@@ -1,0 +1,163 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+  release:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/nosial/ncc:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build project
+        run: |
+          ncc project install --log-level debug -y
+          ncc build --config debug --log-level debug
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug
+          path: target/debug/net.nosial.federationweb.ncc
+
+  release:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/nosial/ncc:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build project
+        run: |
+          ncc project install --log-level debug -y
+          ncc build --config release --log-level debug
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release
+          path: target/release/net.nosial.federationweb.ncc
+
+  web_release:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/nosial/ncc:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build project
+        run: |
+          ncc project install --log-level debug -y
+          ncc build --config web_release --log-level debug
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web_release
+          path: target/web_release/net.nosial.federationweb.ncc
+
+  # Check for phpunit.xml
+  check-phpunit:
+    runs-on: ubuntu-latest
+    outputs:
+      phpunit-exists: ${{ steps.check.outputs.phpunit-exists }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Check for phpunit.xml
+        id: check
+        run: |
+          if [ -f phpunit.xml ]; then
+            echo "phpunit-exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "phpunit-exists=false" >> $GITHUB_OUTPUT
+          fi
+
+  # Check for phpdoc.dist.xml
+  check-phpdoc:
+    runs-on: ubuntu-latest
+    outputs:
+      phpdoc-exists: ${{ steps.check.outputs.phpdoc-exists }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Check for phpdoc.dist.xml
+        id: check
+        run: |
+          if [ -f phpdoc.dist.xml ]; then
+            echo "phpdoc-exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "phpdoc-exists=false" >> $GITHUB_OUTPUT
+          fi
+
+
+
+
+  release-artifacts:
+    needs: [debug, release, web_release]
+    permissions: write-all
+    runs-on: ubuntu-latest
+    container:
+      image: php:8.5
+    if: github.event_name == 'release'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download debug artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: debug
+          path: debug
+
+      - name: Upload debug artifact to release
+        uses: softprops/action-gh-release@v1
+        with:
+            files: |
+                debug/*
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download release artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release
+          path: release
+
+      - name: Upload release artifact to release
+        uses: softprops/action-gh-release@v1
+        with:
+            files: |
+                release/*
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download web_release artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: web_release
+          path: web_release
+
+      - name: Upload web_release artifact to release
+        uses: softprops/action-gh-release@v1
+        with:
+            files: |
+                web_release/*
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
