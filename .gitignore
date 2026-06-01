@@ -17,5 +17,5 @@ Thumbs.db
 *.log
 
 # PHP
-./vendor
 composer.lock
+/vendor/
