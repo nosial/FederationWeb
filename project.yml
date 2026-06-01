@@ -1,0 +1,59 @@
+source: src
+default_build: release
+web_entry_point: web_entry
+assembly:
+  name: FederationWeb
+  package: net.nosial.federationweb
+  version: 1.0.0
+dependencies:
+  net.nosial.dynamicalweb: nosial/dynamicalweb@github
+execution_units:
+  -
+    name: web_entry
+    type: php
+    mode: auto
+    entry: web_entry
+build_configurations:
+  -
+    name: debug
+    output: target/debug/net.nosial.federationweb.ncc
+    type: ncc
+    definitions:
+      NCC_DEBUG: true
+  -
+    name: release
+    output: target/release/net.nosial.federationweb.ncc
+    type: ncc
+  -
+    name: web_release
+    output: 'target/web_release/${ASSEMBLY.PACKAGE}.ncc'
+    type: ncc
+    definitions:
+      NCC_DISABLE_LOGGING: '1'
+    options:
+      web_configuration:
+        application:
+          name: FederationWeb
+          root: FederationWeb/WebApplication
+          resources: FederationWeb/WebResources
+          default_locale: en
+          report_errors: true
+          xss_level: 0
+          debug_panel: true
+        locales:
+          en: FederationWeb/WebLocale/en.yml
+        router:
+          base_path: /
+          response_handlers:
+            404: 404.phtml
+            500: 500.phtml
+          routes:
+            -
+              id: home
+              path: /
+              module: index.phtml
+              locale_id: home
+              allowed_methods:
+                - GET
+                - WEBSOCKET
+        static: true

@@ -1,0 +1,107 @@
+services:
+  app:
+    build:
+      context: .
+    container_name: net.nosial.federationweb
+    image: net.nosial.federationweb:1.0.0
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    depends_on:
+      federation:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - internal_network
+
+  federation:
+    image: ghcr.io/nosial/federationlib:dev
+    container_name: federation_server
+    ports:
+      - "7000:7000"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - federation_uploads:/var/www/uploads
+    environment:
+      # FederationLib Configuration
+      - FEDERATION_DATABASE_HOST=mariadb
+      - FEDERATION_DATABASE_PORT=3306
+      - FEDERATION_DATABASE_USERNAME=${MYSQL_USER:-federation}
+      - FEDERATION_DATABASE_PASSWORD=${MYSQL_PASSWORD:-federation}
+      - FEDERATION_DATABASE_NAME=${MYSQL_DATABASE:-federation}
+      - FEDERATION_REDIS_ENABLED=true
+      - FEDERATION_REDIS_HOST=redis
+      - FEDERATION_REDIS_PORT=6379
+      - FEDERATION_API_KEY=${FEDERATION_API_KEY:-abcdefghijklmnopqrstuvwxyz123456}
+    # volumes:
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:7000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - internal_network
+
+  mariadb:
+    container_name: federation_mariadb
+    image: mariadb:10.5
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-federation_root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-federation}
+      MYSQL_USER: ${MYSQL_USER:-federation}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-federation}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - internal_network
+    expose:
+      - "3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "mariadb", "-u", "${MYSQL_USER:-federation}", "-p${MYSQL_PASSWORD:-federation}"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  redis:
+    container_name: federation_redis
+    image: redis:alpine
+    restart: unless-stopped
+    command: redis-server
+    volumes:
+      - redis_data:/data
+    networks:
+      - internal_network
+    expose:
+      - "6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  federation_uploads:
+    driver: local
+  mariadb_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  internal_network:
+    driver: bridge
+    name: federation_network

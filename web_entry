@@ -1,0 +1,5 @@
+<?php
+    require 'ncc';
+    import('net.nosial.federationweb');
+
+    (new \DynamicalWeb\DynamicalWeb('net.nosial.federationweb'))->handleRequest();
