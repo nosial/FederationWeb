@@ -16,6 +16,21 @@ Thumbs.db
 # Logs
 *.log
 
+# Node / npm
+node_modules/
+.sass-cache/
+*.css.map
+
+# Generated CSS resources
+src/WebResources/css/
+
+# Generated vendor resources
+src/WebResources/vendor/
+
+# Generated JS resources (from bootstrap build)
+src/WebResources/js/app.js
+src/WebResources/js/nav.js
+
 # PHP
 composer.lock
 /vendor/
