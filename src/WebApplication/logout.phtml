@@ -1,0 +1,8 @@
+<?php
+
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+
+    WebSession::destroyCookieSession('web_session');
+    WebSession::getResponse()->setRedirect(Functions::getRouteUrl('authenticate'));
+    WebSession::endSession(0);
