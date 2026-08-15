@@ -1,0 +1,111 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use FederationLib\Objects\ServerInformation;
+    use WebKernel\DashboardView;
+
+    /** @var DashboardView $dashboardView */
+    $dashboardView = WebSession::get('dashboard_view');
+    /** @var ServerInformation $serverInformation */
+    $serverInformation = WebSession::get('server_information');
+?>
+<section class="mb-3">
+    <div class="row g-4">
+        <div class="col-12 col-lg-8">
+            <div class="fw-card h-100">
+                <div class="fw-card-header">
+                    <h5><i class="bi bi-pie-chart fw-icon-amber"></i> <?php Functions::printl('incident_distribution'); ?></h5>
+                </div>
+                <div class="fw-card-body">
+                    <div class="fw-progress-list">
+                        <div>
+                            <div class="fw-progress-label">
+                                <span><?php Functions::printl('audit_log_records'); ?></span><span><?php Functions::print(number_format($serverInformation->getAuditLogRecords())); ?></span>
+                            </div>
+                            <div class="fw-progress-track">
+                                <div class="fw-progress-bar fw-progress-bar-blue" style="width:<?php Functions::print($dashboardView->getRecordPercentage($serverInformation->getAuditLogRecords())); ?>%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="fw-progress-label">
+                                <span><?php Functions::printl('blacklist_records'); ?></span><span><?php Functions::print(number_format($serverInformation->getBlacklistRecords())); ?></span>
+                            </div>
+                            <div class="fw-progress-track">
+                                <div class="fw-progress-bar fw-progress-bar-red" style="width:<?php Functions::print($dashboardView->getRecordPercentage($serverInformation->getBlacklistRecords())); ?>%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="fw-progress-label">
+                                <span><?php Functions::printl('evidence_records'); ?></span><span><?php Functions::print(number_format($serverInformation->getEvidenceRecords())); ?></span>
+                            </div>
+                            <div class="fw-progress-track">
+                                <div class="fw-progress-bar fw-progress-bar-amber" style="width:<?php Functions::print($dashboardView->getRecordPercentage($serverInformation->getEvidenceRecords())); ?>%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="fw-progress-label">
+                                <span><?php Functions::printl('known_entities'); ?></span><span><?php Functions::print(number_format($serverInformation->getKnownEntities())); ?></span>
+                            </div>
+                            <div class="fw-progress-track">
+                                <div class="fw-progress-bar fw-progress-bar-purple" style="width:<?php Functions::print($dashboardView->getRecordPercentage($serverInformation->getKnownEntities())); ?>%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="fw-progress-label">
+                                <span><?php Functions::printl('operators'); ?></span><span><?php Functions::print(number_format($serverInformation->getOperators())); ?></span>
+                            </div>
+                            <div class="fw-progress-track">
+                                <div class="fw-progress-bar fw-progress-bar-cyan" style="width:<?php Functions::print($dashboardView->getRecordPercentage($serverInformation->getOperators())); ?>%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="fw-progress-label">
+                                <span><?php Functions::printl('reports_title'); ?></span><span><?php Functions::print(number_format($serverInformation->getReports())); ?></span>
+                            </div>
+                            <div class="fw-progress-track">
+                                <div class="fw-progress-bar fw-progress-bar-green" style="width:<?php Functions::print($dashboardView->getRecordPercentage($serverInformation->getReports())); ?>%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="fw-card h-100">
+                <div class="fw-card-header">
+                    <h5><i class="bi bi-lightning fw-icon-red"></i> <?php Functions::printl('activity_feed'); ?></h5>
+                </div>
+                <div class="fw-card-body">
+                    <?php
+                        if ($dashboardView->getAuditLogs(4) === null || empty($dashboardView->getAuditLogs(4)))
+                        {
+                            ?>
+                            <div class="fw-empty">
+                                <i class="bi bi-inbox"></i>
+                                <p><?php Functions::printl('no_audit_logs'); ?></p>
+                            </div>
+                            <?php
+                        }
+                        else
+                        {
+                            ?>
+                            <div class="fw-timeline">
+                            <?php
+                            foreach ($dashboardView->getAuditLogs(4) ?? [] as $log)
+                            {
+                                ?>
+                                <div class="fw-timeline-item <?php Functions::print($dashboardView->getTimelineClass($log->getType())); ?>">
+                                    <div class="fw-timeline-time"><?php Functions::print($dashboardView->formatDate($log->getTimestamp(), 'H:i:s')); ?></div>
+                                    <div class="fw-timeline-title"><?php Functions::print($log->getType()->name); ?></div>
+                                    <div class="fw-timeline-desc"><?php Functions::print($log->getMessage()); ?></div>
+                                </div>
+                                <?php
+                            }
+                            ?></div><?php
+                        }
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

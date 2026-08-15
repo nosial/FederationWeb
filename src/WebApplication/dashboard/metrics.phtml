@@ -1,0 +1,64 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+
+    $serverInformation = WebSession::get('server_information');
+?>
+<section class="mb-3">
+    <div class="row g-3">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <div class="fw-stat-card h-100">
+                <div class="fw-stat-icon blue"><i class="bi bi-people"></i></div>
+                <div class="fw-stat-body">
+                    <div class="fw-stat-label"><?php Functions::printl('operators'); ?></div>
+                    <div class="fw-stat-value"><?php Functions::print(number_format($serverInformation->getOperators())); ?></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <div class="fw-stat-card h-100">
+                <div class="fw-stat-icon emerald"><i class="bi bi-globe2"></i></div>
+                <div class="fw-stat-body">
+                    <div class="fw-stat-label"><?php Functions::printl('known_entities'); ?></div>
+                    <div class="fw-stat-value"><?php Functions::print(number_format($serverInformation->getKnownEntities())); ?></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <div class="fw-stat-card h-100">
+                <div class="fw-stat-icon amber"><i class="bi bi-file-earmark-text"></i></div>
+                <div class="fw-stat-body">
+                    <div class="fw-stat-label"><?php Functions::printl('reports_title'); ?></div>
+                    <div class="fw-stat-value"><?php Functions::print(number_format($serverInformation->getReports())); ?></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <div class="fw-stat-card h-100">
+                <div class="fw-stat-icon purple"><i class="bi bi-search"></i></div>
+                <div class="fw-stat-body">
+                    <div class="fw-stat-label"><?php Functions::printl('evidence_records'); ?></div>
+                    <div class="fw-stat-value"><?php Functions::print(number_format($serverInformation->getEvidenceRecords())); ?></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <div class="fw-stat-card h-100">
+                <div class="fw-stat-icon red"><i class="bi bi-shield-exclamation"></i></div>
+                <div class="fw-stat-body">
+                    <div class="fw-stat-label"><?php Functions::printl('blacklist_records'); ?></div>
+                    <div class="fw-stat-value"><?php Functions::print(number_format($serverInformation->getBlacklistRecords())); ?></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <div class="fw-stat-card h-100">
+                <div class="fw-stat-icon cyan"><i class="bi bi-journal-text"></i></div>
+                <div class="fw-stat-body">
+                    <div class="fw-stat-label"><?php Functions::printl('audit_log_records'); ?></div>
+                    <div class="fw-stat-value"><?php Functions::print(number_format($serverInformation->getAuditLogRecords())); ?></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

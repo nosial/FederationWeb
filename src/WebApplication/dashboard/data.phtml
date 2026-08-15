@@ -1,0 +1,84 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use FederationLib\Objects\ServerInformation;
+    use WebKernel\DashboardView;
+
+    /** @var DashboardView $dashboardView */
+    $dashboardView = WebSession::get('dashboard_view');
+    /** @var ServerInformation $serverInformation */
+    $serverInformation = WebSession::get('server_information');
+?>
+<section class="mb-3">
+    <div class="row g-4">
+        <div class="col-12 col-lg-8">
+            <div class="fw-card h-100">
+                <div class="fw-card-header">
+                    <h5><i class="bi bi-lightbulb fw-icon-amber"></i> <?php Functions::printl('audit_log_visibility'); ?></h5>
+                </div>
+                <div class="fw-card-body fw-card-body-nopad">
+                    <div class="fw-table-wrap">
+                        <table class="fw-table fw-table-hoverable fw-table-nowrap">
+                            <tbody>
+                                <?php
+                                    foreach ($dashboardView->getVisibleAuditLogTypes() as $typeName)
+                                    {
+                                        ?>
+                                        <tr>
+                                            <td><?php Functions::print($typeName); ?></td>
+                                            <td class="fw-text-right"><span class="fw-badge fw-badge-emerald"><?php Functions::printl('public'); ?></span></td>
+                                        </tr>
+                                        <?php
+                                    }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="fw-card h-100">
+                <div class="fw-card-header">
+                    <h5><i class="bi bi-hash fw-icon-green"></i> <?php Functions::printl('record_counts'); ?></h5>
+                </div>
+                <div class="fw-card-body fw-card-body-nopad">
+                    <div class="fw-table-wrap">
+                        <table class="fw-table fw-table-hoverable fw-table-nowrap">
+                            <tbody>
+                                <tr>
+                                    <td><?php Functions::printl('operators'); ?></td>
+                                    <td class="fw-text-right fw-fw-bold"><?php Functions::print(number_format($serverInformation->getOperators())); ?></td>
+                                </tr>
+                                <tr>
+                                    <td><?php Functions::printl('known_entities'); ?></td>
+                                    <td class="fw-text-right fw-fw-bold"><?php Functions::print(number_format($serverInformation->getKnownEntities())); ?></td>
+                                </tr>
+                                <tr>
+                                    <td><?php Functions::printl('blacklist_records'); ?></td>
+                                    <td class="fw-text-right fw-fw-bold"><?php Functions::print(number_format($serverInformation->getBlacklistRecords())); ?></td>
+                                </tr>
+                                <tr>
+                                    <td><?php Functions::printl('evidence_records'); ?></td>
+                                    <td class="fw-text-right fw-fw-bold"><?php Functions::print(number_format($serverInformation->getEvidenceRecords())); ?></td>
+                                </tr>
+                                <tr>
+                                    <td><?php Functions::printl('reports_title'); ?></td>
+                                    <td class="fw-text-right fw-fw-bold"><?php Functions::print(number_format($serverInformation->getReports())); ?></td>
+                                </tr>
+                                <tr>
+                                    <td><?php Functions::printl('file_attachments'); ?></td>
+                                    <td class="fw-text-right fw-fw-bold"><?php Functions::print(number_format($serverInformation->getFileAttachmentRecords())); ?></td>
+                                </tr>
+                                <tr>
+                                    <td><?php Functions::printl('audit_log_records'); ?></td>
+                                    <td class="fw-text-right fw-fw-bold"><?php Functions::print(number_format($serverInformation->getAuditLogRecords())); ?></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,83 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\DashboardView;
+    use WebKernel\Utilities;
+
+    Functions::loadLocalization('dashboard');
+
+    $federationClient = WebSession::get('federation_client');
+    $serverInformation = $federationClient->getServerInformation();
+    WebSession::set('server_information', $serverInformation);
+    $cookieSession = WebSession::getCookieSession('web_session');
+    $operatorUuid = $cookieSession->get('operator_uuid');
+    $operatorName = $cookieSession->get('operator_name');
+    $dashboardView = new DashboardView();
+    WebSession::set('dashboard_view', $dashboardView);
+?>
+<!DOCTYPE html>
+<html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>" data-fw-theme="<?php Functions::print(Utilities::getDarkMode() ? 'dark' : ''); ?>">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title><?php Functions::printl('page_title', ['server_name' => $serverInformation->getServerName()]); ?></title>
+        <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="/css/federation.css">
+    </head>
+    <body class="fw-page--dashboard">
+        <div class="fw-wrapper">
+            <?php Functions::insertSection('sections/fw_topbar.phtml'); ?>
+            <?php Functions::insertSection('sections/fw_topnav.phtml'); ?>
+            <main class="fw-main">
+                <div class="fw-content">
+                    <div class="fw-dashboard-commandbar">
+                        <div class="fw-dashboard-title">
+                            <h1><?php Functions::printl('nav_dashboard'); ?></h1>
+                            <span class="fw-dashboard-server"><?php Functions::print($serverInformation->getServerName()); ?><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($serverInformation->getServerName()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></span>
+                        </div>
+                        <div class="fw-dashboard-commandbar-meta">
+                            <span class="fw-badge fw-badge-emerald"><i class="bi bi-check-circle"></i> <?php Functions::printl('online'); ?></span>
+                            <span class="fw-uuid">API <?php Functions::print($serverInformation->getApiVersion()); ?></span>
+                            <?php
+                                if ($operatorUuid !== null)
+                                {
+                                    ?>
+                                    <span class="fw-dashboard-session"><i class="bi bi-person-check"></i> <?php Functions::print($operatorName); ?></span>
+                                    <button type="button" class="fw-btn fw-btn-primary fw-btn-sm" data-bs-toggle="modal" data-bs-target="#submitReportModal"><i class="bi bi-file-earmark-plus"></i> <?php Functions::printl('new_report_title'); ?></button>
+                                    <?php
+                                }
+                                else
+                                {
+                                    ?><span class="fw-dashboard-session"><i class="bi bi-eye"></i> <?php Functions::printl('anonymous'); ?></span><?php
+                                }
+                            ?>
+                        </div>
+                    </div>
+                    <?php Functions::insertSection('dashboard/metrics.phtml'); ?>
+                    <?php
+                        if($operatorUuid !== null)
+                        {
+                            ?><div class="fw-dashboard-section-label"><i class="bi bi-activity"></i> <?php Functions::printl('operational_overview'); ?></div><?php
+                            Functions::insertSection('dashboard/records.phtml');
+                        }
+                        else
+                        {
+                            ?><div class="fw-dashboard-section-label"><i class="bi bi-eye"></i> <?php Functions::printl('public_overview'); ?></div><?php
+                        }
+                    ?>
+                    <?php Functions::insertSection('dashboard/info.phtml'); ?>
+                    <?php
+                        if ($operatorUuid !== null)
+                        {
+                            ?><div class="fw-dashboard-section-label"><i class="bi bi-server"></i> <?php Functions::printl('server_configuration'); ?></div><?php
+                            Functions::insertSection('dashboard/data.phtml');
+                        }
+                    ?>
+                </div>
+            </main>
+        </div>
+        <script src="/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+        <script src="/js/app.js"></script>
+        <script src="/js/nav.js"></script>
+    </body>
+</html>
