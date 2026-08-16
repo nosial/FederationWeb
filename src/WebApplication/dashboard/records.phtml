@@ -1,8 +1,12 @@
 <?php
     use DynamicalWeb\Html\Functions;
     use DynamicalWeb\WebSession;
+    use FederationLib\Objects\ServerInformation;
+    use WebKernel\DashboardView;
 
+    /** @var DashboardView $dashboardView */
     $dashboardView = WebSession::get('dashboard_view');
+    /** @var ServerInformation $serverInformation */
     $serverInformation = WebSession::get('server_information');
 ?>
 <section class="mb-3">
