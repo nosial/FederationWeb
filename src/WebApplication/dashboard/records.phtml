@@ -93,18 +93,22 @@
                                                             {
                                                                 ?><a href="<?php Functions::printRoute('blacklist_detail', ['blacklist_uuid' => $log->getBlacklistUuid()]); ?>" class="fw-detail-link"><?php Functions::printl('blacklist_records'); ?></a><?php
                                                             }
+
                                                             if ($log->getEvidenceUuid())
                                                             {
                                                                 ?><a href="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $log->getEvidenceUuid()]); ?>" class="fw-detail-link"><?php Functions::printl('evidence'); ?></a><?php
                                                             }
+
                                                             if ($log->getFileAttachmentUuid())
                                                             {
                                                                 ?><span class="fw-uuid"><?php Functions::printl('attachments'); ?>: <?php Functions::print(substr($log->getFileAttachmentUuid(), 0, 8)); ?>…</span><?php
                                                             }
+
                                                             if (!$log->getBlacklistUuid() && !$log->getEvidenceUuid() && !$log->getFileAttachmentUuid())
                                                             {
-                                                                ?><span class="fw-uuid">—</span><?php }
-                                                            ?>
+                                                                ?><span class="fw-uuid">—</span><?php
+                                                            }
+                                                        ?>
                                                     </td>
                                                 </tr>
                                             <?php
