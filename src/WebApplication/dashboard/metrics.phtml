@@ -8,7 +8,7 @@
     <div class="row g-3">
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="fw-stat-card h-100">
-                <div class="fw-stat-icon blue"><i class="bi bi-people"></i></div>
+                <div class="fw-stat-icon blue"><i class="bi bi-person-badge"></i></div>
                 <div class="fw-stat-body">
                     <div class="fw-stat-label"><?php Functions::printl('operators'); ?></div>
                     <div class="fw-stat-value"><?php Functions::print(number_format($serverInformation->getOperators())); ?></div>
@@ -17,7 +17,7 @@
         </div>
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="fw-stat-card h-100">
-                <div class="fw-stat-icon emerald"><i class="bi bi-globe2"></i></div>
+                <div class="fw-stat-icon emerald"><i class="bi bi-person"></i></div>
                 <div class="fw-stat-body">
                     <div class="fw-stat-label"><?php Functions::printl('known_entities'); ?></div>
                     <div class="fw-stat-value"><?php Functions::print(number_format($serverInformation->getKnownEntities())); ?></div>
@@ -26,7 +26,7 @@
         </div>
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="fw-stat-card h-100">
-                <div class="fw-stat-icon amber"><i class="bi bi-file-earmark-text"></i></div>
+                <div class="fw-stat-icon amber"><i class="bi bi-flag"></i></div>
                 <div class="fw-stat-body">
                     <div class="fw-stat-label"><?php Functions::printl('reports_title'); ?></div>
                     <div class="fw-stat-value"><?php Functions::print(number_format($serverInformation->getReports())); ?></div>
@@ -35,7 +35,7 @@
         </div>
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="fw-stat-card h-100">
-                <div class="fw-stat-icon purple"><i class="bi bi-search"></i></div>
+                <div class="fw-stat-icon purple"><i class="bi bi-file-earmark-text"></i></div>
                 <div class="fw-stat-body">
                     <div class="fw-stat-label"><?php Functions::printl('evidence_records'); ?></div>
                     <div class="fw-stat-value"><?php Functions::print(number_format($serverInformation->getEvidenceRecords())); ?></div>
