@@ -1,0 +1,239 @@
+// FederationWeb — Enterprise Theme Variables
+// Law Enforcement / Professional — Square, Compact, Data-Dense
+
+// === Core Palette ===
+$white: #ffffff;
+$ink-black: #00171f;
+$deep-space-blue: #003459;
+$cerulean: #007ea7;
+$fresh-sky: #00a7e1;
+
+// === Neutral Grays (derived for UI surfaces) ===
+$fw-gray-950: #0a0f12;
+$fw-gray-700: #2a363e;
+$fw-gray-600: #47555e;
+$fw-gray-500: #64757f;
+$fw-gray-400: #8a99a2;
+$fw-gray-300: #b0bcc4;
+$fw-gray-200: #ced6db;
+$fw-gray-100: #e5e9ec;
+$fw-gray-50:  #f2f4f5;
+
+// === Status Colors (muted for professional use) ===
+$fw-blue-700: #003459;
+$fw-blue-600: #007ea7;
+$fw-blue-500: #00a7e1;
+$fw-blue-100: #d9f0fa;
+$fw-blue-50:  #edf7fc;
+
+$fw-emerald-700: #1a6d4a;
+$fw-emerald-600: #21885d;
+$fw-emerald-500: #28a571;
+$fw-emerald-400: #53bf91;
+$fw-emerald-100: #d4f0e4;
+$fw-emerald-50:  #ebf8f2;
+
+$fw-amber-700: #8a610e;
+$fw-amber-600: #a97812;
+$fw-amber-500: #c99116;
+$fw-amber-400: #d6a944;
+$fw-amber-100: #f5e8c7;
+$fw-amber-50:  #fbf3e0;
+
+$fw-red-700: #941f1f;
+$fw-red-600: #b32626;
+$fw-red-500: #d42e2e;
+$fw-red-400: #de5c5c;
+$fw-red-100: #f5d0d0;
+$fw-red-50:  #fbeaea;
+
+$fw-purple-700: #55328c;
+$fw-purple-600: #693daa;
+$fw-purple-500: #7e49c9;
+$fw-purple-400: #9b72d5;
+$fw-purple-100: #e5d9f5;
+
+$fw-cyan-700: #1e687a;
+$fw-cyan-600: #258199;
+$fw-cyan-500: #2d9bb8;
+$fw-cyan-400: #5bb0c8;
+$fw-cyan-100: #d3eaf0;
+$fw-cyan-50:  #eaf5f8;
+
+// === Top Navigation ===
+$topnav-height: 38px;
+$topnav-bg: $ink-black;
+$topnav-text: $fw-gray-400;
+$topnav-active-bg: rgba($cerulean, 0.18);
+$topnav-active-text: $fresh-sky;
+$topnav-hover-bg: rgba(255, 255, 255, 0.06);
+
+// === Topbar ===
+$topbar-height: 48px;
+
+// === Content ===
+$content-padding: 14px;
+
+// === Typography ===
+$fw-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+$fw-font-size-xs:    .625rem;
+$fw-font-size-sm:    .6875rem;
+$fw-font-size-base:  .75rem;
+$fw-font-size-lg:    .8125rem;
+$fw-font-size-xl:    .875rem;
+$fw-line-height: 1.45;
+
+// === Card ===
+$card-border-color: $fw-gray-200;
+
+// === Table ===
+$table-cell-padding: .15rem .4rem;
+$table-font-size: .65rem;
+
+// === Badge ===
+$badge-font-size: .625rem;
+$badge-padding: .15em .45em;
+
+// === Button ===
+$btn-font-size: $fw-font-size-sm;
+$btn-padding: .3rem .6rem;
+
+// === Form ===
+$input-font-size: $fw-font-size-sm;
+$input-padding: .3rem .55rem;
+$input-border-color: $fw-gray-300;
+
+// === Transition ===
+$fw-transition: 100ms ease;
+$fw-transition-fast: 80ms ease;
+
+// === Accent Colors (for card left borders) ===
+$accent-purple: $fw-purple-600;
+$accent-blue: $cerulean;
+$accent-cyan: $fw-cyan-600;
+$accent-green: $fw-emerald-600;
+$accent-amber: $fw-amber-600;
+$accent-red: $fw-red-600;
+
+// === Theme CSS Custom Properties (Light & Dark) ===
+// Uses the core palette colors intentionally — no generic grays for surfaces.
+// Light: white bg, deep-space-blue text, cerulean accents
+// Dark: ink-black bg, deep-space-blue surfaces, fresh-sky accents, cerulean borders
+
+:root {
+  --fw-body-bg: #{$fw-gray-50};
+  --fw-surface-bg: #{$white};
+  --fw-surface-alt: #{$fw-gray-50};
+  --fw-surface-overlay: #{$white};
+  --fw-text-primary: #{$deep-space-blue};
+  --fw-text-secondary: #{$fw-gray-600};
+  --fw-text-muted: #{$fw-gray-400};
+  --fw-text-heading: #{$deep-space-blue};
+  --fw-border-default: #{$fw-gray-200};
+  --fw-border-light: #{$fw-gray-100};
+  --fw-border-input: #{$fw-gray-300};
+  --fw-primary: #{$cerulean};
+  --fw-primary-hover: #{$deep-space-blue};
+  --fw-primary-text: #{$white};
+  --fw-link: #{$cerulean};
+  --fw-link-hover: #{$fresh-sky};
+  --fw-topbar-bg: #{$white};
+  --fw-topbar-border: #{$fw-gray-200};
+  --fw-table-header-bg: #{$fw-gray-50};
+  --fw-table-row-alt: #{rgba($fw-gray-50, 0.6)};
+  --fw-input-bg: #{$white};
+  --fw-input-border: #{$fw-gray-300};
+  --fw-success-bg: #{$fw-emerald-50};
+  --fw-success-text: #{$fw-emerald-700};
+  --fw-danger-bg: #{$fw-red-50};
+  --fw-danger-text: #{$fw-red-700};
+  --fw-warning-bg: #{$fw-amber-50};
+  --fw-warning-text: #{$fw-amber-700};
+  --fw-info-bg: #{$fw-blue-50};
+  --fw-info-text: #{$fw-blue-700};
+  --fw-dot-green: #{$fw-emerald-500};
+  --fw-dot-yellow: #{$fw-amber-500};
+  --fw-dot-red: #{$fw-red-500};
+  --fw-dot-gray: #{$fw-gray-300};
+  --fw-dot-blue: #{$cerulean};
+  --fw-icon-purple: #{$fw-purple-600};
+  --fw-icon-blue: #{$cerulean};
+  --fw-icon-red: #{$fw-red-600};
+  --fw-icon-amber: #{$fw-amber-600};
+  --fw-icon-green: #{$fw-emerald-600};
+  --fw-icon-cyan: #{$fw-cyan-600};
+  --fw-icon-navy: #{$deep-space-blue};
+  --fw-badge-blue-bg: #{$fw-blue-100};
+  --fw-badge-blue-text: #{$fw-blue-700};
+  --fw-badge-green-bg: #{$fw-emerald-100};
+  --fw-badge-green-text: #{$fw-emerald-700};
+  --fw-badge-amber-bg: #{$fw-amber-100};
+  --fw-badge-amber-text: #{$fw-amber-700};
+  --fw-badge-red-bg: #{$fw-red-100};
+  --fw-badge-red-text: #{$fw-red-700};
+  --fw-badge-purple-bg: #{$fw-purple-100};
+  --fw-badge-purple-text: #{$fw-purple-700};
+  --fw-badge-cyan-bg: #{$fw-cyan-100};
+  --fw-badge-cyan-text: #{$fw-cyan-700};
+  --fw-badge-gray-bg: #{$fw-gray-100};
+  --fw-badge-gray-text: #{$fw-gray-600};
+}
+
+[data-fw-theme="dark"] {
+  --fw-body-bg: #{$ink-black};
+  --fw-surface-bg: #{$deep-space-blue};
+  --fw-surface-alt: #{rgba(0, 52, 89, 0.65)};
+  --fw-surface-overlay: #{$deep-space-blue};
+  --fw-text-primary: #{$white};
+  --fw-text-secondary: #{mix($white, $deep-space-blue, 75%)};
+  --fw-text-muted: #{mix($white, $deep-space-blue, 55%)};
+  --fw-text-heading: #{$white};
+  --fw-border-default: #{rgba($cerulean, 0.35)};
+  --fw-border-light: #{rgba($cerulean, 0.18)};
+  --fw-border-input: #{rgba($cerulean, 0.5)};
+  --fw-primary: #{$fresh-sky};
+  --fw-primary-hover: #{$cerulean};
+  --fw-primary-text: #{$ink-black};
+  --fw-link: #{$fresh-sky};
+  --fw-link-hover: #{$white};
+  --fw-topbar-bg: #{mix($deep-space-blue, $ink-black, 70%)};
+  --fw-topbar-border: #{rgba($cerulean, 0.25)};
+  --fw-table-header-bg: #{rgba($cerulean, 0.18)};
+  --fw-table-row-alt: #{rgba($white, 0.02)};
+  --fw-input-bg: #{rgba($ink-black, 0.4)};
+  --fw-input-border: #{rgba($cerulean, 0.5)};
+  --fw-success-bg: #{rgba($fw-emerald-500, 0.15)};
+  --fw-success-text: #{$fw-emerald-400};
+  --fw-danger-bg: #{rgba($fw-red-500, 0.15)};
+  --fw-danger-text: #{$fw-red-400};
+  --fw-warning-bg: #{rgba($fw-amber-500, 0.15)};
+  --fw-warning-text: #{$fw-amber-400};
+  --fw-info-bg: #{rgba($fresh-sky, 0.15)};
+  --fw-info-text: #{$fresh-sky};
+  --fw-dot-green: #{$fw-emerald-400};
+  --fw-dot-yellow: #{$fw-amber-400};
+  --fw-dot-red: #{$fw-red-400};
+  --fw-dot-gray: #{rgba($white, 0.25)};
+  --fw-dot-blue: #{$fresh-sky};
+  --fw-icon-purple: #{$fw-purple-400};
+  --fw-icon-blue: #{$fresh-sky};
+  --fw-icon-red: #{$fw-red-400};
+  --fw-icon-amber: #{$fw-amber-400};
+  --fw-icon-green: #{$fw-emerald-400};
+  --fw-icon-cyan: #{$fw-cyan-400};
+  --fw-icon-navy: #{mix($white, $deep-space-blue, 80%)};
+  --fw-badge-blue-bg: #{rgba($cerulean, 0.2)};
+  --fw-badge-blue-text: #{$fresh-sky};
+  --fw-badge-green-bg: #{rgba($fw-emerald-500, 0.2)};
+  --fw-badge-green-text: #{$fw-emerald-400};
+  --fw-badge-amber-bg: #{rgba($fw-amber-500, 0.2)};
+  --fw-badge-amber-text: #{$fw-amber-400};
+  --fw-badge-red-bg: #{rgba($fw-red-500, 0.2)};
+  --fw-badge-red-text: #{$fw-red-400};
+  --fw-badge-purple-bg: #{rgba($fw-purple-500, 0.2)};
+  --fw-badge-purple-text: #{$fw-purple-400};
+  --fw-badge-cyan-bg: #{rgba($fw-cyan-500, 0.2)};
+  --fw-badge-cyan-text: #{$fw-cyan-400};
+  --fw-badge-gray-bg: #{rgba($white, 0.1)};
+  --fw-badge-gray-text: #{rgba($white, 0.6)};
+}
