@@ -1,0 +1,36 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\Utilities;
+
+    Functions::loadLocalization('404');
+    $darkMode = Utilities::getDarkMode();
+?>
+<!DOCTYPE html>
+<html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>" data-fw-theme="<?php Functions::print($darkMode ? 'dark' : ''); ?>">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <?php Functions::insertSection('sections/head.phtml'); ?>
+        <title><?php Functions::printl('page_title') ?></title>
+        <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="/css/federation.css">
+    </head>
+    <body class="fw-error-page">
+        <div class="fw-error">
+            <div class="fw-error-card">
+                <div class="fw-error-icon fw-error-icon-amber">
+                    <i class="bi bi-exclamation-circle"></i>
+                </div>
+                <div class="fw-error-code"><?php Functions::printl('error_code'); ?></div>
+                <p class="fw-error-description"><?php Functions::printl('error_description'); ?></p>
+                <div class="fw-error-actions">
+                    <button type="button" class="fw-btn fw-btn-primary" onclick="window.history.back()">
+                        <i class="bi bi-arrow-left"></i> <?php Functions::printl('go_back'); ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <script src="/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
