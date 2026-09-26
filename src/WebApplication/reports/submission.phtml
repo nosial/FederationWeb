@@ -1,0 +1,15 @@
+<?php
+    use DynamicalWeb\Enums\RequestMethod;
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\ReportSubmissionView;
+
+    Functions::loadLocalization('reports');
+
+    $reportSubmissionView = new ReportSubmissionView();
+
+    if (WebSession::getRequest()->getMethod() === RequestMethod::POST)
+    {
+        $reportSubmissionView->handlePostRequest();
+    }
+?>
