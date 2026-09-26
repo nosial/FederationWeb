@@ -1,0 +1,339 @@
+// Misc components: metadata, copy, progress, timeline, empty, panel, KPI, etc.
+
+// ============ Code/monospace ============
+.fw-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', ui-monospace, monospace;
+  font-size: .7rem;
+}
+
+.fw-uuid {
+  @extend .fw-mono;
+  color: var(--fw-text-secondary);
+  font-size: .625rem;
+}
+
+// ============ Copy button ============
+.fw-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--fw-text-muted);
+  vertical-align: middle;
+  transition: color $fw-transition-fast, background $fw-transition-fast;
+  flex-shrink: 0;
+
+  i { font-size: 10px; pointer-events: none; }
+
+  &:hover {
+    background: var(--fw-border-light);
+    color: var(--fw-text-primary);
+  }
+
+  &.copied {
+    color: $fw-emerald-600;
+    pointer-events: none;
+  }
+}
+
+// ============ Status dots ============
+.fw-dot {
+  width: 6px;
+  height: 6px;
+  display: inline-block;
+
+  &.green { background: var(--fw-dot-green); }
+  &.amber { background: var(--fw-dot-yellow); }
+  &.red { background: var(--fw-dot-red); }
+  &.gray { background: var(--fw-dot-gray); }
+}
+
+// ============ Icon colors ============
+.fw-icon-purple { color: var(--fw-icon-purple); }
+.fw-icon-blue { color: var(--fw-icon-blue); }
+.fw-icon-red { color: var(--fw-icon-red); }
+.fw-icon-amber { color: var(--fw-icon-amber); }
+.fw-icon-green { color: var(--fw-icon-green); }
+.fw-icon-cyan { color: var(--fw-icon-cyan); }
+.fw-icon-navy { color: var(--fw-icon-navy); }
+
+// ============ Progress ============
+.fw-progress-list { display: flex; flex-direction: column; gap: 6px; }
+.fw-progress-label { display: flex; justify-content: space-between; font-size: $fw-font-size-xs; margin-bottom: 1px; color: var(--fw-text-muted); }
+.fw-progress-track { height: 5px; background: var(--fw-border-light); overflow: hidden; }
+.fw-progress-bar { height: 100%; }
+.fw-progress-bar-blue { background: $cerulean; }
+.fw-progress-bar-red { background: $fw-red-600; }
+.fw-progress-bar-amber { background: $fw-amber-600; }
+.fw-progress-bar-purple { background: $fw-purple-600; }
+.fw-progress-bar-cyan { background: $fw-cyan-600; }
+.fw-progress-bar-green { background: $fw-emerald-500; }
+
+// ============ Metadata list ============
+.fw-metadata-list { display: flex; flex-direction: column; gap: 5px; }
+
+.fw-metadata-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 8px;
+  background: var(--fw-surface-alt);
+  border: 1px solid var(--fw-border-default);
+  font-size: $fw-font-size-sm;
+
+  .fw-metadata-key {
+    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', ui-monospace, monospace;
+    font-size: .6875rem;
+    color: var(--fw-text-primary);
+    font-weight: 600;
+  }
+
+  .fw-metadata-value {
+    flex: 1;
+    min-width: 0;
+    text-align: right;
+    color: var(--fw-text-primary);
+    word-break: break-all;
+    font-weight: 500;
+
+    &.null {
+      color: var(--fw-text-muted);
+      font-style: italic;
+    }
+  }
+
+  .fw-metadata-type {
+    font-size: .5625rem;
+    text-transform: lowercase;
+    font-weight: 600;
+    padding: .1em .35em;
+  }
+}
+
+// ============ Permission toggles ============
+.fw-permission-grid { display: flex; flex-direction: column; gap: 6px; }
+
+.fw-permission-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border: 1px solid var(--fw-border-default);
+  background: var(--fw-surface-bg);
+
+  .fw-permission-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+
+    .fw-permission-name {
+      font-size: $fw-font-size-sm;
+      font-weight: 600;
+      color: var(--fw-text-heading);
+    }
+
+    .fw-permission-desc {
+      font-size: $fw-font-size-xs;
+      color: var(--fw-text-muted);
+    }
+  }
+}
+
+// ============ File upload dropzone ============
+.fw-dropzone {
+  border: 2px dashed var(--fw-border-input);
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--fw-text-muted);
+  cursor: pointer;
+
+  i { font-size: 22px; display: block; margin-bottom: 5px; }
+
+  &:hover {
+    border-color: var(--fw-primary);
+    background: rgba($cerulean, 0.06);
+  }
+}
+
+// ============ Inline modal alert ============
+.fw-modal-alert {
+  padding: 8px 10px;
+  font-size: $fw-font-size-sm;
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-bottom: 12px;
+
+  i { font-size: 13px; margin-top: 1px; }
+
+  &-danger { background: var(--fw-danger-bg); color: var(--fw-danger-text); }
+  &-warning { background: var(--fw-warning-bg); color: var(--fw-warning-text); }
+}
+
+// ============ Token display ============
+.fw-token-display {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+
+  input {
+    flex: 1;
+    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', ui-monospace, monospace;
+    font-size: $fw-font-size-xs;
+    background: var(--fw-surface-alt);
+    border: 1px solid var(--fw-border-default);
+    padding: 6px 8px;
+    color: var(--fw-text-primary);
+  }
+}
+
+// ============ Empty state ============
+.fw-empty,
+.fw-empty-sm {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--fw-text-muted);
+
+  i { display: block; color: var(--fw-text-muted); }
+
+  p { font-size: $fw-font-size-sm; margin: 0; }
+}
+
+.fw-empty {
+  min-height: 144px;
+  padding: 36px 16px;
+
+  i { font-size: 28px; margin-bottom: 6px; }
+}
+
+.fw-empty-sm {
+  min-height: 112px;
+  padding: 24px 14px;
+
+  i { font-size: 20px; margin-bottom: 5px; }
+}
+
+// ============ Timeline ============
+.fw-timeline {
+  position: relative;
+  padding-left: 18px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 5px;
+    bottom: 5px;
+    width: 2px;
+    background: var(--fw-border-default);
+  }
+
+  .fw-timeline-item {
+    position: relative;
+    padding-bottom: 10px;
+
+    &:last-child { padding-bottom: 0; }
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -16px;
+      top: 4px;
+      width: 7px;
+      height: 7px;
+      background: var(--fw-dot-gray);
+      border: 2px solid var(--fw-surface-bg);
+    }
+
+    &.active::before { background: var(--fw-dot-blue); }
+    &.success::before { background: var(--fw-dot-green); }
+    &.warning::before { background: var(--fw-dot-yellow); }
+    &.danger::before { background: var(--fw-dot-red); }
+
+    .fw-timeline-time {
+      font-size: $fw-font-size-xs;
+      color: var(--fw-text-muted);
+      font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', ui-monospace, monospace;
+    }
+
+    .fw-timeline-title {
+      font-size: $fw-font-size-sm;
+      font-weight: 600;
+      color: var(--fw-text-heading);
+      margin: 1px 0 0;
+    }
+
+    .fw-timeline-desc {
+      font-size: $fw-font-size-xs;
+      color: var(--fw-text-secondary);
+      margin-top: 1px;
+    }
+  }
+}
+
+// ============ Locale selector grid ============
+.fw-locale-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+.fw-locale-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--fw-border-default);
+  text-decoration: none;
+  color: var(--fw-text-primary);
+  transition: background .15s, border-color .15s;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--fw-surface-hover);
+    border-color: var(--fw-primary);
+  }
+
+  &.fw-locale-active {
+    border-color: var(--fw-primary);
+    background: color-mix(in srgb, var(--fw-primary) 8%, transparent);
+  }
+
+  .fi { font-size: 1.4em; }
+}
+
+.fw-locale-name {
+  font-size: .82rem;
+  font-weight: 500;
+}
+
+.fw-locale-check {
+  margin-left: auto;
+  color: var(--fw-primary);
+  font-size: .85rem;
+}
+
+// ============ Utility helpers ============
+.fw-text-right { text-align: right; }
+.fw-fw-bold { font-weight: 700; }
+.fw-fw-semibold { font-weight: 600; }
+.fw-mb-0 { margin-bottom: 0; }
+.fw-mt-2 { margin-top: 6px; }
+.fw-wrap { word-break: break-word; white-space: normal; }
+.fw-hidden { display: none !important; }
+.fw-error-detail { font-size: .8rem; }
+.fw-mono-muted { color: #555; font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+.fw-empty-state { padding: 12px 0; text-align: center; color: #555; }
+.fw-code-block { font-size: .7rem; word-break: break-all; }
+.fw-text-ellipsis { max-width: 200px; display: inline-block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
