@@ -1,0 +1,247 @@
+<?php
+    use DynamicalWeb\Enums\RequestMethod;
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\BlacklistView;
+    use WebKernel\ViewAuthorization;
+
+    Functions::loadLocalization('blacklist');
+
+    $view = new BlacklistView();
+    WebSession::set('blacklist_view', $view);
+
+    if (WebSession::getRequest()->getMethod() === RequestMethod::POST)
+    {
+        $view->handlePostRequest();
+    }
+?>
+<!DOCTYPE html>
+<html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>" data-fw-theme="<?php Functions::print($view->isDarkMode() ? 'dark' : ''); ?>">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <?php Functions::insertSection('../sections/head.phtml'); ?>
+        <title><?php Functions::printl('page_title'); ?></title>
+        <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="/css/federation.css">
+    </head>
+    <body>
+        <div class="fw-wrapper">
+            <?php Functions::insertSection('../sections/fw_topbar.phtml'); ?>
+            <?php Functions::insertSection('../sections/fw_topnav.phtml'); ?>
+            <div class="fw-main">
+                <div class="fw-content">
+                    <div class="fw-page-header-actions">
+                        <div>
+                            <h1><?php Functions::printl('heading'); ?></h1>
+                            <p class="fw-page-header-meta"><?php Functions::printl('subtitle'); ?></p>
+                        </div>
+                        <div class="fw-page-header-right">
+                            <a href="<?php Functions::printRoute('blacklist_list_print', queryParams: $view->getBaseQuery()); ?>" class="fw-btn fw-btn-secondary fw-btn-sm"><i class="bi bi-printer"></i> <?php Functions::printl('print_page'); ?></a>
+                        </div>
+                    </div>
+                    <?php
+                        if ($view->getSuccessMessage())
+                        {
+                            ?>
+                            <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span><?php Functions::printl($view->getSuccessMessage()); ?></span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            <?php
+                        }
+                    ?>
+                    <?php
+                        if ($view->getErrorMessage())
+                        {
+                            ?>
+                            <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                    <div>
+                                        <strong><?php Functions::printl($view->getErrorMessage()); ?></strong>
+                                        <?php
+                                            if ($view->getErrorDetail())
+                                            {
+                                                ?>
+                                                <br><span class="fw-error-detail"><?php Functions::print($view->getErrorDetail()); ?></span>
+                                                <?php
+                                            }
+                                        ?>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            <?php
+                        }
+                    ?>
+                    <section class="mb-5">
+                        <form class="fw-filter-bar" method="GET" action="<?php Functions::printRoute('blacklist'); ?>">
+                            <input type="hidden" name="sort_by" value="<?php Functions::print($view->getSortBy() ?? ''); ?>">
+                            <input type="hidden" name="sort_order" value="<?php Functions::print($view->getApiOrder() ?? ''); ?>">
+                            <?php
+                                if ($view->getOperatorId())
+                                {
+                                    ?><input type="hidden" name="operator_id" value="<?php Functions::print($view->getOperatorId()); ?>"><?php
+                                }
+                            ?>
+                            <?php
+                                if ($view->getEntityId())
+                                {
+                                    ?><input type="hidden" name="entity_id" value="<?php Functions::print($view->getEntityId()); ?>"><?php
+                                }
+                            ?>
+                            <div class="fw-filter-row">
+                                <div class="fw-filter-search">
+                                    <i class="bi bi-search"></i>
+                                    <input type="text" class="fw-filter-input" name="search_query" placeholder="<?php Functions::printl('filter_placeholder'); ?>" value="<?php Functions::print($view->getSearchQuery() ?? ''); ?>" autocomplete="off" minlength="2">
+                                    <div class="fw-filter-suggestions" id="suggestions-blacklist"></div>
+                                </div>
+                                <div class="fw-filter-quick">
+                                    <select class="fw-filter-select" name="category_filter" onchange="this.form.submit()">
+                                        <option value=""><?php Functions::printl('filter_all_categories'); ?></option>
+                                        <option value="ACTIVE" <?php
+                                            if ($view->getCategoryFilter() === 'ACTIVE')
+                                            {
+                                                ?>selected<?php
+                                            }
+                                        ?>><?php Functions::printl('filter_active'); ?></option>
+                                        <option value="LIFTED" <?php
+                                            if ($view->getCategoryFilter() === 'LIFTED')
+                                            {
+                                                ?>selected<?php
+                                            }
+                                        ?>><?php Functions::printl('filter_lifted'); ?></option>
+                                        <option value="EXPIRED" <?php
+                                            if ($view->getCategoryFilter() === 'EXPIRED')
+                                            {
+                                                ?>selected<?php
+                                            }
+                                        ?>><?php Functions::printl('filter_expired'); ?></option>
+                                        <option value="PERMANENT" <?php
+                                            if ($view->getCategoryFilter() === 'PERMANENT')
+                                            {
+                                                ?>selected<?php
+                                            }
+                                        ?>><?php Functions::printl('filter_permanent'); ?></option>
+                                    </select>
+                                </div>
+                                <div class="fw-filter-actions">
+                                    <button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon fw-col-toggle" title="<?php Functions::printl('columns'); ?>" data-table="blacklist"><i class="bi bi-layout-three-columns"></i></button>
+                                    <a href="<?php Functions::printRoute('blacklist', queryParams: array_filter(['operator_id' => $view->getOperatorId(), 'entity_id' => $view->getEntityId()])); ?>" class="fw-btn fw-btn-ghost fw-btn-sm"><i class="bi bi-x-circle"></i> <?php Functions::printl('filter_reset'); ?></a>
+                                </div>
+                            </div>
+                            <div class="fw-filter-badges" id="badges-blacklist"></div>
+                            <div class="fw-col-panel" id="cols-blacklist">
+                                <label><input type="checkbox" data-col="0" checked> <?php Functions::printl('uuid'); ?></label>
+                                <label><input type="checkbox" data-col="1" checked> <?php Functions::printl('entity'); ?></label>
+                                <label><input type="checkbox" data-col="2" checked> <?php Functions::printl('operator'); ?></label>
+                                <label><input type="checkbox" data-col="3" checked> <?php Functions::printl('type'); ?></label>
+                                <label><input type="checkbox" data-col="4" checked> <?php Functions::printl('report'); ?></label>
+                                <label><input type="checkbox" data-col="5" checked> <?php Functions::printl('status'); ?></label>
+                                <label><input type="checkbox" data-col="6" checked> <?php Functions::printl('expires'); ?></label>
+                                <label><input type="checkbox" data-col="7" checked> <?php Functions::printl('created'); ?></label>
+                                <label><input type="checkbox" data-col="8" checked> <?php Functions::printl('actions'); ?></label>
+                            </div>
+                        </form>
+                        <div class="fw-card h-100">
+                            <div class="fw-card-body fw-card-body-nopad">
+                                <div class="fw-table-wrap">
+                                    <?php Functions::insertSection('table.phtml'); ?>
+                                </div>
+                            </div>
+                            <div class="fw-card-footer">
+                                <div class="fw-pagination">
+                                    <span class="fw-pagination-info">
+                                        <?php
+                                            $showingStart = !empty($view->getRecords()) ? ($view->getPage() - 1) * $view->getPageSize() + 1 : 0;
+                                            $showingEnd = !empty($view->getRecords()) ? min($view->getPage() * $view->getPageSize(), $view->getTotalRecords()) : 0;
+                                            Functions::printl('showing_blacklist', [
+                                                'start' => '<b class="fw-showing-start">' . $showingStart . '</b>',
+                                                'end' => '<b class="fw-showing-end">' . $showingEnd . '</b>',
+                                                'total' => '<b class="fw-showing-total">' . $view->getTotalRecords() . '</b>',
+                                            ], false);
+                                        ?>
+                                    </span>
+                                    <div class="fw-pagination-pages">
+                                        <?php
+                                            if ($view->getPage() > 1)
+                                            {
+                                                ?>
+                                                <a href="<?php Functions::printRoute('blacklist', queryParams: array_merge($view->getBaseQuery(), ['page' => $view->getPage() - 1])); ?>" class="fw-page-prev"><i class="bi bi-chevron-left"></i></a>
+                                                <?php
+                                            }
+                                            else
+                                            {
+                                                ?><a href="#" class="fw-page-prev disabled"><i class="bi bi-chevron-left"></i></a><?php
+                                            }
+
+                                            $maxVisible = 5;
+                                            $startPage = max(1, min($view->getPage() - floor($maxVisible / 2), $view->getTotalPages() - $maxVisible + 1));
+                                            $endPage = min($view->getTotalPages(), $startPage + $maxVisible - 1);
+                                            if ($startPage > 1)
+                                            {
+                                                ?>
+                                                <a href="<?php Functions::printRoute('blacklist', queryParams: array_merge($view->getBaseQuery(), ['page' => 1])); ?>">1</a>
+                                                <?php
+                                                if ($startPage > 2)
+                                                {
+                                                    ?><span class="fw-page-ellipsis">…</span><?php
+                                                }
+                                            }
+
+                                            for ($i = $startPage; $i <= $endPage; $i++)
+                                            {
+                                                if ($i == $view->getPage())
+                                                {
+                                                    ?><span class="active fw-page-current"><?php Functions::print($i); ?></span><?php
+                                                }
+                                                else
+                                                {
+                                                    ?>
+                                                    <a href="<?php Functions::printRoute('blacklist', queryParams: array_merge($view->getBaseQuery(), ['page' => $i])); ?>"><?php Functions::print($i); ?></a>
+                                                    <?php
+                                                }
+                                            }
+
+                                            if ($endPage < $view->getTotalPages())
+                                            {
+                                                if ($endPage < $view->getTotalPages() - 1)
+                                                {
+                                                    ?><span class="fw-page-ellipsis">…</span><?php
+                                                }
+                                                ?>
+                                                <a href="<?php Functions::printRoute('blacklist', queryParams: array_merge($view->getBaseQuery(), ['page' => $view->getTotalPages()])); ?>" class="fw-page-total"><?php Functions::print($view->getTotalPages()); ?></a>
+                                                <?php
+                                            }
+
+                                            if ($view->getPage() < $view->getTotalPages())
+                                            {
+                                                ?>
+                                                <a href="<?php Functions::printRoute('blacklist', queryParams: array_merge($view->getBaseQuery(), ['page' => $view->getPage() + 1])); ?>" class="fw-page-next"><i class="bi bi-chevron-right"></i></a>
+                                                <?php
+                                            }
+                                            else
+                                            {
+                                                ?><a href="#" class="fw-page-next disabled"><i class="bi bi-chevron-right"></i></a><?php
+                                            }
+                                        ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+        <?php Functions::insertSection('modals.phtml'); ?>
+        <script src="/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+        <script src="/js/app.js"></script>
+        <script src="/js/nav.js"></script>
+        <?php Functions::insertSection('../sections/javascript.phtml'); ?>
+        <?php Functions::insertSection('javascript.phtml'); ?>
+    </body>
+</html>
