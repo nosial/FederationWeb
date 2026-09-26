@@ -1,0 +1,537 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\ApiSpecificationView;
+
+    Functions::loadLocalization('dashboard');
+
+    $apiSpecificationView = new ApiSpecificationView();
+    WebSession::set('api_specification_view', $apiSpecificationView);
+
+    $hasSpecification = $apiSpecificationView->getError() === null && !empty($apiSpecificationView->getSpec());
+?>
+<!DOCTYPE html>
+<html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>" data-fw-theme="<?php Functions::print($apiSpecificationView->getDarkMode() ? 'dark' : ''); ?>">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <?php Functions::insertSection('../sections/head.phtml'); ?>
+        <title><?php Functions::printl('api_specification'); ?></title>
+        <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="/css/federation.css">
+    </head>
+    <body class="fw-page--api-specification">
+        <div class="fw-wrapper">
+            <?php Functions::insertSection('../sections/fw_topbar.phtml'); ?>
+            <?php Functions::insertSection('../sections/fw_topnav.phtml'); ?>
+            <main class="fw-main">
+                <div class="fw-content">
+                    <section class="mt-4">
+                        <div class="fw-card">
+                            <div class="fw-card-header">
+                                <h5><i class="bi bi-book fw-icon-purple"></i> <?php Functions::printl('api_specification'); ?></h5>
+                                <?php
+                                    if ($hasSpecification)
+                                    {
+                                        ?>
+                                        <div class="fw-card-actions">
+                                            <button class="fw-btn fw-btn-ghost fw-btn-sm" type="button" onclick="toggleRawSpec()"><i class="bi bi-code-slash"></i> <?php Functions::printl('specification_raw'); ?></button>
+                                        </div>
+                                        <?php
+                                    }
+                                ?>
+                            </div>
+                            <div class="fw-card-body fw-card-body--flush">
+                                <?php
+                                    if ($hasSpecification)
+                                    {
+                                        ?>
+                                        <div class="fw-spec-search">
+                                            <i class="bi bi-search"></i>
+                                            <input type="text" id="specSearchInput" class="fw-spec-search-input" placeholder="<?php Functions::printl('spec_search_placeholder'); ?>" oninput="filterSpec(this.value)">
+                                            <button type="button" class="fw-spec-search-clear fw-hidden" id="specSearchClear" onclick="clearSpecSearch()"><i class="bi bi-x-lg"></i></button>
+                                        </div>
+                                        <div id="rawSpecBlock" class="fw-hidden">
+                                            <div class="fw-json-block">
+                                                <pre class="fw-json-pre"><code><?php Functions::print(json_encode($apiSpecificationView->getSpec(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?></code></pre>
+                                            </div>
+                                        </div>
+                                        <?php
+                                    }
+                                ?>
+
+                                <div id="specStructured">
+                                    <?php
+                                        if (!empty($apiSpecificationView->getSpecInfo()))
+                                        {
+                                            ?>
+                                            <div class="fw-spec-section">
+                                                <div class="fw-spec-section-header">
+                                                    <h6><i class="bi bi-info-square"></i> <?php Functions::printl('api_summary'); ?></h6>
+                                                </div>
+                                                <div class="fw-card-body-detail fw-spec-section-body">
+                                                    <div class="fw-detail-row">
+                                                        <span class="fw-detail-label"><?php Functions::printl('spec_title'); ?></span>
+                                                        <span class="fw-detail-value"><strong><?php Functions::print($apiSpecificationView->getSpecInfo()['title'] ?? '—'); ?></strong></span>
+                                                    </div>
+                                                    <div class="fw-detail-row">
+                                                        <span class="fw-detail-label"><?php Functions::printl('api_version'); ?></span>
+                                                        <span class="fw-detail-value fw-mono"><span class="fw-badge fw-badge-blue"><?php Functions::print($apiSpecificationView->getSpecInfo()['version'] ?? '—'); ?></span></span>
+                                                    </div>
+                                                    <?php
+                                                        if (!empty($apiSpecificationView->getSpecInfo()['description']))
+                                                        {
+                                                            ?>
+                                                            <div class="fw-detail-row">
+                                                                <span class="fw-detail-label"><?php Functions::printl('description_label'); ?></span>
+                                                                <span class="fw-detail-value fw-detail-value--pre"><?php Functions::print($apiSpecificationView->getSpecInfo()['description']); ?></span>
+                                                            </div>
+                                                            <?php
+                                                        }
+                                                    ?>
+                                                    <?php
+                                                        if (!empty($apiSpecificationView->getSpecInfo()['termsOfService']))
+                                                        {
+                                                            ?>
+                                                            <div class="fw-detail-row">
+                                                                <span class="fw-detail-label"><?php Functions::printl('spec_terms_of_service'); ?></span>
+                                                                <span class="fw-detail-value"><a href="<?php Functions::print(ApiSpecificationView::safeUrl($apiSpecificationView->getSpecInfo()['termsOfService']) ?? '#'); ?>" target="_blank" rel="noopener"><?php Functions::print($apiSpecificationView->getSpecInfo()['termsOfService']); ?></a></span>
+                                                            </div>
+                                                            <?php
+                                                        }
+                                                    ?>
+                                                    <?php
+                                                        if (!empty($apiSpecificationView->getSpecInfo()['contact']))
+                                                        {
+                                                            ?>
+                                                            <div class="fw-detail-row">
+                                                                <span class="fw-detail-label"><?php Functions::printl('spec_contact'); ?></span>
+                                                                <span class="fw-detail-value">
+                                                                    <?php
+                                                                        if (!empty($apiSpecificationView->getSpecInfo()['contact']['name']))
+                                                                        {
+                                                                            ?>
+                                                                            <span><?php Functions::print($apiSpecificationView->getSpecInfo()['contact']['name']); ?></span>
+                                                                            <?php
+                                                                        }
+                                                                        if (!empty($apiSpecificationView->getSpecInfo()['contact']['email']))
+                                                                        {
+                                                                            ?>
+                                                                            <span> &lt;<a href="mailto:<?php Functions::print($apiSpecificationView->getSpecInfo()['contact']['email']); ?>"><?php Functions::print($apiSpecificationView->getSpecInfo()['contact']['email']); ?></a>&gt;</span>
+                                                                            <?php
+                                                                        }
+                                                                        if (!empty($apiSpecificationView->getSpecInfo()['contact']['url']))
+                                                                        {
+                                                                            ?>
+                                                                            <br><a href="<?php Functions::print(ApiSpecificationView::safeUrl($apiSpecificationView->getSpecInfo()['contact']['url']) ?? '#'); ?>" target="_blank" rel="noopener"><?php Functions::print($apiSpecificationView->getSpecInfo()['contact']['url']); ?></a>
+                                                                            <?php
+                                                                        }
+                                                                    ?>
+                                                                </span>
+                                                            </div>
+                                                            <?php
+                                                        }
+                                                    ?>
+                                                    <?php
+                                                        if (!empty($apiSpecificationView->getSpecInfo()['license']))
+                                                        {
+                                                            ?>
+                                                            <div class="fw-detail-row">
+                                                                <span class="fw-detail-label"><?php Functions::printl('spec_license'); ?></span>
+                                                                <span class="fw-detail-value">
+                                                                    <?php
+                                                                        if (!empty($apiSpecificationView->getSpecInfo()['license']['url']))
+                                                                        {
+                                                                            ?>
+                                                                            <a href="<?php Functions::print(ApiSpecificationView::safeUrl($apiSpecificationView->getSpecInfo()['license']['url']) ?? '#'); ?>" target="_blank" rel="noopener"><?php Functions::print($apiSpecificationView->getSpecInfo()['license']['name'] ?? $apiSpecificationView->getSpecInfo()['license']['url']); ?></a>
+                                                                            <?php
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            ?>
+                                                                            <span><?php Functions::print($apiSpecificationView->getSpecInfo()['license']['name'] ?? '—'); ?></span>
+                                                                            <?php
+                                                                        }
+                                                                    ?>
+                                                                </span>
+                                                            </div>
+                                                            <?php
+                                                        }
+                                                    ?>
+                                                    <?php
+                                                        if (!empty($apiSpecificationView->getSpecServers()))
+                                                        {
+                                                            ?>
+                                                            <div class="fw-detail-row">
+                                                                <span class="fw-detail-label"><?php Functions::printl('spec_servers'); ?></span>
+                                                                <span class="fw-detail-value">
+                                                                    <?php
+                                                                        foreach ($apiSpecificationView->getSpecServers() as $svr)
+                                                                        {
+                                                                            ?>
+                                                                            <div class="fw-mono">
+                                                                                <?php Functions::print($svr['url'] ?? ''); ?>
+                                                                                <?php
+                                                                                    if (!empty($svr['description']))
+                                                                                    {
+                                                                                        ?>
+                                                                                        <span class="fw-uuid">— <?php Functions::print($svr['description']); ?></span>
+                                                                                        <?php
+                                                                                    }
+                                                                                ?>
+                                                                            </div>
+                                                                            <?php
+                                                                        }
+                                                                    ?>
+                                                                </span>
+                                                            </div>
+                                                            <?php
+                                                        }
+                                                    ?>
+                                                    <?php
+                                                        if ($apiSpecificationView->getExternalDocs())
+                                                        {
+                                                            ?>
+                                                            <div class="fw-detail-row">
+                                                                <span class="fw-detail-label"><?php Functions::printl('spec_external_docs'); ?></span>
+                                                                <span class="fw-detail-value"><a href="<?php Functions::print(ApiSpecificationView::safeUrl($apiSpecificationView->getExternalDocs()['url']) ?? '#'); ?>" target="_blank" rel="noopener"><?php Functions::print($apiSpecificationView->getExternalDocs()['description'] ?? $apiSpecificationView->getExternalDocs()['url']); ?></a></span>
+                                                            </div>
+                                                            <?php
+                                                        }
+                                                    ?>
+                                                </div>
+                                            </div>
+                                            <?php
+                                        }
+                                    ?>
+
+                                    <?php
+                                        if (!empty($apiSpecificationView->getEndpointsByTag()))
+                                        {
+                                            ?>
+                                            <div class="fw-spec-section">
+                                                <div class="fw-spec-section-header">
+                                                    <h6><i class="bi bi-diagram-3"></i> <?php Functions::printl('api_endpoints'); ?> <span class="fw-uuid"><?php Functions::printl('endpoints_grouped_by_tag'); ?></span></h6>
+                                                </div>
+                                                <div class="fw-spec-section-body fw-spec-section-body--flush">
+                                                    <?php
+                                                        $tagIndex = 0;
+
+                                                        foreach ($apiSpecificationView->getEndpointsByTag() as $tagName => $endpoints)
+                                                        {
+                                                            $tagDesc = $apiSpecificationView->getTag($tagName)['description'] ?? '';
+                                                            $tagAttributes = $tagIndex === 0 ? ' open' : '';
+                                                            ?>
+                                                            <details class="fw-spec-tag-group"<?php Functions::print($tagAttributes); ?>>
+                                                                <summary class="fw-spec-tag-summary">
+                                                                    <span class="fw-spec-tag-name"><?php Functions::print($tagName); ?></span>
+                                                                    <?php
+                                                                        if ($tagDesc)
+                                                                        {
+                                                                            ?>
+                                                                            <span class="fw-spec-tag-desc"><?php Functions::print($tagDesc); ?></span>
+                                                                            <?php
+                                                                        }
+                                                                    ?>
+                                                                    <span class="fw-spec-tag-count fw-uuid">
+                                                                        <?php
+                                                                            if (count($endpoints) === 1)
+                                                                            {
+                                                                                Functions::printl('endpoint_count_single');
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                Functions::printl('endpoint_count', ['count' => count($endpoints)]);
+                                                                            }
+                                                                        ?>
+                                                                    </span>
+                                                                </summary>
+                                                                <div class="fw-spec-endpoint-list">
+                                                                    <?php
+                                                                        foreach ($endpoints as $ep)
+                                                                        {
+                                                                            ?>
+                                                                            <details class="fw-spec-endpoint">
+                                                                                <summary class="fw-spec-endpoint-summary">
+                                                                                    <span class="fw-badge fw-badge-sm <?php Functions::print(ApiSpecificationView::getMethodBadge($ep['method'])); ?> fw-spec-method"><?php Functions::print($ep['method']); ?></span>
+                                                                                    <span class="fw-spec-path fw-mono"><?php Functions::print($ep['path']); ?></span>
+                                                                                    <span class="fw-spec-summary"><?php Functions::print($ep['details']['summary'] ?? $ep['details']['description'] ?? ''); ?></span>
+                                                                                    <?php
+                                                                                        if (!empty($ep['details']['deprecated']))
+                                                                                        {
+                                                                                            ?>
+                                                                                            <span class="fw-badge fw-badge-red fw-badge-sm"><?php Functions::printl('deprecated'); ?></span>
+                                                                                            <?php
+                                                                                        }
+                                                                                    ?>
+                                                                                </summary>
+                                                                                <div class="fw-spec-endpoint-body">
+                                                                                    <?php
+                                                                                        if (!empty($ep['details']['description']) && ($ep['details']['description'] ?? '') !== ($ep['details']['summary'] ?? ''))
+                                                                                        {
+                                                                                            ?>
+                                                                                            <div class="fw-spec-desc-block"><?php Functions::print($ep['details']['description']); ?></div>
+                                                                                            <?php
+                                                                                        }
+                                                                                    ?>
+
+                                                                                    <?php
+                                                                                        if (!empty($ep['details']['parameters']))
+                                                                                        {
+                                                                                            ?>
+                                                                                            <div class="fw-spec-subsection">
+                                                                                                <div class="fw-spec-subsection-title"><?php Functions::printl('parameters_label'); ?></div>
+                                                                                                <div class="fw-table-wrap">
+                                                                                                    <table class="fw-table fw-table-hoverable fw-table-nowrap">
+                                                                                                        <thead>
+                                                                                                            <tr>
+                                                                                                                <th><?php Functions::printl('name'); ?></th>
+                                                                                                                <th><?php Functions::printl('type'); ?></th>
+                                                                                                                <th><?php Functions::printl('in_label'); ?></th>
+                                                                                                                <th><?php Functions::printl('required_label'); ?></th>
+                                                                                                                <th><?php Functions::printl('description_label'); ?></th>
+                                                                                                            </tr>
+                                                                                                        </thead>
+                                                                                                        <tbody>
+                                                                                                            <?php
+                                                                                                                foreach ($ep['details']['parameters'] as $param)
+                                                                                                                {
+                                                                                                                    $paramType = isset($param['schema']) ? ApiSpecificationView::getSchemaType($param['schema'], $apiSpecificationView->getSpec())['label'] : 'string';
+                                                                                                                    ?>
+                                                                                                                    <tr>
+                                                                                                                        <td class="fw-mono"><?php Functions::print($param['name']); ?></td>
+                                                                                                                        <td class="fw-mono"><?php Functions::print($paramType); ?></td>
+                                                                                                                        <td><span class="fw-uuid"><?php Functions::print($param['in']); ?></span></td>
+                                                                                                                        <td>
+                                                                                                                            <?php
+                                                                                                                                if (!empty($param['required']))
+                                                                                                                                {
+                                                                                                                                    ?>
+                                                                                                                                    <span class="fw-dot red" title="<?php Functions::printl('required_label'); ?>"></span>
+                                                                                                                                    <?php
+                                                                                                                                }
+                                                                                                                                else
+                                                                                                                                {
+                                                                                                                                    ?>
+                                                                                                                                    <span class="fw-uuid">—</span>
+                                                                                                                                    <?php
+                                                                                                                                }
+                                                                                                                            ?>
+                                                                                                                        </td>
+                                                                                                                        <td><?php Functions::print($param['description'] ?? '—'); ?></td>
+                                                                                                                    </tr>
+                                                                                                                    <?php
+                                                                                                                }
+                                                                                                            ?>
+                                                                                                        </tbody>
+                                                                                                    </table>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <?php
+                                                                                        }
+                                                                                    ?>
+
+                                                                                    <?php
+                                                                                        $requestBody = $ep['details']['requestBody'] ?? null;
+                                                                                        if ($requestBody)
+                                                                                        {
+                                                                                            ?>
+                                                                                            <div class="fw-spec-subsection">
+                                                                                                <div class="fw-spec-subsection-title"><?php Functions::printl('request_body'); ?></div>
+                                                                                                <?php
+                                                                                                    if (!empty($requestBody['description']))
+                                                                                                    {
+                                                                                                        ?>
+                                                                                                        <div class="fw-spec-desc-block"><?php Functions::print($requestBody['description']); ?></div>
+                                                                                                        <?php
+                                                                                                    }
+                                                                                                    if (!empty($requestBody['required']))
+                                                                                                    {
+                                                                                                        ?>
+                                                                                                        <div class="fw-spec-desc-block"><span class="fw-dot red"></span> Required</div>
+                                                                                                        <?php
+                                                                                                    }
+                                                                                                    if (!empty($requestBody['content']))
+                                                                                                    {
+                                                                                                        foreach ($requestBody['content'] as $contentType => $contentDef)
+                                                                                                        {
+                                                                                                            ?>
+                                                                                                            <div class="fw-spec-subsection-item">
+                                                                                                                <span class="fw-uuid"><?php Functions::print($contentType); ?></span>
+                                                                                                                <?php
+                                                                                                                    if (!empty($contentDef['schema']))
+                                                                                                                    {
+                                                                                                                        ?>
+                                                                                                                        <div class="fw-spec-schema-block">
+                                                                                                                            <?php print(ApiSpecificationView::renderSchemaInline($contentDef['schema'], $apiSpecificationView->getSpec())); ?>
+                                                                                                                        </div>
+                                                                                                                        <?php
+                                                                                                                    }
+                                                                                                                ?>
+                                                                                                            </div>
+                                                                                                            <?php
+                                                                                                        }
+                                                                                                    }
+                                                                                                ?>
+                                                                                            </div>
+                                                                                            <?php
+                                                                                        }
+                                                                                    ?>
+
+                                                                                    <?php
+                                                                                        if (!empty($ep['details']['responses']))
+                                                                                        {
+                                                                                            ?>
+                                                                                            <div class="fw-spec-subsection">
+                                                                                                <div class="fw-spec-subsection-title"><?php Functions::printl('responses'); ?></div>
+                                                                                                <?php
+                                                                                                    foreach ($ep['details']['responses'] as $statusCode => $response)
+                                                                                                    {
+                                                                                                        ?>
+                                                                                                        <details class="fw-spec-response">
+                                                                                                            <summary class="fw-spec-response-summary">
+                                                                                                                <span class="fw-badge fw-badge-sm <?php Functions::print(match (true) { $statusCode[0] === '2' => 'fw-badge-green', $statusCode[0] === '4' => 'fw-badge-amber', $statusCode[0] === '5' => 'fw-badge-red', default => 'fw-badge-blue' }); ?>"><?php Functions::print($statusCode); ?></span>
+                                                                                                                <span><?php Functions::print($response['description'] ?? ''); ?></span>
+                                                                                                            </summary>
+                                                                                                            <?php
+                                                                                                                if (!empty($response['content']))
+                                                                                                                {
+                                                                                                                    ?>
+                                                                                                                    <div class="fw-spec-response-body">
+                                                                                                                        <?php
+                                                                                                                            foreach ($response['content'] as $ct => $contentDef)
+                                                                                                                            {
+                                                                                                                                ?>
+                                                                                                                                <div class="fw-spec-subsection-item">
+                                                                                                                                    <span class="fw-uuid"><?php Functions::print($ct); ?></span>
+                                                                                                                                    <?php
+                                                                                                                                        if (!empty($contentDef['schema']))
+                                                                                                                                        {
+                                                                                                                                            ?>
+                                                                                                                                            <div class="fw-spec-schema-block">
+                                                                                                                                                <?php print(ApiSpecificationView::renderSchemaInline($contentDef['schema'], $apiSpecificationView->getSpec())); ?>
+                                                                                                                                            </div>
+                                                                                                                                            <?php
+                                                                                                                                        }
+                                                                                                                                    ?>
+                                                                                                                                </div>
+                                                                                                                                <?php
+                                                                                                                            }
+                                                                                                                        ?>
+                                                                                                                    </div>
+                                                                                                                    <?php
+                                                                                                                }
+                                                                                                            ?>
+                                                                                                        </details>
+                                                                                                        <?php
+                                                                                                    }
+                                                                                                ?>
+                                                                                            </div>
+                                                                                            <?php
+                                                                                        }
+                                                                                    ?>
+                                                                                </div>
+                                                                            </details>
+                                                                            <?php
+                                                                        }
+                                                                    ?>
+                                                                </div>
+                                                            </details>
+                                                            <?php
+                                                            $tagIndex++;
+                                                        }
+                                                    ?>
+                                                </div>
+                                            </div>
+                                            <?php
+                                        }
+                                        elseif ($apiSpecificationView->getError() !== null)
+                                        {
+                                            ?>
+                                            <div class="fw-tab-empty">
+                                                <i class="bi bi-exclamation-circle"></i>
+                                                <p><?php Functions::printl('spec_load_failed'); ?></p>
+                                            </div>
+                                            <?php
+                                        }
+                                        else
+                                        {
+                                            ?>
+                                            <div class="fw-tab-empty">
+                                                <i class="bi bi-diagram-3"></i>
+                                                <p><?php Functions::printl('no_endpoints'); ?></p>
+                                            </div>
+                                            <?php
+                                        }
+                                    ?>
+
+                                    <?php
+                                        if (!empty($apiSpecificationView->getSchemas()))
+                                        {
+                                            ?>
+                                            <div class="fw-spec-section">
+                                                <div class="fw-spec-section-header">
+                                                    <h6><i class="bi bi-boxes"></i> <?php Functions::printl('schemas'); ?> <span class="fw-uuid"><?php Functions::print(count($apiSpecificationView->getSchemas())); ?> <?php Functions::printl('component_schemas'); ?></span></h6>
+                                                </div>
+                                                <div class="fw-spec-section-body fw-spec-section-body--flush">
+                                                    <?php
+                                                        foreach ($apiSpecificationView->getSchemas() as $schemaName => $schemaDef)
+                                                        {
+                                                            ?>
+                                                            <details class="fw-spec-schema">
+                                                                <summary class="fw-spec-schema-summary">
+                                                                    <span class="fw-spec-schema-name fw-mono"><?php Functions::print($schemaName); ?></span>
+                                                                    <span class="fw-uuid"><?php Functions::print($schemaDef['type'] ?? 'object'); ?></span>
+                                                                    <?php
+                                                                        if (!empty($schemaDef['description']))
+                                                                        {
+                                                                            ?>
+                                                                            <span class="fw-spec-summary"><?php Functions::print($schemaDef['description']); ?></span>
+                                                                            <?php
+                                                                        }
+                                                                    ?>
+                                                                </summary>
+                                                                <div class="fw-spec-schema-body">
+                                                                    <?php print(ApiSpecificationView::renderSchemaProperties($schemaDef, $apiSpecificationView->getSpec())); ?>
+                                                                </div>
+                                                            </details>
+                                                            <?php
+                                                        }
+                                                    ?>
+                                                </div>
+                                            </div>
+                                            <?php
+                                        }
+                                        elseif ($apiSpecificationView->getError() !== null)
+                                        {
+                                            ?>
+                                            <div class="fw-tab-empty">
+                                                <i class="bi bi-exclamation-circle"></i>
+                                                <p><?php Functions::printl('spec_load_failed'); ?></p>
+                                            </div>
+                                            <?php
+                                        }
+                                        else
+                                        {
+                                            ?>
+                                            <div class="fw-tab-empty">
+                                                <i class="bi bi-boxes"></i>
+                                                <p><?php Functions::printl('no_schemas'); ?></p>
+                                            </div>
+                                            <?php
+                                        }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </div>
+        <script src="/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+        <script src="/js/app.js"></script>
+        <script src="/js/nav.js"></script>
+        <?php Functions::insertSection('../sections/javascript.phtml'); ?>
+        <?php Functions::insertSection('javascript.phtml'); ?>
+    </body>
+</html>
