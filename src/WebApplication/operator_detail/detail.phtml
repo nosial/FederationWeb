@@ -1,0 +1,209 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\OperatorDetailView;
+
+    /** @var OperatorDetailView $view */
+    $view = WebSession::get('operator_detail_view');
+?>
+                            <div class="fw-record-hero">
+                                <div class="fw-record-hero-title">
+                                    <div class="fw-record-hero-icon"><i class="bi bi-person-badge"></i></div>
+                                    <div class="fw-record-hero-text">
+                                        <h1><?php Functions::printl('record_title'); ?></h1>
+                                        <div class="fw-record-hero-subtitle"><?php Functions::print($view->getOperator()->getUuid()); ?></div>
+                                    </div>
+                                </div>
+                                <div class="fw-record-hero-status">
+                                    <a href="<?php Functions::printRoute('operator_detail_print', ['operator_id' => $view->getOperator()->getUuid()]); ?>" class="fw-btn fw-btn-secondary fw-btn-sm"><i class="bi bi-printer"></i> <?php Functions::printl('print_page'); ?></a>
+                                    <?php
+                                        if ($view->getOperator()->isDisabled())
+                                        {
+                                            ?><span class="fw-badge fw-badge-red"><?php Functions::printl('disabled'); ?></span><?php
+                                        }
+                                        else
+                                        {
+                                            ?><span class="fw-badge fw-badge-emerald"><?php Functions::printl('active'); ?></span><?php
+                                        }
+                                    ?>
+                                </div>
+                            </div>
+                            <section class="mb-4">
+                                <div class="row g-4">
+                                    <div class="col-xl-9 col-lg-8">
+                                        <div class="fw-card fw-card-accent accent-green h-100">
+                                            <div class="fw-card-header">
+                                                <h5><i class="bi bi-person-badge fw-icon-green"></i> <?php Functions::printl('record_detail'); ?></h5>
+                                            </div>
+                                            <div class="fw-card-body fw-card-body-detail">
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('uuid'); ?></span>
+                                                    <span class="fw-detail-value fw-mono"><span class="fw-uuid"><?php Functions::print($view->getOperator()->getUuid()); ?></span><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($view->getOperator()->getUuid()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('name'); ?></span>
+                                                    <span class="fw-detail-value fw-fw-semibold"><span class="fw-uuid"><?php Functions::print($view->getOperator()->getName()); ?></span><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($view->getOperator()->getName()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('status'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getOperator()->isDisabled())
+                                                            {
+                                                                ?><span class="fw-dot red"></span> <?php Functions::printl('disabled'); ?><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-dot green"></span> <?php Functions::printl('active'); ?><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('auto_assign'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getOperator()->isAutoAssigned())
+                                                            {
+                                                                ?><span class="fw-dot green"></span> <?php Functions::printl('yes'); ?><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-dot gray"></span> <?php Functions::printl('no'); ?><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('permissions'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <div class="fw-permissions">
+                                                            <?php
+                                                                if ($view->getOperator()->hasClientPermissions())
+                                                                {
+                                                                    ?><span class="fw-badge fw-badge-blue"><?php Functions::printl('perm_client'); ?></span><?php
+                                                                }
+                                                                if ($view->getOperator()->hasManagementPermissions())
+                                                                {
+                                                                    ?><span class="fw-badge fw-badge-purple"><?php Functions::printl('perm_blacklist'); ?></span><?php
+                                                                }
+                                                                if ($view->getOperator()->hasOperatorPermissions())
+                                                                {
+                                                                    ?><span class="fw-badge fw-badge-amber"><?php Functions::printl('perm_operators'); ?></span><?php
+                                                                }
+                                                                if (!$view->getOperator()->hasClientPermissions() && !$view->getOperator()->hasManagementPermissions() && !$view->getOperator()->hasOperatorPermissions())
+                                                                {
+                                                                    ?><span class="fw-uuid">—</span><?php
+                                                                }
+                                                            ?>
+                                                        </div>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('disabled_yes'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getOperator()->isDisabled())
+                                                            {
+                                                                ?><span class="fw-dot red"></span> <?php Functions::printl('yes'); ?><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-dot green"></span> <?php Functions::printl('no'); ?><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('access_token'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getOperator()->getAccessToken() !== null)
+                                                            {
+                                                                ?>
+                                                                <span class="fw-dot green"></span> <?php Functions::printl('present'); ?>
+                                                                <span class="fw-detail-meta"><?php Functions::print('(sha256$' . substr(hash('sha256', $view->getOperator()->getAccessToken()), 0, 6) . ')'); ?></span>
+                                                                <?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-dot gray"></span> <?php Functions::printl('none'); ?><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('created'); ?></span>
+                                                    <span class="fw-detail-value fw-mono"><?php Functions::print($view->formatDate($view->getOperator()->getCreated())); ?></span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('updated'); ?></span>
+                                                    <span class="fw-detail-value fw-mono">
+                                                        <?php
+                                                            if ($view->getOperator()->getUpdated() === $view->getOperator()->getCreated())
+                                                            {
+                                                                ?><span class="fw-uuid">—</span><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><?php Functions::print($view->formatDate($view->getOperator()->getUpdated())); ?><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-lg-4 d-flex flex-column gap-4">
+                                        <div class="fw-profile-card">
+                                            <div class="fw-profile-avatar"><?php Functions::print(strtoupper(substr($view->getOperator()->getName(), 0, 1))); ?></div>
+                                            <div class="fw-profile-info">
+                                                <div class="fw-profile-name"><?php Functions::print($view->getOperator()->getName()); ?></div>
+                                                <div class="fw-profile-role"><?php Functions::printl('profile_active_since', ['date' => $view->formatDate($view->getOperator()->getCreated(), 'Y-m-d')]); ?></div>
+                                            </div>
+                                        </div>
+                                        <div class="fw-card fw-sidebar-card">
+                                            <div class="fw-card-header">
+                                                <h5><i class="bi bi-lightning fw-icon-amber"></i> <?php Functions::printl('actions'); ?></h5>
+                                            </div>
+                                            <div class="fw-card-body">
+                                                <div class="fw-detail-actions">
+                                                    <button class="fw-btn fw-btn-secondary fw-btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditOperator"><i class="bi bi-pencil"></i> <?php Functions::printl('edit_operator'); ?></button>
+                                                    <button class="fw-btn fw-btn-secondary fw-btn-sm" data-bs-toggle="modal" data-bs-target="#modalGenerateToken"><i class="bi bi-key"></i> <?php Functions::printl('generate_token'); ?></button>
+                                                    <button class="fw-btn fw-btn-secondary fw-btn-sm" data-bs-toggle="modal" data-bs-target="#modalSetPermissions"><i class="bi bi-person-gear"></i> <?php Functions::printl('set_permissions'); ?></button>
+                                                    <button class="fw-btn fw-btn-secondary fw-btn-sm" data-bs-toggle="modal" data-bs-target="#modalToggleAutoAssign"><i class="bi bi-toggle-<?php Functions::print($view->getOperator()->isAutoAssigned() ? 'on' : 'off'); ?>"></i> <?php Functions::printl($view->getOperator()->isAutoAssigned() ? 'disable_auto_assign' : 'enable_auto_assign'); ?></button>
+                                                    <button class="fw-btn fw-btn-secondary fw-btn-sm" data-bs-toggle="modal" data-bs-target="#modalDisableOperator"><i class="bi bi-slash-circle"></i> <?php Functions::printl($view->getOperator()->isDisabled() ? 'enable_operator' : 'disable_operator'); ?></button>
+                                                    <button class="fw-btn fw-btn-danger fw-btn-sm" data-bs-toggle="modal" data-bs-target="#modalDeleteOperator"><i class="bi bi-trash"></i> <?php Functions::printl('delete_operator'); ?></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="fw-card fw-sidebar-card">
+                                            <div class="fw-card-header">
+                                                <h5><i class="bi bi-link-45deg fw-icon-blue"></i> <?php Functions::printl('related_summary'); ?></h5>
+                                            </div>
+                                            <div class="fw-card-body">
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('reports'); ?></span>
+                                                    <span class="fw-detail-value"><a href="<?php Functions::printRoute('reports', queryParams: ['operator_id' => $view->getOperator()->getUuid()]); ?>" class="fw-detail-link"><?php Functions::printl('operator_records', ['count' => count($view->getRecentReports() ?? [])]); ?></a></span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('assigned_reports'); ?></span>
+                                                    <span class="fw-detail-value"><a href="<?php Functions::printRoute('reports', queryParams: ['assigned_operator_id' => $view->getOperator()->getUuid()]); ?>" class="fw-detail-link"><?php Functions::printl('operator_records', ['count' => count($view->getAssignedReports() ?? [])]); ?></a></span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('evidence_records'); ?></span>
+                                                    <span class="fw-detail-value"><a href="<?php Functions::printRoute('evidence', queryParams: ['operator_id' => $view->getOperator()->getUuid()]); ?>" class="fw-detail-link"><?php Functions::printl('operator_records', ['count' => $view->getEvidenceCount()]); ?></a></span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('blacklist_records'); ?></span>
+                                                    <span class="fw-detail-value"><a href="<?php Functions::printRoute('blacklist', queryParams: ['operator_id' => $view->getOperator()->getUuid()]); ?>" class="fw-detail-link"><?php Functions::printl('operator_entries', ['count' => $view->getBlacklistCount()]); ?></a></span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('audit_log_records'); ?></span>
+                                                    <span class="fw-detail-value"><a href="<?php Functions::printRoute('audit_log', queryParams: ['operator_id' => $view->getOperator()->getUuid()]); ?>" class="fw-detail-link"><?php Functions::printl('operator_entries', ['count' => count($view->getRecentAuditLogs() ?? [])]); ?></a></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
