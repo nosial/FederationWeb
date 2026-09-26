@@ -1,0 +1,25 @@
+{
+  "name": "federation-web",
+  "version": "1.0.0",
+  "description": "FederationWeb — Open Federated Database Web Client",
+  "private": true,
+  "scripts": {
+    "build:css": "sass bootstrap/scss/main.scss src/WebResources/css/federation.css --style=compressed --source-map --load-path=node_modules --quiet-deps && sass bootstrap/scss/main.scss src/WebResources/css/federation.dev.css --style=expanded --source-map --load-path=node_modules --quiet-deps && sass bootstrap/scss/print.scss src/WebResources/css/print.css --style=compressed --source-map --load-path=node_modules --quiet-deps",
+    "build:js": "node bootstrap/scripts/build-js.js",
+    "build:vendor": "node bootstrap/scripts/build-vendor.js",
+    "build:html": "node bootstrap/scripts/build-html.js",
+    "build": "npm run build:vendor && npm run build:css && npm run build:js",
+    "watch:css": "sass bootstrap/scss/main.scss src/WebResources/css/federation.css --watch --style=expanded --source-map --load-path=node_modules --quiet-deps",
+    "clean": "rm -rf src/WebResources/css src/WebResources/vendor src/WebResources/js/app.js src/WebResources/js/nav.js",
+    "dev": "npm run build && npx live-server dist --port=8080 --no-browser"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "flag-icons": "^7.5.0"
+  },
+  "devDependencies": {
+    "nunjucks": "^3.2.4",
+    "sass": "1.77.8"
+  }
+}
