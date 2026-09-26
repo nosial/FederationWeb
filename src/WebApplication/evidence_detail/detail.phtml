@@ -1,0 +1,433 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use WebKernel\Utilities;
+    use DynamicalWeb\WebSession;
+    use WebKernel\EvidenceDetailView;
+    use WebKernel\ViewAuthorization;
+
+    /** @var EvidenceDetailView $view */
+    $view = WebSession::get('evidence_detail_view');
+?>
+                            <div class="fw-record-hero">
+                                <div class="fw-record-hero-title">
+                                    <div class="fw-record-hero-icon"><i class="bi bi-file-earmark-text"></i></div>
+                                    <div class="fw-record-hero-text">
+                                        <h1><?php Functions::printl('record_title'); ?></h1>
+                                        <div class="fw-record-hero-subtitle"><span class="fw-uuid"><?php Functions::print($view->getEvidence()->getUuid()); ?></span><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($view->getEvidence()->getUuid()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></div>
+                                    </div>
+                                </div>
+                                <div class="fw-record-hero-status">
+                                    <a href="<?php Functions::printRoute('evidence_detail_print', ['evidence_uuid' => $view->getEvidence()->getUuid()]); ?>" class="fw-btn fw-btn-secondary fw-btn-sm" target="_blank"><i class="bi bi-printer"></i> <?php Functions::printl('print_page'); ?></a>
+                                    <?php
+                                        if ($view->getClassificationFlag() !== null)
+                                        {
+                                            ?><span class="fw-badge <?php Functions::print($view->getClassificationBadge()); ?>"><?php Functions::print($view->getClassificationFlag()->name); ?></span><?php
+                                        }
+
+                                        if ($view->getEvidence()->isConfidential())
+                                        {
+                                            ?><span class="fw-badge fw-badge-amber"><?php Functions::printl('detail_confidential'); ?></span><?php
+                                        }
+                                    ?>
+                                </div>
+                            </div>
+                            <section>
+                                <div class="row g-4">
+                                    <div class="col-xl-8 col-lg-7">
+                                        <div class="fw-card fw-card-accent accent-cyan mb-4">
+                                            <div class="fw-card-header">
+                                                <h5><i class="bi bi-file-earmark-text fw-icon-cyan"></i> <?php Functions::printl('detail_heading'); ?></h5>
+                                            </div>
+                                            <div class="fw-card-body fw-card-body-detail">
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('uuid'); ?></span>
+                                                    <span class="fw-detail-value fw-mono"><span class="fw-uuid"><?php Functions::print($view->getEvidence()->getUuid()); ?></span><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($view->getEvidence()->getUuid()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('entity'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getEntityRecord())
+                                                            {
+                                                                ?><a href="<?php Functions::printRoute('entity_detail', ['entity_id' => $view->getEntityRecord()->getUuid()]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($view->getEntityRecord()->getAddress()); ?></a><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($view->getEntityRecord()->getUuid()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><a href="<?php Functions::printRoute('entity_detail', ['entity_id' => $view->getEvidence()->getEntityUuid()]); ?>" class="fw-detail-link"><span class="fw-uuid"><?php Functions::print($view->getEvidence()->getEntityUuid()); ?></span></a><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('operator'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getOperatorRecord())
+                                                            {
+                                                                ?><a href="<?php Functions::printRoute('operator_detail', ['operator_id' => $view->getOperatorRecord()->getUuid()]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($view->getOperatorRecord()->getName()); ?></a><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($view->getOperatorRecord()->getUuid()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><a href="<?php Functions::printRoute('operator_detail', ['operator_id' => $view->getEvidence()->getOperatorUuid()]); ?>" class="fw-detail-link"><span class="fw-uuid"><?php Functions::print($view->getEvidence()->getOperatorUuid()); ?></span></a><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('detail_confidential'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getEvidence()->isConfidential())
+                                                            {
+                                                                ?><span class="fw-dot amber"></span> <?php Functions::printl('yes'); ?><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-dot green"></span> <?php Functions::printl('no'); ?><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('classification'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getClassificationFlag() !== null)
+                                                            {
+                                                                ?><span class="fw-badge <?php Functions::print($view->getClassificationBadge() ?? 'fw-badge-gray'); ?>"><?php Functions::print($view->getClassificationFlag()->name); ?></span><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-uuid">—</span><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('detail_tag'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getEvidence()->getTag() !== null)
+                                                            {
+                                                                ?><span class="fw-badge fw-badge-navy"><?php Functions::print($view->getEvidence()->getTag()); ?></span><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-uuid">—</span><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('detail_report'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getReportRecord())
+                                                            {
+                                                                ?><a href="<?php Functions::printRoute('report_detail', ['report_uuid' => $view->getReportRecord()->getUuid()]); ?>" class="fw-detail-link fw-fw-semibold"><span class="fw-uuid"><?php Functions::print(substr($view->getReportRecord()->getUuid(), 0, 8)); ?>…</span></a><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($view->getReportRecord()->getUuid()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button><?php
+                                                            }
+                                                            elseif ($view->getEvidence()->getReport() !== null)
+                                                            {
+                                                                ?><a href="<?php Functions::printRoute('report_detail', ['report_uuid' => $view->getEvidence()->getReport()]); ?>" class="fw-detail-link"><span class="fw-uuid"><?php Functions::print($view->getEvidence()->getReport()); ?></span></a><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-uuid">—</span><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row fw-detail-row-full">
+                                                    <span class="fw-detail-label"><?php Functions::printl('detail_text_content'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getEvidence()->getTextContent() !== null)
+                                                            {
+                                                                ?><div class="fw-text-block"><?php Functions::print($view->getEvidence()->getTextContent()); ?></div><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-uuid">—</span><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row fw-detail-row-full">
+                                                    <span class="fw-detail-label"><?php Functions::printl('detail_note'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getEvidence()->getNote() !== null)
+                                                            {
+                                                                ?><div class="fw-text-block"><?php Functions::print($view->getEvidence()->getNote()); ?></div><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-uuid">—</span><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row fw-detail-row-full">
+                                                    <span class="fw-detail-label"><?php Functions::printl('detail_metadata'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            $metadata = $view->getEvidence()->getMetadata();
+
+                                                            if (!empty($metadata))
+                                                            {
+                                                                ?>
+                                                                <div class="fw-metadata-list">
+                                                                    <?php
+                                                                        foreach ($metadata as $metadataKey => $metadataValue)
+                                                                        {
+                                                                            ?>
+                                                                            <div class="fw-metadata-item">
+                                                                                <span class="fw-metadata-key"><?php Functions::print($metadataKey); ?></span>
+                                                                                <span class="fw-metadata-value<?php
+                                                                                    if ($metadataValue === null)
+                                                                                    {
+                                                                                        ?> null<?php
+                                                                                    }
+                                                                                ?>"><?php Functions::print($metadataValue === null ? Utilities::localize('null_label') : (is_bool($metadataValue) ? ($metadataValue ? Utilities::localize('true_label') : Utilities::localize('false_label')) : (string)$metadataValue)); ?></span>
+                                                                                <span class="fw-badge fw-badge-gray fw-metadata-type"><?php Functions::print(gettype($metadataValue)); ?></span>
+                                                                            </div>
+                                                                            <?php
+                                                                        }
+                                                                    ?>
+                                                                </div>
+                                                                <?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-uuid">—</span><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('created'); ?></span>
+                                                    <span class="fw-detail-value fw-mono"><?php Functions::print($view->formatDate($view->getEvidence()->getCreated())); ?></span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('updated'); ?></span>
+                                                    <span class="fw-detail-value fw-mono">
+                                                        <?php
+                                                            if ($view->getEvidence()->getUpdated() !== null)
+                                                            {
+                                                                Functions::print($view->formatDate($view->getEvidence()->getUpdated()));
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-uuid">—</span><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php
+                                            if (ViewAuthorization::canManageRecords())
+                                            {
+                                                ?>
+                                        <div class="fw-card mb-4">
+                                            <div class="fw-card-header">
+                                                <h5><i class="bi bi-paperclip fw-icon-cyan"></i> <?php Functions::printl('attachments'); ?><?php
+                                                    if (!empty($view->getAttachments()))
+                                                    {
+                                                        ?> <span class="fw-badge fw-badge-cyan fw-badge-sm"><?php Functions::print(count($view->getAttachments())); ?></span><?php
+                                                    }
+                                                ?></h5>
+                                                <div class="fw-card-actions">
+                                                    <?php
+                                                        if (ViewAuthorization::canContribute())
+                                                        {
+                                                            ?><button type="button" class="fw-btn fw-btn-primary fw-btn-sm" data-bs-toggle="modal" data-bs-target="#modalUploadAttachment"><i class="bi bi-upload"></i> <?php Functions::printl('upload_attachment'); ?></button><?php
+                                                        }
+                                                    ?>
+                                                </div>
+                                            </div>
+                                            <div class="fw-card-body">
+                                                <?php
+                                                    if ($view->getAttachments() === null)
+                                                    {
+                                                        ?>
+                                                        <div class="fw-empty-sm">
+                                                            <i class="bi bi-exclamation-circle"></i>
+                                                            <p><?php Functions::printl('error_loading_attachments'); ?></p>
+                                                        </div>
+                                                        <?php
+                                                    }
+                                                    elseif (empty($view->getAttachments()))
+                                                    {
+                                                        ?>
+                                                        <div class="fw-empty-sm">
+                                                            <i class="bi bi-paperclip"></i>
+                                                            <p><?php Functions::printl('no_attachments_desc'); ?></p>
+                                                        </div>
+                                                        <?php
+                                                    }
+                                                    else
+                                                    {
+                                                        ?>
+                                                        <div class="fw-attachment-list">
+                                                            <?php
+                                                                foreach ($view->getAttachments() as $attachment)
+                                                                {
+                                                                    ?>
+                                                                    <div class="fw-attachment-item">
+                                                                        <div class="fw-attachment-icon"><i class="bi <?php Functions::print($view->getMimeIcon($attachment->getFileMime())); ?>"></i></div>
+                                                                        <div class="fw-attachment-body">
+                                                                            <div class="fw-attachment-name"><?php Functions::print($attachment->getFileName() ?: '—'); ?></div>
+                                                                            <div class="fw-attachment-meta">
+                                                                                <span><?php Functions::print($attachment->getFileMime() ?: '—'); ?></span>
+                                                                                <span>·</span>
+                                                                                <span><?php Functions::print($view->formatSize($attachment->getFileSize())); ?></span>
+                                                                                <span>·</span>
+                                                                                <span><?php Functions::print($view->formatDate($attachment->getCreated(), 'Y-m-d')); ?></span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="fw-attachment-actions">
+                                                                            <a href="<?php Functions::printRoute('evidence_detail', pathVariables: ['evidence_uuid' => $view->getEvidence()->getUuid()], queryParams: ['download_attachment' => $attachment->getUuid()]); ?>" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('download_attachment'); ?>"><i class="bi bi-download"></i></a>
+                                                                            <?php
+                                                                                if (ViewAuthorization::canManageRecords())
+                                                                                {
+                                                                                    ?><button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('delete_attachment'); ?>" data-bs-toggle="modal" data-bs-target="#modalDeleteAttachment" data-attachment-uuid="<?php Functions::print($attachment->getUuid()); ?>" data-attachment-name="<?php Functions::print($attachment->getFileName() ?: '—'); ?>"><i class="bi bi-trash"></i></button><?php
+                                                                                }
+                                                                            ?>
+                                                                        </div>
+                                                                    </div>
+                                                                    <?php
+                                                                }
+                                                            ?>
+                                                        </div>
+                                                        <?php
+                                                    }
+                                                ?>
+                                            </div>
+                                        </div>
+                                                <?php
+                                            }
+                                        ?>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-5 d-flex flex-column gap-4">
+                                        <div class="fw-card fw-sidebar-card">
+                                            <div class="fw-card-header">
+                                                <h5><i class="bi bi-info-circle fw-icon-blue"></i> <?php Functions::printl('status_summary'); ?></h5>
+                                            </div>
+                                            <div class="fw-card-body">
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('detail_confidential'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getEvidence()->isConfidential())
+                                                            {
+                                                                ?><span class="fw-dot amber"></span> <?php Functions::printl('yes'); ?><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-dot green"></span> <?php Functions::printl('no'); ?><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('classification'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getClassificationFlag() !== null)
+                                                            {
+                                                                ?><span class="fw-badge <?php Functions::print($view->getClassificationBadge() ?? 'fw-badge-gray'); ?>"><?php Functions::print($view->getClassificationFlag()->name); ?></span><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-uuid">—</span><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('detail_tag'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getEvidence()->getTag() !== null)
+                                                            {
+                                                                ?><span class="fw-badge fw-badge-navy"><?php Functions::print($view->getEvidence()->getTag()); ?></span><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-uuid">—</span><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('attachments'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getAttachments() === null)
+                                                            {
+                                                                ?><span class="fw-uuid">—</span><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-badge fw-badge-cyan"><?php Functions::print(count($view->getAttachments())); ?></span><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('created'); ?></span>
+                                                    <span class="fw-detail-value fw-mono"><?php Functions::print($view->formatDate($view->getEvidence()->getCreated(), 'Y-m-d')); ?></span>
+                                                </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('updated'); ?></span>
+                                                    <span class="fw-detail-value fw-mono"><?php Functions::print($view->getEvidence()->getUpdated() !== null ? $view->formatDate($view->getEvidence()->getUpdated(), 'Y-m-d') : '—'); ?></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php
+                                            if (!ViewAuthorization::isAnonymous())
+                                            {
+                                                ?>
+                                        <div class="fw-card fw-sidebar-card">
+                                            <div class="fw-card-header">
+                                                <h5><i class="bi bi-lightning fw-icon-amber"></i> <?php Functions::printl('actions'); ?></h5>
+                                            </div>
+                                            <div class="fw-card-body">
+                                                <div class="fw-detail-actions">
+                                                    <?php
+                                                        if (ViewAuthorization::canManageRecords())
+                                                        {
+                                                            ?>
+                                                    <form method="POST" action="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $view->getEvidence()->getUuid()]); ?>" class="d-inline w-100"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                                        <input type="hidden" name="action" value="toggle_confidential">
+                                                        <button type="submit" class="fw-btn fw-btn-secondary fw-btn-sm w-100"><i class="bi bi-shield-<?php Functions::print($view->getEvidence()->isConfidential() ? 'exclamation' : 'check'); ?>"></i> <?php Functions::printl($view->getEvidence()->isConfidential() ? 'remove_confidential' : 'mark_confidential'); ?></button>
+                                                    </form>
+                                                            <?php
+                                                        }
+                                                        if (ViewAuthorization::canManageEntityRelationships())
+                                                        {
+                                                            ?><button type="button" class="fw-btn fw-btn-secondary fw-btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalUpdateTag"><i class="bi bi-tag"></i> <?php Functions::printl('update_tag'); ?></button><?php
+                                                        }
+                                                        if (ViewAuthorization::canManageRecords())
+                                                        {
+                                                            ?><button type="button" class="fw-btn fw-btn-secondary fw-btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalAddToReport"><i class="bi bi-link-45deg"></i> <?php Functions::printl('add_to_report'); ?></button><?php
+                                                        }
+                                                        if (ViewAuthorization::canContribute())
+                                                        {
+                                                            ?><button type="button" class="fw-btn fw-btn-secondary fw-btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalUploadAttachment"><i class="bi bi-upload"></i> <?php Functions::printl('upload_attachment'); ?></button><?php
+                                                        }
+                                                        if (ViewAuthorization::canManageRecords())
+                                                        {
+                                                            ?><button type="button" class="fw-btn fw-btn-danger fw-btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalDeleteEvidence"><i class="bi bi-trash"></i> <?php Functions::printl('delete_evidence'); ?></button><?php
+                                                        }
+                                                    ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                                <?php
+                                            }
+                                        ?>
+                                    </div>
+                                </div>
+                            </section>
