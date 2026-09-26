@@ -1,0 +1,437 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use FederationLib\FederationClient;
+
+    Functions::loadLocalization('fw_topbar');
+
+    /** @var FederationClient|null $federationClient */
+    $federationClient = WebSession::get('federation_client');
+    $operatorUuid = WebSession::get('fw_topbar_operator_uuid');
+
+    if ($operatorUuid)
+    {
+        ?>
+<script>
+function toggleEntityMode() {
+    var modal = document.getElementById('submitReportModal');
+    if (!modal) return;
+    var mode = modal.querySelector('input[name="entity_mode"]:checked').value;
+    modal.querySelector('#entitySearchWrap').classList.toggle('fw-hidden', mode !== 'search');
+    modal.querySelector('#newEntityWrap').classList.toggle('fw-hidden', mode !== 'new');
+    if (mode === 'new') modal.querySelector('input[name="new_entity_address"]').focus();
+}
+
+(function() {
+    <?php
+        if ($federationClient !== null)
+        {
+            ?>
+    var input = document.getElementById('entitySearchInput');
+    if (!input) return;
+    var hidden = document.getElementById('entityIdentifier');
+    var dropdown = document.getElementById('entityDropdown');
+    var timer = null;
+    var selectedIndex = -1;
+    var currentResults = [];
+
+    function closeDropdown() { dropdown.classList.remove('open'); selectedIndex = -1; }
+
+    function selectItem(item) {
+        hidden.value = item.uuid;
+        input.value = item.address;
+        closeDropdown();
+    }
+
+    function renderResults(results) {
+        dropdown.innerHTML = '';
+        if (results.length === 0) {
+            dropdown.innerHTML = '<div class="fw-autocomplete-empty"><?php Functions::printl('no_entities_found'); ?></div>';
+            dropdown.classList.add('open');
+            return;
+        }
+        currentResults = results;
+        results.forEach(function(item, i) {
+            var div = document.createElement('div');
+            div.className = 'fw-autocomplete-item';
+            div.innerHTML = '<span class="fw-ae-addr">' + escapeHtml(item.address) + '</span><span class="fw-ae-uuid">' + escapeHtml(item.uuid.substring(0, 8)) + '…</span>';
+            div.addEventListener('click', function() { selectItem(item); });
+            div.addEventListener('mouseenter', function() {
+                document.querySelectorAll('.fw-autocomplete-item').forEach(function(el) { el.classList.remove('active'); });
+                div.classList.add('active');
+                selectedIndex = i;
+            });
+            dropdown.appendChild(div);
+        });
+        selectedIndex = -1;
+        dropdown.classList.add('open');
+    }
+
+    function doSearch(query) {
+        if (query.length < 2) { closeDropdown(); return; }
+        dropdown.innerHTML = '<div class="fw-autocomplete-loading"><?php Functions::printl('searching'); ?></div>';
+        dropdown.classList.add('open');
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '<?php Functions::printRoute('report_submission'); ?>', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                try {
+                    var resp = JSON.parse(xhr.responseText);
+                    renderResults(resp.results || []);
+                } catch(e) { closeDropdown(); }
+            } else { closeDropdown(); }
+        };
+        xhr.onerror = function() { closeDropdown(); };
+        xhr.send('action=search_entities&query=' + encodeURIComponent(query));
+    }
+
+    input.addEventListener('input', function() {
+        hidden.value = '';
+        clearTimeout(timer);
+        var val = this.value.trim();
+        if (val.length >= 2) {
+            timer = setTimeout(function() { doSearch(val); }, 250);
+        } else { closeDropdown(); }
+    });
+
+    input.addEventListener('keydown', function(e) {
+        var items = dropdown.querySelectorAll('.fw-autocomplete-item');
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+            updateActive(items);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            selectedIndex = Math.max(selectedIndex - 1, -1);
+            updateActive(items);
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            var active = dropdown.querySelector('.fw-autocomplete-item.active');
+            var idx = Array.from(items).indexOf(active);
+            if (idx >= 0 && currentResults[idx]) selectItem(currentResults[idx]);
+        } else if (e.key === 'Escape') {
+            closeDropdown();
+        }
+    });
+
+    function updateActive(items) {
+        items.forEach(function(el, i) { el.classList.toggle('active', i === selectedIndex); });
+        if (selectedIndex >= 0 && currentResults[selectedIndex]) {
+            hidden.value = currentResults[selectedIndex].uuid;
+        }
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.fw-autocomplete-wrap')) closeDropdown();
+    });
+    <?php
+        }
+    ?>
+})();
+
+function updateFileList() {
+    var input = document.getElementById('fileInput');
+    var list = document.getElementById('fileList');
+    list.innerHTML = '';
+    if (input.files.length === 0) return;
+    for (var i = 0; i < input.files.length; i++) {
+        var tag = document.createElement('span');
+        tag.className = 'fw-file-tag';
+        tag.innerHTML = escapeHtml(input.files[i].name) +
+            ' <button type="button" class="fw-file-remove" onclick="removeFile(' + i + ')">&times;</button>';
+        list.appendChild(tag);
+    }
+}
+
+function removeFile(index) {
+    var input = document.getElementById('fileInput');
+    var dt = new DataTransfer();
+    for (var i = 0; i < input.files.length; i++) {
+        if (i !== index) dt.items.add(input.files[i]);
+    }
+    input.files = dt.files;
+    updateFileList();
+}
+
+function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+(function() {
+    var list = document.getElementById('reportEvidenceList');
+    var addButton = document.getElementById('addReportEvidence');
+    if (!list || !addButton) return;
+
+    addButton.addEventListener('click', function() {
+        var index = list.querySelectorAll('[data-report-evidence]').length;
+        var item = list.querySelector('[data-report-evidence]').cloneNode(true);
+        item.querySelectorAll('[data-evidence-field]').forEach(function(field) {
+            field.value = '';
+            field.name = 'evidence[' + index + '][' + field.dataset.evidenceField + ']';
+        });
+
+        var actions = document.createElement('div');
+        actions.className = 'd-flex justify-content-end mb-2';
+        var removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.className = 'fw-btn fw-btn-danger fw-btn-sm';
+        removeButton.innerHTML = '<i class="bi bi-trash"></i> <?php Functions::printl('new_report_remove_evidence'); ?>';
+        removeButton.addEventListener('click', function() {
+            item.remove();
+        });
+        actions.appendChild(removeButton);
+        item.prepend(actions);
+        list.appendChild(item);
+    });
+})();
+
+// Drag and drop support for file upload
+(function() {
+    var dropzone = document.getElementById('dropzone');
+    var fileInput = document.getElementById('fileInput');
+    if (!dropzone || !fileInput) return;
+
+    dropzone.addEventListener('click', function() {
+        fileInput.click();
+    });
+
+    dropzone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add('dragover');
+    });
+
+    dropzone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove('dragover');
+    });
+
+    dropzone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove('dragover');
+
+        var droppedFiles = e.dataTransfer.files;
+        if (droppedFiles.length === 0) return;
+
+        var dt = new DataTransfer();
+        for (var i = 0; i < fileInput.files.length; i++) {
+            dt.items.add(fileInput.files[i]);
+        }
+        for (var i = 0; i < droppedFiles.length; i++) {
+            dt.items.add(droppedFiles[i]);
+        }
+        fileInput.files = dt.files;
+        updateFileList();
+    });
+
+    fileInput.addEventListener('change', function() {
+        updateFileList();
+    });
+})();
+
+// Global search functionality
+(function() {
+    var searchWrap = document.getElementById('globalSearch');
+    var searchInput = document.getElementById('globalSearchInput');
+    var searchToggle = document.getElementById('globalSearchToggle');
+    var searchResults = document.getElementById('globalSearchResults');
+    if (!searchInput || !searchResults) return;
+
+    var timer = null;
+    var selectedIndex = -1;
+    var currentResults = [];
+
+    var searchRoute = '<?php Functions::printRoute('search'); ?>';
+
+    function closeDropdown() {
+        searchResults.classList.remove('open');
+        searchResults.innerHTML = '';
+        selectedIndex = -1;
+        currentResults = [];
+    }
+
+    function navigateTo(url) {
+        closeDropdown();
+        searchInput.value = '';
+        window.location.href = url;
+    }
+
+    function renderDropdown(results) {
+        searchResults.innerHTML = '';
+        if (results.length === 0) {
+            searchResults.innerHTML = '<div class="fw-search-result-item fw-search-result-empty"><?php Functions::printl('search_no_results'); ?></div>';
+            searchResults.classList.add('open');
+            return;
+        }
+
+        currentResults = results;
+        results.forEach(function(item, i) {
+            var div = document.createElement('a');
+            div.className = 'fw-search-result-item';
+            div.href = item.url;
+            div.setAttribute('data-index', i);
+
+            var iconMap = {
+                ENTITY: 'bi-person',
+                EVIDENCE: 'bi-file-earmark-text',
+                REPORT: 'bi-flag',
+                BLACKLIST: 'bi-shield-exclamation',
+                OPERATOR: 'bi-person-badge',
+                AUDIT_LOG: 'bi-journal-text',
+                ATTACHMENT: 'bi-paperclip'
+            };
+            var badgeMap = {
+                ENTITY: 'fw-search-badge-entity',
+                EVIDENCE: 'fw-search-badge-evidence',
+                REPORT: 'fw-search-badge-report',
+                BLACKLIST: 'fw-search-badge-blacklist',
+                OPERATOR: 'fw-search-badge-operator',
+                AUDIT_LOG: 'fw-search-badge-audit-log',
+                ATTACHMENT: 'fw-search-badge-audit-log'
+            };
+
+            var icon = iconMap[item.type] || 'bi-search';
+            var badge = badgeMap[item.type] || '';
+
+            div.innerHTML = '<i class="bi ' + icon + '"></i>' +
+                '<div class="fw-search-result-info">' +
+                    '<div class="fw-search-result-title">' + escapeHtml(item.title) + '</div>' +
+                    '<div class="fw-search-result-desc">' + escapeHtml(item.desc || '') + '</div>' +
+                '</div>' +
+                '<span class="fw-badge fw-badge-sm ' + badge + '">' + escapeHtml(item.label) + '</span>';
+
+            div.addEventListener('click', function(e) {
+                e.preventDefault();
+                navigateTo(this.href);
+            });
+
+            div.addEventListener('mouseenter', function() {
+                searchResults.querySelectorAll('.fw-search-result-item').forEach(function(el) { el.classList.remove('active'); });
+                div.classList.add('active');
+                selectedIndex = i;
+            });
+
+            searchResults.appendChild(div);
+        });
+
+        // View all results link
+        var query = searchInput.value.trim();
+        if (query.length >= 2) {
+            var viewAll = document.createElement('a');
+            viewAll.className = 'fw-search-result-item fw-search-result-view-all';
+            viewAll.href = searchRoute + '?q=' + encodeURIComponent(query);
+            viewAll.innerHTML = '<?php Functions::printl('search_view_all'); ?> <i class="bi bi-arrow-right"></i>';
+            viewAll.addEventListener('click', function(e) {
+                e.preventDefault();
+                navigateTo(this.href);
+            });
+            searchResults.appendChild(viewAll);
+        }
+
+        searchResults.classList.add('open');
+        selectedIndex = -1;
+    }
+
+    function doSearch(query) {
+        if (query.length < 2) { closeDropdown(); return; }
+        searchResults.innerHTML = '<div class="fw-search-result-item fw-search-result-empty fw-search-result-item--searching"><?php Functions::printl('searching'); ?></div>';
+        searchResults.classList.add('open');
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', searchRoute, true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                try {
+                    var resp = JSON.parse(xhr.responseText);
+                    renderDropdown(resp.results || []);
+                } catch(e) { closeDropdown(); }
+            } else { closeDropdown(); }
+        };
+        xhr.onerror = function() { closeDropdown(); };
+        xhr.send('action=search_dropdown&q=' + encodeURIComponent(query));
+    }
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(timer);
+        var val = this.value.trim();
+        if (val.length >= 2) {
+            timer = setTimeout(function() { doSearch(val); }, 250);
+        } else { closeDropdown(); }
+    });
+
+    searchInput.addEventListener('keydown', function(e) {
+        var items = searchResults.querySelectorAll('.fw-search-result-item:not(.fw-search-result-empty):not(.fw-search-result-view-all)');
+
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            var active = searchResults.querySelector('.fw-search-result-item.active');
+            if (active && active.href) {
+                navigateTo(active.href);
+            } else {
+                var query = this.value.trim();
+                if (query.length >= 2) {
+                    navigateTo(searchRoute + '?q=' + encodeURIComponent(query));
+                }
+            }
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+            updateActive(items);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            selectedIndex = Math.max(selectedIndex - 1, -1);
+            updateActive(items);
+        } else if (e.key === 'Escape') {
+            closeDropdown();
+            searchInput.blur();
+        }
+    });
+
+    function updateActive(items) {
+        items.forEach(function(el, i) {
+            el.classList.toggle('active', i === selectedIndex);
+        });
+    }
+
+    searchInput.addEventListener('focus', function() {
+        var val = this.value.trim();
+        if (val.length >= 2 && searchResults.children.length > 0) {
+            searchResults.classList.add('open');
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#globalSearch')) closeDropdown();
+    });
+
+    // Mobile toggle
+    if (searchToggle) {
+        searchToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            searchInput.classList.toggle('open');
+            if (searchInput.classList.contains('open')) {
+                searchInput.focus();
+            }
+        });
+    }
+
+    // Close mobile search on Escape
+    searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && searchInput.classList.contains('open')) {
+            searchInput.classList.remove('open');
+            searchInput.blur();
+            closeDropdown();
+        }
+    });
+})();
+</script>
+<?php
+    }
+?>
