@@ -1,0 +1,211 @@
+// FederationWeb — Demo Page (Interactive Table Views)
+
+.fw-filter-bar {
+  margin-bottom: 10px;
+  background: $white;
+  border: 1px solid $card-border-color;
+  padding: 8px 12px;
+}
+
+.fw-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fw-filter-search {
+  position: relative;
+  flex: 1 1 160px;
+  min-width: 120px;
+
+  i {
+    position: absolute;
+    left: 7px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $fw-gray-400;
+    font-size: 12px;
+    pointer-events: none;
+  }
+
+  .fw-filter-input {
+    width: 100%;
+    padding: 4px 7px 4px 24px;
+    font-size: $fw-font-size-sm;
+    border: 1px solid $input-border-color;
+    background: $fw-gray-50;
+    color: $deep-space-blue;
+    outline: none;
+
+    &::placeholder { color: $fw-gray-400; font-size: $fw-font-size-xs; }
+    &:focus { border-color: $cerulean; background: $white; }
+  }
+}
+
+.fw-filter-quick {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+
+  .fw-filter-select {
+    padding: 4px 7px;
+    font-size: $fw-font-size-xs;
+    border: 1px solid $input-border-color;
+    background: $fw-gray-50;
+    color: $fw-gray-600;
+    outline: none;
+    cursor: pointer;
+    max-width: 130px;
+
+    &:focus { border-color: $cerulean; background: $white; }
+  }
+}
+
+.fw-filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+
+}
+
+.fw-filter-badges {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+  min-height: 0;
+
+  &:empty { display: none; }
+}
+
+.fw-filter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 6px;
+  font-size: $fw-font-size-xs;
+  font-weight: 500;
+  color: $cerulean;
+  background: $fw-blue-50;
+  border: 1px solid $fw-blue-100;
+
+}
+
+.fw-col-panel {
+  display: none;
+  margin-top: 6px;
+  padding: 6px 8px;
+  background: $fw-gray-50;
+  border: 1px solid $fw-gray-200;
+  flex-wrap: wrap;
+  gap: 3px;
+  max-width: 480px;
+
+  &.open { display: flex; }
+
+  label {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: $fw-font-size-xs;
+    color: $fw-gray-600;
+    cursor: pointer;
+    padding: 2px 5px;
+
+    &:hover { background: $fw-gray-100; }
+
+    input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 13px;
+      height: 13px;
+      margin: 0;
+      border: 1px solid $fw-gray-200;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background $fw-transition-fast, border-color $fw-transition-fast;
+
+      &:checked {
+        background: $cerulean url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath fill='%23fff' d='M3.5 7.5L1.4 5.4l-.8.8L3.5 9l5-5-.8-.8z'/%3E%3C/svg%3E") center / 9px no-repeat;
+        border-color: $cerulean;
+      }
+    }
+  }
+}
+
+.fw-filter-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: $white;
+  border: 1px solid $fw-gray-200;
+  max-height: 240px;
+  overflow-y: auto;
+  display: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+  margin-top: 2px;
+
+  &.open { display: block; }
+}
+
+.fw-filter-suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: $fw-font-size-xs;
+  color: $deep-space-blue;
+  text-decoration: none;
+  border-bottom: 1px solid $fw-gray-100;
+
+  &:last-child { border-bottom: none; }
+  &:hover,
+  &.active { background: $fw-blue-50; }
+
+  i {
+    font-size: 14px;
+    color: $fw-gray-400;
+    flex-shrink: 0;
+    position: static;
+    top: auto;
+    left: auto;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .fw-filter-suggestion-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .fw-filter-suggestion-title {
+    font-weight: 600;
+    font-size: $fw-font-size-xs;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .fw-filter-suggestion-subtitle {
+    font-size: 10px;
+    color: $fw-gray-400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.fw-filter-suggestion-empty {
+  opacity: 0.6;
+  justify-content: center;
+  cursor: default;
+}
+
+.fw-filter-suggestion-item--searching { opacity: 0.6; }
+
+.fw-search-result-item--searching { opacity: 0.6; }
