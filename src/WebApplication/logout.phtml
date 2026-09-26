@@ -1,7 +1,17 @@
 <?php
 
     use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\Enums\RequestMethod;
     use DynamicalWeb\WebSession;
+
+    // Signing out changes state, so it is a POST that carries the CSRF token; a plain link or a
+    // cross-site request to /logout only returns to the dashboard.
+    if (WebSession::getRequest()->getMethod() !== RequestMethod::POST)
+    {
+        WebSession::getResponse()->setRedirect(Functions::getRouteUrl('dashboard'));
+        WebSession::endSession(0);
+        return;
+    }
 
     WebSession::destroyCookieSession('web_session');
     WebSession::getResponse()->setRedirect(Functions::getRouteUrl('authenticate'));
