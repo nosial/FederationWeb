@@ -61,47 +61,6 @@
         }
     }
 
-    // ─── Active menu item highlighting ───────────────────────────────────
-
-    function setActiveMenuItem() {
-        var sidebar = document.getElementById('sidebar');
-        if (!sidebar) return;
-
-        // Current page filename (e.g. "buttons.html")
-        var currentPage = window.location.pathname.split('/').pop() || 'index.html';
-
-        var links = sidebar.querySelectorAll('.sidebar-link');
-        var bestMatch = null;
-        var bestLength = 0;
-
-        // Remove existing active classes and find the best match
-        links.forEach(function (link) {
-            var item = link.closest('.sidebar-item');
-            if (item) item.classList.remove('active');
-
-            var href = link.getAttribute('href');
-            if (!href || href === '#') return;
-
-            // Extract the filename from the href
-            var hrefPage = href.split('/').pop().split('?')[0].split('#')[0];
-
-            if (hrefPage && hrefPage === currentPage && hrefPage.length > bestLength) {
-                bestMatch = link;
-                bestLength = hrefPage.length;
-            }
-        });
-
-        // Mark the matching item as active
-        if (bestMatch) {
-            var item = bestMatch.closest('.sidebar-item');
-            if (item) item.classList.add('active');
-
-            // Ensure the section containing the active item is expanded
-            var section = bestMatch.closest('.sidebar-nav-section');
-            if (section) section.classList.add('section-open');
-        }
-    }
-
     // ─── Responsive handler ──────────────────────────────────────────────
 
     function handleResize() {
@@ -228,9 +187,6 @@
         if (!isMobile() && loadCollapsed()) {
             document.body.classList.add('sidebar-collapsed');
         }
-
-        // Highlight the active menu item
-        setActiveMenuItem();
 
         // Initialize section expand/collapse
         initSectionToggle();
