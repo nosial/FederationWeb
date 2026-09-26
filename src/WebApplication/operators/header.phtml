@@ -1,0 +1,51 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\OperatorsView;
+
+    /** @var OperatorsView $operatorsView */
+    $operatorsView = WebSession::get('operators_view');
+?>
+<div class="fw-page-header-actions">
+    <div>
+        <h1><?php Functions::printl('heading'); ?></h1>
+        <p class="fw-page-header-meta"><?php Functions::printl('subtitle'); ?></p>
+    </div>
+    <div class="fw-page-header-right">
+        <a href="<?php Functions::printRoute('operators_list_print', queryParams: $operatorsView->getBaseQuery()); ?>" class="fw-btn fw-btn-secondary fw-btn-sm"><i class="bi bi-printer"></i> <?php Functions::printl('print_page'); ?></a>
+    </div>
+</div>
+<?php
+    if ($operatorsView->getSuccessMessage())
+    {
+        ?>
+        <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-check-circle-fill"></i>
+                <span><?php Functions::printl($operatorsView->getSuccessMessage()); ?></span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php
+    }
+    if ($operatorsView->getErrorMessageKey())
+    {
+        ?>
+        <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <div>
+                    <strong><?php Functions::printl($operatorsView->getErrorMessageKey()); ?></strong>
+                    <?php
+                        if ($operatorsView->getErrorMessage())
+                        {
+                            ?><br><span class="fw-error-detail"><?php Functions::print($operatorsView->getErrorMessage()); ?></span><?php
+                        }
+                    ?>
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php
+    }
+?>
