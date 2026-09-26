@@ -1,0 +1,128 @@
+// Tabs
+
+.fw-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--fw-border-default);
+  padding: 0 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-shrink: 0;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
+
+  .fw-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 9px;
+    font-size: $fw-font-size-xs;
+    font-weight: 600;
+    color: var(--fw-text-muted);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    transition: color $fw-transition, border-color $fw-transition;
+    text-decoration: none;
+    margin-bottom: -1px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    line-height: 1.4;
+
+    i { font-size: 11px; }
+
+    &:hover {
+      color: var(--fw-text-primary);
+    }
+
+    &.active {
+      color: var(--fw-link);
+      border-bottom-color: var(--fw-link);
+    }
+  }
+
+  .fw-tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 15px;
+    height: 14px;
+    padding: 0 3px;
+    font-size: .5rem;
+    font-weight: 700;
+    line-height: 1;
+    background: var(--fw-border-light);
+    color: var(--fw-text-muted);
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
+  .fw-tab.active .fw-tab-badge {
+    background: rgba($cerulean, 0.12);
+    color: var(--fw-link);
+  }
+}
+
+// Card with integrated tabs
+.fw-card-tabs {
+  .fw-card-header {
+    border-bottom-color: var(--fw-border-light);
+    padding-bottom: 8px;
+  }
+
+  .fw-tabs {
+    border-bottom-color: var(--fw-border-default);
+    padding: 0 8px;
+    background: var(--fw-surface-alt);
+  }
+
+  .fw-card-body-nopad {
+    .tab-content {
+      .tab-pane {
+        .fw-table-wrap:first-child {
+          .fw-table:first-child {
+            thead th:first-child { padding-left: 8px; }
+            tbody td:first-child { padding-left: 8px; }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Empty state inside tab panes
+.fw-tab-empty {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 144px;
+  padding: 28px 14px;
+  text-align: center;
+  color: var(--fw-text-muted);
+
+  i {
+    font-size: 20px;
+    display: block;
+    margin-bottom: 5px;
+    color: var(--fw-text-muted);
+  }
+
+  p {
+    font-size: $fw-font-size-sm;
+    margin: 0;
+    color: var(--fw-text-muted);
+    font-weight: 500;
+  }
+}
+
+// Tab pane animation
+.tab-content > .tab-pane {
+  display: none;
+
+  &.active { display: block; }
+}
