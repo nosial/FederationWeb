@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - '**'
-  release:
-    types: [created]
+    tags:
+      - '*'
   workflow_dispatch:
 
 jobs:
@@ -17,6 +17,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # The build compiles the stylesheets, scripts and vendor assets with npm (see project.yml)
+      - name: Install Node.js
+        run: |
+          apt-get update && apt-get install -y nodejs npm && rm -rf /var/lib/apt/lists/*
 
       - name: Build project
         run: |
@@ -38,6 +43,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # The build compiles the stylesheets, scripts and vendor assets with npm (see project.yml)
+      - name: Install Node.js
+        run: |
+          apt-get update && apt-get install -y nodejs npm && rm -rf /var/lib/apt/lists/*
+
       - name: Build project
         run: |
           ncc project install --log-level debug -y
@@ -57,6 +67,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # The build compiles the stylesheets, scripts and vendor assets with npm (see project.yml)
+      - name: Install Node.js
+        run: |
+          apt-get update && apt-get install -y nodejs npm && rm -rf /var/lib/apt/lists/*
 
       - name: Build project
         run: |
@@ -112,7 +127,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: php:8.5
-    if: github.event_name == 'release'
+    # Pushing a tag creates the release and attaches the packages; a release created by another
+    # workflow's GITHUB_TOKEN would not start this one, so the release is created here.
+    if: startsWith(github.ref, 'refs/tags/')
 
     steps:
       - name: Checkout repository
@@ -127,6 +144,9 @@ jobs:
       - name: Upload debug artifact to release
         uses: softprops/action-gh-release@v1
         with:
+            name: Release ${{ github.ref_name }}
+            prerelease: ${{ contains(github.ref_name, '-') }}
+            generate_release_notes: true
             files: |
                 debug/*
         env:
