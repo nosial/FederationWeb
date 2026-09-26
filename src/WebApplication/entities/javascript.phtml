@@ -1,0 +1,286 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+?>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var deleteModal = document.getElementById('deleteEntityModal');
+            var deleteText = document.getElementById('deleteEntityText');
+            var deleteTemplate = deleteText ? deleteText.innerHTML : '';
+            if (deleteModal) {
+                deleteModal.addEventListener('show.bs.modal', function(event) {
+                    var button = event.relatedTarget;
+                    if (!button) return;
+                    var identifier = button.getAttribute('data-identifier');
+                    var address = button.getAttribute('data-address');
+                    document.getElementById('deleteEntityIdentifier').value = identifier;
+                    if (deleteText) {
+                        var escapedAddress = document.createElement('span');
+                        escapedAddress.textContent = address;
+                        deleteText.innerHTML = deleteTemplate.replace(/\{address\}/g, '<strong>' + escapedAddress.innerHTML + '</strong>');
+                    }
+                });
+            }
+        });
+        </script>
+
+        <script>
+        (function() {
+            var input = document.querySelector('.fw-filter-bar input[name="search_query"]');
+            if (!input) return;
+            var form = input.closest('form');
+            var suggestions = document.getElementById('suggestions-entities');
+            if (!suggestions) return;
+            var timer = null, selectedIndex = -1, currentResults = [];
+
+            function closeDropdown() { suggestions.classList.remove('open'); suggestions.innerHTML = ''; selectedIndex = -1; currentResults = []; }
+
+            function escapeHtml(value) { var span = document.createElement('span'); span.textContent = value === null || value === undefined ? '' : String(value); return span.innerHTML; }
+
+            function doSearch(query) {
+                if (query.length < 2) { closeDropdown(); return; }
+                suggestions.innerHTML = '<div class="fw-filter-suggestion-item fw-filter-suggestion-item--searching"><?php Functions::printl('searching'); ?></div>';
+                suggestions.classList.add('open');
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '<?php Functions::printRoute('entities'); ?>', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        try { var resp = JSON.parse(xhr.responseText); renderResults(resp.results || []); }
+                        catch(e) { closeDropdown(); }
+                    } else { closeDropdown(); }
+                };
+                xhr.onerror = function() { closeDropdown(); };
+                xhr.send('action=search_suggestions&q=' + encodeURIComponent(query));
+            }
+
+            function renderResults(results) {
+                suggestions.innerHTML = '';
+                if (results.length === 0) {
+                    suggestions.innerHTML = '<div class="fw-filter-suggestion-item fw-filter-suggestion-empty"><?php Functions::printl('no_entities_found'); ?></div>';
+                    suggestions.classList.add('open'); return;
+                }
+                currentResults = results;
+                results.forEach(function(item, i) {
+                    var div = document.createElement('a');
+                    div.className = 'fw-filter-suggestion-item';
+                    div.href = item.url;
+                    div.innerHTML = '<i class="bi bi-person"></i><div class="fw-filter-suggestion-info"><div class="fw-filter-suggestion-title">' + escapeHtml(item.title) + '</div><div class="fw-filter-suggestion-subtitle">' + escapeHtml(item.subtitle) + '</div></div>';
+                    div.addEventListener('click', function(e) { e.preventDefault(); closeDropdown(); input.value = ''; window.location.href = this.href; });
+                    div.addEventListener('mouseenter', function() { suggestions.querySelectorAll('.fw-filter-suggestion-item').forEach(function(el) { el.classList.remove('active'); }); div.classList.add('active'); selectedIndex = i; });
+                    suggestions.appendChild(div);
+                });
+                suggestions.classList.add('open'); selectedIndex = -1;
+            }
+
+            input.addEventListener('input', function() { clearTimeout(timer); var val = this.value.trim(); if (val.length >= 2) { timer = setTimeout(function() { doSearch(val); }, 250); } else { closeDropdown(); } });
+            input.addEventListener('keydown', function(e) {
+                var items = suggestions.querySelectorAll('.fw-filter-suggestion-item:not(.fw-filter-suggestion-empty)');
+                if (e.key === 'Enter') { e.preventDefault(); var active = suggestions.querySelector('.fw-filter-suggestion-item.active'); if (active && active.href) { closeDropdown(); input.value = ''; window.location.href = active.href; } else { form.submit(); } }
+                else if (e.key === 'ArrowDown') { e.preventDefault(); selectedIndex = Math.min(selectedIndex + 1, items.length - 1); updateActive(items); }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); selectedIndex = Math.max(selectedIndex - 1, -1); updateActive(items); }
+                else if (e.key === 'Escape') { closeDropdown(); input.blur(); }
+            });
+            input.addEventListener('focus', function() { var val = this.value.trim(); if (val.length >= 2 && suggestions.children.length > 0) suggestions.classList.add('open'); });
+            document.addEventListener('click', function(e) { if (!e.target.closest('.fw-filter-search')) closeDropdown(); });
+            function updateActive(items) { items.forEach(function(el, i) { el.classList.toggle('active', i === selectedIndex); }); }
+        })();
+        </script>
+
+        <script>
+        (function() {
+            var metadataContainer = document.getElementById('metadataRows');
+            var metadataEmpty = document.getElementById('metadataEmpty');
+            var metadataHidden = document.getElementById('entityMetadataHidden');
+            var addBtn = document.getElementById('addMetadataBtn');
+            var createForm = document.getElementById('createEntityForm');
+
+            var typeOptions = [
+                { value: 'string', label: '<?php Functions::printl('modal_edit_metadata_type_string'); ?>' },
+                { value: 'boolean', label: '<?php Functions::printl('modal_edit_metadata_type_boolean'); ?>' },
+                { value: 'integer', label: '<?php Functions::printl('modal_edit_metadata_type_integer'); ?>' },
+                { value: 'null', label: '<?php Functions::printl('modal_edit_metadata_type_null'); ?>' }
+            ];
+
+            function renderValueWidget(type, value) {
+                var container = document.createElement('div');
+                container.style.flex = '1';
+                container.style.minWidth = '120px';
+                switch (type) {
+                    case 'string':
+                        var input = document.createElement('input');
+                        input.type = 'text';
+                        input.className = 'fw-form-control';
+                        input.placeholder = '<?php Functions::printl('modal_edit_metadata_value_placeholder'); ?>';
+                        input.setAttribute('data-md-value', '');
+                        input.value = value !== null && value !== undefined ? String(value) : '';
+                        container.appendChild(input);
+                        break;
+                    case 'boolean':
+                        var select = document.createElement('select');
+                        select.className = 'fw-form-control';
+                        select.setAttribute('data-md-value', '');
+                        var optTrue = document.createElement('option');
+                        optTrue.value = 'true';
+                        optTrue.textContent = '<?php Functions::printl('true_label'); ?>';
+                        var optFalse = document.createElement('option');
+                        optFalse.value = 'false';
+                        optFalse.textContent = '<?php Functions::printl('false_label'); ?>';
+                        select.appendChild(optTrue);
+                        select.appendChild(optFalse);
+                        select.value = value === true || value === 'true' ? 'true' : 'false';
+                        container.appendChild(select);
+                        break;
+                    case 'integer':
+                        var input = document.createElement('input');
+                        input.type = 'number';
+                        input.className = 'fw-form-control';
+                        input.placeholder = '0';
+                        input.step = '1';
+                        input.setAttribute('data-md-value', '');
+                        input.value = value !== null && value !== undefined ? Number(value) : 0;
+                        container.appendChild(input);
+                        break;
+                    case 'null':
+                        var span = document.createElement('span');
+                        span.className = 'fw-form-text text-muted';
+                        span.style.padding = '0.375rem 0';
+                        span.style.display = 'inline-block';
+                        span.textContent = '<?php Functions::printl('null_label'); ?>';
+                        container.appendChild(span);
+                        break;
+                }
+                return container;
+            }
+
+            function createRow(key, value) {
+                var detectedType = 'string';
+                if (value === null || value === undefined) {
+                    detectedType = 'null';
+                } else if (typeof value === 'boolean') {
+                    detectedType = 'boolean';
+                } else if (typeof value === 'number' && Number.isInteger(value)) {
+                    detectedType = 'integer';
+                }
+
+                var row = document.createElement('div');
+                row.className = 'fw-metadata-row d-flex gap-2 align-items-center mb-2';
+
+                var keyInput = document.createElement('input');
+                keyInput.type = 'text';
+                keyInput.className = 'fw-form-control';
+                keyInput.placeholder = '<?php Functions::printl('modal_edit_metadata_key_placeholder'); ?>';
+                keyInput.style.minWidth = '160px';
+                keyInput.style.width = 'auto';
+                keyInput.style.flex = '0 1 180px';
+                keyInput.setAttribute('data-md-key', '');
+                keyInput.value = key || '';
+
+                var typeSelect = document.createElement('select');
+                typeSelect.className = 'fw-form-control';
+                typeSelect.style.minWidth = '100px';
+                typeSelect.style.width = 'auto';
+                typeSelect.style.flex = '0 1 120px';
+                typeSelect.setAttribute('data-md-type', '');
+                typeOptions.forEach(function(opt) {
+                    var option = document.createElement('option');
+                    option.value = opt.value;
+                    option.textContent = opt.label;
+                    typeSelect.appendChild(option);
+                });
+                typeSelect.value = detectedType;
+
+                var valueWidget = renderValueWidget(detectedType, value);
+
+                var removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon';
+                removeBtn.setAttribute('data-md-remove', '');
+                removeBtn.title = '<?php Functions::printl('remove'); ?>';
+                removeBtn.innerHTML = '<i class="bi bi-x-circle"></i>';
+                removeBtn.addEventListener('click', function() {
+                    row.remove();
+                    updateEmptyState();
+                });
+
+                typeSelect.addEventListener('change', function() {
+                    var newType = typeSelect.value;
+                    var oldValue = getRowValue(row);
+                    var newWidget = renderValueWidget(newType, oldValue);
+                    valueWidget.replaceWith(newWidget);
+                    valueWidget = newWidget;
+                });
+
+                row.appendChild(keyInput);
+                row.appendChild(typeSelect);
+                row.appendChild(valueWidget);
+                row.appendChild(removeBtn);
+                return row;
+            }
+
+            function getRowValue(row) {
+                var typeSelect = row.querySelector('[data-md-type]');
+                var type = typeSelect ? typeSelect.value : 'string';
+                var valueEl = row.querySelector('[data-md-value]');
+                switch (type) {
+                    case 'string':
+                        return valueEl ? valueEl.value : '';
+                    case 'boolean':
+                        return valueEl ? valueEl.value === 'true' : false;
+                    case 'integer':
+                        return valueEl ? parseInt(valueEl.value, 10) || 0 : 0;
+                    case 'null':
+                        return null;
+                }
+                return null;
+            }
+
+            function getRowKey(row) {
+                var el = row.querySelector('[data-md-key]');
+                return el ? el.value.trim() : '';
+            }
+
+            function buildMetadataObject() {
+                var rows = metadataContainer.querySelectorAll('.fw-metadata-row');
+                var obj = {};
+                rows.forEach(function(row) {
+                    var key = getRowKey(row);
+                    if (key === '') return;
+                    obj[key] = getRowValue(row);
+                });
+                return obj;
+            }
+
+            function updateEmptyState() {
+                var rows = metadataContainer.querySelectorAll('.fw-metadata-row');
+                if (metadataEmpty) {
+                    metadataEmpty.style.display = rows.length === 0 ? 'block' : 'none';
+                }
+            }
+
+            function addRow(key, value) {
+                var row = createRow(key, value);
+                if (metadataEmpty) {
+                    metadataContainer.insertBefore(row, metadataEmpty);
+                } else {
+                    metadataContainer.appendChild(row);
+                }
+                updateEmptyState();
+            }
+
+            if (createForm) {
+                createForm.addEventListener('submit', function() {
+                    var obj = buildMetadataObject();
+                    var keys = Object.keys(obj);
+                    metadataHidden.value = keys.length > 0 ? JSON.stringify(obj) : '{}';
+                });
+            }
+
+            if (addBtn) {
+                addBtn.addEventListener('click', function() {
+                    addRow('', '');
+                });
+            }
+
+            updateEmptyState();
+        })();
+        </script>
