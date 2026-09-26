@@ -1,0 +1,192 @@
+<?php
+    use DynamicalWeb\Enums\RequestMethod;
+    use DynamicalWeb\Html\Functions;
+    use WebKernel\Utilities;
+    use DynamicalWeb\WebSession;
+    use WebKernel\AuthenticateView;
+
+    Functions::loadLocalization('authenticate');
+
+    $authenticateView = new AuthenticateView();
+    $serverEndpoint = $authenticateView->getDefaultServerEndpoint();
+    $serverName = is_string($serverEndpoint) && $serverEndpoint !== '' ? $serverEndpoint : Utilities::localize('server_name_fallback');
+
+    if (WebSession::getRequest()->getMethod() === RequestMethod::POST)
+    {
+        $authenticateView->handlePostRequest();
+    }
+
+    WebSession::set('authenticate_view', $authenticateView);
+?>
+<!DOCTYPE html>
+<html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>" data-fw-theme="<?php Functions::print($authenticateView->getDarkMode() ? 'dark' : ''); ?>">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <?php Functions::insertSection('../sections/head.phtml'); ?>
+        <title><?php Functions::printl('page_title', ['server_name' => $serverName]); ?></title>
+        <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="/vendor/flag-icons/css/flag-icons.min.css">
+        <link rel="stylesheet" href="/css/federation.css">
+    </head>
+    <body class="fw-login-page">
+        <?php
+            $isCustomHostDisabled = $authenticateView->isCustomHostDisabled();
+            $serverHostFieldClass = $isCustomHostDisabled ? ' fw-login-field-disabled' : '';
+            $serverHostAttributes = $isCustomHostDisabled ? ' disabled readonly' : '';
+            $isAnonymousDisabled = $authenticateView->isAnonymousDisabled();
+            $accessTokenAttributes = $isAnonymousDisabled ? ' required' : '';
+        ?>
+        <div class="fw-login">
+            <div class="fw-login-card">
+                <div class="fw-login-pixel">
+                    <div class="fw-login-pixel-bg"></div>
+                    <div class="fw-login-logo">
+                        <img class="fw-logo-dark" src="/logo/dark.svg" alt="">
+                        <img class="fw-logo-light" src="/logo/light.svg" alt="">
+                    </div>
+                </div>
+                <div class="fw-login-panel">
+                    <div class="fw-login-panel-header">
+                        <div class="fw-login-title"><?php Functions::printl('form_title'); ?></div>
+                        <div class="fw-login-subtitle"><?php Functions::printl('form_subtitle'); ?></div>
+                    </div>
+
+                    <?php
+                        if ($authenticateView->getError() !== null)
+                        {
+                            ?>
+                    <div class="fw-alert fw-alert-danger">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <span>
+                            <?php
+                                switch($authenticateView->getError())
+                                {
+                                    case 'missing_key':
+                                        Functions::printl('error_required');
+                                        break;
+                                    case 'invalid_key':
+                                        Functions::printl('error_invalid');
+                                        break;
+                                    case 'disabled_operator':
+                                        Functions::printl('error_disabled');
+                                        break;
+                                    case 'server_unreachable':
+                                        Functions::printl('error_server_unreachable');
+                                        break;
+                                    case 'anonymous_disabled':
+                                        Functions::printl('error_anonymous_disabled');
+                                        break;
+                                    default:
+                                        Functions::printl('error_generic');
+                                        break;
+                                }
+                            ?>
+                        </span>
+                    </div>
+                    <?php
+                        }
+                    ?>
+
+                    <form class="fw-login-form" action="/authenticate" method="POST" novalidate><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                        <div class="fw-login-field<?php echo $serverHostFieldClass; ?>">
+                            <label for="serverHost"><?php Functions::printl('server_host_label'); ?></label>
+                            <div class="fw-login-input-wrap">
+                                <i class="bi bi-globe2"></i>
+                                <input type="text" id="serverHost" name="server_host" value="<?php Functions::print($authenticateView->getDefaultServerEndpoint()); ?>" placeholder="<?php Functions::printl('server_host_placeholder'); ?>"<?php echo $serverHostAttributes; ?> autocomplete="off" spellcheck="false">
+                            </div>
+                            <?php
+                                if ($isCustomHostDisabled)
+                                {
+                                    ?>
+                            <span class="fw-login-field-note"><?php Functions::printl('server_host_locked'); ?></span>
+                            <?php
+                                }
+                            ?>
+                        </div>
+                        <div class="fw-login-field">
+                            <label for="accessToken"><?php Functions::printl('access_token_label'); ?></label>
+                            <div class="fw-login-input-wrap">
+                                <i class="bi bi-key"></i>
+                                <input type="password" id="accessToken" name="api_key" placeholder="<?php Functions::printl('access_token_placeholder'); ?>"<?php echo $accessTokenAttributes; ?> autocomplete="off" spellcheck="false">
+                            </div>
+                            <?php
+                                if ($isAnonymousDisabled)
+                                {
+                                    ?>
+                            <span class="fw-login-field-note fw-login-field-note-required"><?php Functions::printl('access_token_required'); ?></span>
+                            <?php
+                                }
+                                else
+                                {
+                                    ?>
+                            <span class="fw-login-field-note"><?php Functions::printl('access_token_optional'); ?></span>
+                            <?php
+                                }
+                            ?>
+                        </div>
+                        <button type="submit" class="fw-btn fw-btn-primary fw-login-submit">
+                            <i class="bi bi-shield-check"></i>
+                            <?php Functions::printl('submit_button'); ?>
+                        </button>
+                    </form>
+
+                    <div class="fw-login-footer">
+                        <div class="fw-login-footer-actions">
+                            <button type="button" class="fw-login-theme-toggle fw-dark-mode-toggle">
+                                <i class="bi <?php Functions::print($authenticateView->getDarkMode() ? 'bi-sun' : 'bi-moon-stars'); ?>"></i>
+                            </button>
+                            <button type="button" class="fw-login-theme-toggle" data-bs-toggle="modal" data-bs-target="#languageModalLogin" title="<?php Functions::printl('language'); ?>">
+                                <i class="bi bi-globe"></i>
+                            </button>
+                        </div>
+                        <span class="fw-login-server-name">
+                            <i class="bi bi-server"></i>
+                            <?php Functions::print($serverName); ?>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="languageModalLogin" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-globe"></i> <?php Functions::printl('language_select_title'); ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="fw-locale-grid">
+                            <?php
+                                foreach ($authenticateView->getLocales() as $locale)
+                                {
+                                    $isActive = ($locale['code'] === $authenticateView->getCurrentLocale());
+                                    $localeClass = $isActive ? ' fw-locale-active' : '';
+                                    ?>
+                            <a href="/dynaweb/language/<?php Functions::print($locale['code']); ?>?r=<?php Functions::print(urlencode($authenticateView->getReturnPath())); ?>"
+                               class="fw-locale-option<?php echo $localeClass; ?>">
+                                <span class="fi fi-<?php Functions::print($locale['flag']); ?> fis"></span>
+                                <span class="fw-locale-name"><?php Functions::print($locale['label']); ?></span>
+                                <?php
+                                        if ($isActive)
+                                        {
+                                            ?>
+                                <span class="fw-locale-check"><i class="bi bi-check-lg"></i></span>
+                                <?php
+                                        }
+                                    ?>
+                            </a>
+                            <?php
+                                }
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+        <?php Functions::insertSection('javascript.phtml'); ?>
+    </body>
+</html>
