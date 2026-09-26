@@ -1,0 +1,161 @@
+// Cards + Stat cards
+
+.fw-card {
+  background: var(--fw-surface-bg);
+  border: 1px solid var(--fw-border-default);
+
+  .fw-card-header {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--fw-border-default);
+    background: var(--fw-surface-alt);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    h5, h6 {
+      font-size: $fw-font-size-sm;
+      font-weight: 600;
+      margin: 0;
+      color: var(--fw-text-heading);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      i { font-size: 14px; }
+    }
+
+    .fw-card-actions {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+  }
+
+  .fw-card-body {
+    padding: 10px 12px;
+  }
+
+  .fw-card-body-nopad {
+    padding: 0;
+  }
+
+  .fw-card-body-detail {
+    padding: 10px 12px;
+  }
+
+  .fw-card-footer {
+    padding: 6px 12px;
+    border-top: 1px solid var(--fw-border-default);
+    background: var(--fw-surface-alt);
+    font-size: $fw-font-size-sm;
+    color: var(--fw-text-muted);
+
+    a {
+      color: var(--fw-text-muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: $fw-font-size-xs;
+      font-weight: 500;
+
+      i { font-size: 11px; }
+
+      &:hover { color: var(--fw-link-hover); }
+    }
+  }
+}
+
+.fw-card:has(> .fw-card-body > .fw-empty, > .fw-card-body > .fw-tab-empty, > .fw-card-body > .fw-empty-sm) {
+  display: flex;
+  flex-direction: column;
+
+  > .fw-card-body {
+    display: flex;
+    flex: 1;
+  }
+
+  .fw-empty,
+  .fw-empty-sm,
+  .fw-tab-empty {
+    flex: 1;
+  }
+}
+
+.fw-card-accent {
+  border-left: 3px solid var(--fw-accent, transparent);
+}
+
+.fw-card-body--flush { padding: 0; }
+
+.fw-card-body-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fw-record-detail-card {
+  background: var(--fw-surface-alt);
+  border: 1px solid var(--fw-border-default);
+
+  .fw-card-header { padding: 6px 10px; }
+  .fw-card-body { padding: 8px 10px; }
+}
+
+.accent-purple { --fw-accent: #{$accent-purple}; }
+.accent-blue { --fw-accent: #{$accent-blue}; }
+.accent-cyan { --fw-accent: #{$accent-cyan}; }
+.accent-green { --fw-accent: #{$accent-green}; }
+.accent-amber { --fw-accent: #{$accent-amber}; }
+.accent-red { --fw-accent: #{$accent-red}; }
+
+// === Stat cards ===
+.fw-stat-card {
+  background: var(--fw-surface-bg);
+  border: 1px solid var(--fw-border-default);
+  padding: 12px;
+  display: flex;
+  height: 100%;
+  align-items: flex-start;
+  gap: 10px;
+
+  .fw-stat-icon {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+
+    &.blue { background: $fw-blue-100; color: $fw-blue-600; }
+    &.emerald { background: $fw-emerald-100; color: $fw-emerald-600; }
+    &.amber { background: $fw-amber-100; color: $fw-amber-600; }
+    &.red { background: $fw-red-100; color: $fw-red-600; }
+    &.purple { background: $fw-purple-100; color: $fw-purple-600; }
+    &.cyan { background: $fw-cyan-100; color: $fw-cyan-600; }
+  }
+
+  .fw-stat-body {
+    flex: 1;
+    min-width: 0;
+
+    .fw-stat-label {
+      font-size: $fw-font-size-xs;
+      color: var(--fw-text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 1px;
+    }
+
+    .fw-stat-value {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--fw-text-heading);
+      line-height: 1.2;
+    }
+
+  }
+}
