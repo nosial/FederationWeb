@@ -1,0 +1,32 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\BlacklistDetailView;
+
+    /** @var BlacklistDetailView $view */
+    $view = WebSession::get('blacklist_detail_view');
+
+    if ($view->getRecord() !== null)
+    {
+        ?>
+        <script>
+        (function() {
+            var viewAll = document.getElementById('blacklistRelatedViewAll');
+            var tabs = document.getElementById('blacklistRelatedTabs');
+            if (!viewAll || !tabs) return;
+            var links = {
+                tabBlacklistEntityBlacklist: '<?php Functions::printRoute('blacklist', queryParams: ['entity_id' => $view->getRecord()->getEntityUuid()]); ?>',
+                tabBlacklistEntityEvidence: '<?php Functions::printRoute('evidence', queryParams: ['entity_id' => $view->getRecord()->getEntityUuid()]); ?>',
+                tabBlacklistEntityReports: '<?php Functions::printRoute('reports', queryParams: ['entity_id' => $view->getRecord()->getEntityUuid()]); ?>',
+                tabBlacklistAuditLog: '<?php Functions::printRoute('audit_log', queryParams: ['entity_id' => $view->getRecord()->getEntityUuid()]); ?>'
+            };
+            tabs.querySelectorAll('[data-bs-toggle="tab"]').forEach(function(button) {
+                button.addEventListener('shown.bs.tab', function() {
+                    viewAll.href = links[this.getAttribute('data-bs-target').slice(1)];
+                });
+            });
+        })();
+        </script>
+        <?php
+    }
+?>
