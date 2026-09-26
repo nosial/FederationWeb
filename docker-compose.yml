@@ -2,8 +2,8 @@ services:
   app:
     build:
       context: .
-    container_name: net.nosial.federationweb
-    image: net.nosial.federationweb:1.0.0
+    container_name: federation_web
+    image: federation_web
     ports:
       - "8080:8080"
     restart: unless-stopped
@@ -16,6 +16,10 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    environment:
+      - FEDERATION_SERVER_ENDPOINT=http://federation_server:7000
+      #- FEDERATION_DISABLE_CUSTOM_HOST=1
+      #- FEDERATION_DISABLE_ANONYMOUS=1
     networks:
       - internal_network
 
@@ -34,6 +38,7 @@ services:
       - federation_uploads:/var/www/uploads
     environment:
       # FederationLib Configuration
+      - FEDERATION_NAME=Nosial Federation
       - FEDERATION_DATABASE_HOST=mariadb
       - FEDERATION_DATABASE_PORT=3306
       - FEDERATION_DATABASE_USERNAME=${MYSQL_USER:-federation}
@@ -42,7 +47,7 @@ services:
       - FEDERATION_REDIS_ENABLED=true
       - FEDERATION_REDIS_HOST=redis
       - FEDERATION_REDIS_PORT=6379
-      - FEDERATION_API_KEY=${FEDERATION_API_KEY:-abcdefghijklmnopqrstuvwxyz123456}
+      - FEDERATION_ACCESS_TOKEN=${FEDERATION_ACCESS_TOKEN:-abcdefghijklmnopqrstuvwxyz123456}
     # volumes:
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:7000/"]
