@@ -1,0 +1,174 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\BlacklistView;
+    use WebKernel\ViewAuthorization;
+
+    /** @var BlacklistView $view */
+    $view = WebSession::get('blacklist_view');
+?>
+                                    <table class="fw-table fw-table-hoverable fw-table-nowrap" id="table-blacklist">
+                                        <thead>
+                                            <tr>
+                                                <th><?php Functions::printl('uuid'); ?></th>
+                                                <th><?php Functions::printl('entity'); ?></th>
+                                                <th><?php Functions::printl('operator'); ?></th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('blacklist', queryParams: array_merge($view->getBaseQuery(), ['sort_by' => 'type', 'sort_order' => ($view->getSortBy() === 'type' && $view->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('type'); ?>
+                                                        <?php
+                                                            if ($view->getSortBy() === 'type')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($view->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th><?php Functions::printl('report'); ?></th>
+                                                <th><?php Functions::printl('status'); ?></th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('blacklist', queryParams: array_merge($view->getBaseQuery(), ['sort_by' => 'expires', 'sort_order' => ($view->getSortBy() === 'expires' && $view->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('expires'); ?>
+                                                        <?php
+                                                            if ($view->getSortBy() === 'expires')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($view->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('blacklist', queryParams: array_merge($view->getBaseQuery(), ['sort_by' => 'created', 'sort_order' => ($view->getSortBy() === 'created' && $view->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('created'); ?>
+                                                        <?php
+                                                            if ($view->getSortBy() === 'created')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($view->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th class="fw-col-actions"><?php Functions::printl('actions'); ?></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                                if ($view->getRecords() === null)
+                                                {
+                                                    ?>
+                                                    <tr>
+                                                        <td colspan="9">
+                                                            <div class="fw-empty">
+                                                                <i class="bi bi-exclamation-circle"></i>
+                                                                <p><?php Functions::printl('error_loading'); ?></p>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                }
+                                                elseif (empty($view->getRecords()))
+                                                {
+                                                    ?>
+                                                    <tr>
+                                                        <td colspan="9">
+                                                            <div class="fw-empty">
+                                                                <i class="bi bi-shield-exclamation"></i>
+                                                                <p><?php Functions::printl('no_blacklist'); ?></p>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                }
+                                                else
+                                                {
+                                                    foreach ($view->getRecords() as $record)
+                                                    {
+                                                        $entityUuid = $record->getEntityUuid();
+                                                        $entityAddress = $view->getEntityAddress($entityUuid);
+                                                        $operatorUuid = $record->getOperatorUuid();
+                                                        $operatorName = $view->getOperatorName($operatorUuid);
+                                                        $reportUuid = $record->getReportUuid();
+                                                        $expires = $record->getExpires();
+                                                        ?>
+                                                        <tr class="fw-row-link" data-href="<?php Functions::printRoute('blacklist_detail', ['blacklist_uuid' => $record->getUuid()]); ?>">
+                                                            <td><span class="fw-uuid"><?php Functions::print($record->getUuid()); ?></span><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($record->getUuid()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></td>
+                                                            <td><a href="<?php Functions::printRoute('entity_detail', ['entity_id' => $entityUuid]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($entityAddress ?? $entityUuid); ?></a><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($entityUuid); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></td>
+                                                            <td><a href="<?php Functions::printRoute('operator_detail', ['operator_id' => $operatorUuid]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($operatorName ?? $operatorUuid); ?></a><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($operatorUuid); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></td>
+                                                            <td><span class="fw-badge <?php Functions::print($view->getTypeBadge($record->getType())); ?>"><?php Functions::print($record->getType()->name); ?></span></td>
+                                                            <td>
+                                                                <?php
+                                                                    if ($reportUuid === null)
+                                                                    {
+                                                                        ?><span class="fw-uuid">—</span><?php
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $reportInfo = $view->getReportInfo($reportUuid);
+                                                                        ?>
+                                                                        <a href="<?php Functions::printRoute('report_detail', ['report_uuid' => $reportUuid]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($reportInfo['label'] ?? substr($reportUuid, 0, 8) . '…'); ?></a>
+                                                                        <?php
+                                                                        if ($reportInfo !== null)
+                                                                        {
+                                                                            ?><span class="fw-badge fw-badge-xs <?php Functions::print($reportInfo['opened'] ? 'fw-badge-amber' : 'fw-badge-green'); ?>"><?php Functions::printl($reportInfo['opened'] ? 'open' : 'closed'); ?></span><?php
+                                                                        }
+                                                                        ?>
+                                                                        <button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($reportUuid); ?>" title="Copy"><i class="bi bi-clipboard"></i></button>
+                                                                        <?php
+                                                                    }
+                                                                ?>
+                                                            </td>
+                                                            <td>
+                                                                <?php
+                                                                    if ($record->isLifted())
+                                                                    {
+                                                                        ?><span class="fw-dot gray"></span> <?php Functions::printl('status_lifted'); ?><?php
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        ?><span class="fw-dot green"></span> <?php Functions::printl('status_active'); ?><?php
+                                                                    }
+                                                                ?>
+                                                            </td>
+                                                            <td>
+                                                                <?php
+                                                                    if ($expires !== null)
+                                                                    {
+                                                                        ?><span class="fw-uuid"><?php Functions::print($view->formatDate($expires)); ?></span><?php
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        ?><span class="fw-uuid"><?php Functions::printl('permanent'); ?></span><?php
+                                                                    }
+                                                                ?>
+                                                            </td>
+                                                            <td><span class="fw-uuid"><?php Functions::print($view->formatDate($record->getCreated())); ?></span></td>
+                                                            <td>
+                                                                <div class="fw-table-actions">
+                                                                    <a href="<?php Functions::printRoute('blacklist_detail', ['blacklist_uuid' => $record->getUuid()]); ?>" target="_blank" rel="noopener" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('open_in_new_tab'); ?>"><i class="bi bi-box-arrow-in-up-right"></i></a>
+                                                                    <?php
+                                                                        if (ViewAuthorization::canManageRecords())
+                                                                        {
+                                                                            if (!$record->isLifted())
+                                                                            {
+                                                                                ?>
+                                                                    <button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('lift_blacklist'); ?>" data-bs-toggle="modal" data-bs-target="#liftBlacklistModal" data-uuid="<?php Functions::print($record->getUuid()); ?>">
+                                                                        <i class="bi bi-check-circle"></i>
+                                                                    </button>
+                                                                                <?php
+                                                                            }
+                                                                            ?>
+                                                                    <button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('delete_blacklist'); ?>" data-bs-toggle="modal" data-bs-target="#deleteBlacklistModal" data-uuid="<?php Functions::print($record->getUuid()); ?>">
+                                                                        <i class="bi bi-trash"></i>
+                                                                    </button>
+                                                                            <?php
+                                                                        }
+                                                                    ?>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <?php
+                                                    }
+                                                }
+                                            ?>
+                                        </tbody>
+                                    </table>
