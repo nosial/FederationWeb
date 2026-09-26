@@ -1,0 +1,79 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\ReportDetailView;
+    use WebKernel\Utilities;
+
+    Functions::loadLocalization('reports');
+
+    // The print document renders the same detail and related sections as the record page, so both
+    // always show the same information; print.css restyles them and hides interactive controls.
+    $reportDetailView = new ReportDetailView();
+    WebSession::set('report_detail_view', $reportDetailView);
+    $hasRecord = !$reportDetailView->hasError() && $reportDetailView->getReport();
+?>
+<!DOCTYPE html>
+<html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <?php Functions::insertSection('../sections/head.phtml'); ?>
+        <title><?php Functions::printl('record_title'); ?> — <?php
+            if ($hasRecord)
+            {
+                Functions::print(substr($reportDetailView->getReport()->getUuid(), 0, 8) . '…');
+            }
+            else
+            {
+                Functions::printl('error_label');
+            }
+        ?></title>
+        <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="/css/print.css">
+    </head>
+    <body>
+        <div class="fw-print-controls">
+            <a href="javascript:window.print()" class="fw-print-btn"><i class="bi bi-printer"></i> <?php Functions::printl('print_page'); ?></a>
+            <a href="<?php Functions::printRoute('report_detail', ['report_uuid' => WebSession::getRequest()->getPathParameter('report_uuid')]); ?>" class="fw-print-btn"><i class="bi bi-arrow-left"></i> <?php Functions::printl('back'); ?></a>
+        </div>
+        <div class="fw-print-page">
+            <header class="fw-print-docheader">
+                <div class="fw-print-brand">
+                    <h1 class="fw-print-title"><?php Functions::printl('app_name'); ?></h1>
+                    <div class="fw-print-subtitle"><?php Functions::printl('print_server_info'); ?></div>
+                </div>
+                <div class="fw-print-meta">
+                    <div><?php Functions::printl('document_generated'); ?></div>
+                    <div class="generated"><?php Functions::print(Utilities::formatDate(time(), 'Y-m-d H:i:s')); ?></div>
+                </div>
+            </header>
+            <?php
+                if (!$hasRecord)
+                {
+                    ?>
+                    <div class="fw-print-identity">
+                        <div class="fw-print-record-type"><?php Functions::printl('record_title'); ?></div>
+                        <h2 class="fw-print-record-title"><?php Functions::printl('error_loading_entry'); ?></h2>
+                    </div>
+                    <?php
+                }
+                else
+                {
+                    ?>
+                    <div class="fw-print-view">
+                        <?php
+                            Functions::insertSection('detail.phtml');
+                            Functions::insertSection('related.phtml');
+                        ?>
+                    </div>
+                    <footer class="fw-print-docfooter">
+                        <span><?php Functions::printl('print_footer_brand'); ?></span>
+                        <span><?php Functions::printl('print_footer_subtitle'); ?></span>
+                    </footer>
+                    <?php
+                }
+            ?>
+        </div>
+        <?php Functions::insertSection('../sections/print_javascript.phtml'); ?>
+    </body>
+</html>
