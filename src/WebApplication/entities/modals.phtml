@@ -1,0 +1,102 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use WebKernel\ViewAuthorization;
+?>
+<?php
+    if (ViewAuthorization::canContribute())
+    {
+        ?>
+<div class="modal fade" id="modalNewEntity" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-person"></i> <?php Functions::printl('create_entity_heading'); ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="<?php Functions::printRoute('entities'); ?>" id="createEntityForm"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                <input type="hidden" name="action" value="create_entity">
+                <div class="modal-body">
+                    <div class="fw-form-group">
+                        <label class="fw-form-label"><?php Functions::printl('create_entity_host_label'); ?></label>
+                        <input type="text" class="fw-form-control" name="entity_host" placeholder="<?php Functions::printl('create_entity_host_placeholder'); ?>" required autocomplete="off">
+                    </div>
+                    <div class="fw-form-group">
+                        <label class="fw-form-label"><?php Functions::printl('create_entity_id_label'); ?></label>
+                        <input type="text" class="fw-form-control" name="entity_id" placeholder="<?php Functions::printl('create_entity_id_placeholder'); ?>" autocomplete="off">
+                    </div>
+                    <div class="fw-form-group">
+                        <label class="fw-form-label"><?php Functions::printl('create_entity_metadata_label'); ?></label>
+                        <div id="metadataRows">
+                            <div class="fw-metadata-empty" id="metadataEmpty"><?php Functions::printl('modal_edit_metadata_no_entries'); ?></div>
+                        </div>
+                        <button type="button" class="fw-btn fw-btn-secondary fw-btn-sm mt-2" id="addMetadataBtn">
+                            <i class="bi bi-plus-lg"></i> <?php Functions::printl('modal_edit_metadata_add'); ?>
+                        </button>
+                        <input type="hidden" name="entity_metadata" id="entityMetadataHidden">
+                        <div class="fw-form-help"><?php Functions::printl('create_entity_help'); ?></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                    <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl('create_entity'); ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+        <?php
+    }
+?>
+
+<div class="modal fade" id="queryEntityModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-diagram-3"></i> <?php Functions::printl('query_entity'); ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="GET" action="<?php Functions::printRoute('entity_query'); ?>">
+                <div class="modal-body">
+                    <p class="mb-3"><?php Functions::printl('query_entity_help'); ?></p>
+                    <div class="fw-form-group">
+                        <label class="fw-form-label" for="queryEntityIdentifier"><?php Functions::printl('query_entity_identifier_label'); ?></label>
+                        <input type="text" class="fw-form-control" id="queryEntityIdentifier" name="identifier" placeholder="<?php Functions::printl('query_entity_identifier_placeholder'); ?>" required autocomplete="off">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                    <button type="submit" class="fw-btn fw-btn-primary"><i class="bi bi-search"></i> <?php Functions::printl('query_entity_submit'); ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<?php
+    if (ViewAuthorization::canManageRecords())
+    {
+        ?>
+<div class="modal fade" id="deleteEntityModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> <?php Functions::printl('delete_entity'); ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="<?php Functions::printRoute('entities'); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                <input type="hidden" name="action" value="delete_entity">
+                <input type="hidden" name="entity_identifier" id="deleteEntityIdentifier">
+                <div class="modal-body text-center">
+                    <p id="deleteEntityText"><?php Functions::printl('delete_entity_confirm', ['address' => '{address}'], false); ?></p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                    <button type="submit" class="fw-btn fw-btn-danger"><?php Functions::printl('confirm_delete'); ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+        <?php
+    }
+?>
