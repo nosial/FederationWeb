@@ -1,0 +1,214 @@
+// Modals + Dropdowns
+
+// ============ Dropdown ============
+.fw-dropdown-menu {
+  border: 1px solid var(--fw-border-default);
+  padding: 4px;
+  background: var(--fw-surface-overlay);
+  min-width: 160px;
+
+  &.show { display: block; }
+}
+
+.fw-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 8px;
+  font-size: $fw-font-size-sm;
+  color: var(--fw-text-primary);
+  transition: all $fw-transition-fast;
+  cursor: pointer;
+
+  i {
+    font-size: 14px;
+    color: var(--fw-text-muted);
+    width: 15px;
+    text-align: center;
+  }
+
+  &:hover {
+    background: var(--fw-surface-alt);
+    color: var(--fw-text-primary);
+    i { color: var(--fw-text-secondary); }
+  }
+
+  &:active {
+    background: rgba($cerulean, 0.08);
+    color: var(--fw-link);
+    i { color: var(--fw-link); }
+  }
+
+  .fw-report-badge {
+    margin-left: auto;
+    line-height: 1;
+  }
+}
+
+.fw-dropdown-divider {
+  margin: 3px 0;
+  border-color: var(--fw-border-light);
+}
+
+// ============ Autocomplete ============
+.fw-autocomplete {
+  position: relative;
+
+  .fw-autocomplete-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 3px;
+    background: var(--fw-surface-overlay);
+    border: 1px solid var(--fw-border-default);
+    max-height: 240px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1060;
+
+    &.open { display: block; }
+
+    .fw-autocomplete-item {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      padding: 6px 10px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--fw-border-light);
+      font-size: $fw-font-size-sm;
+
+      &:last-child { border-bottom: none; }
+
+      .fw-autocomplete-item-title {
+        font-weight: 500;
+        color: var(--fw-text-heading);
+      }
+
+      .fw-autocomplete-item-desc {
+        font-size: $fw-font-size-xs;
+        color: var(--fw-text-muted);
+      }
+
+      &.active,
+      &:hover {
+        background: rgba($cerulean, 0.06);
+        .fw-autocomplete-item-title { color: var(--fw-link); }
+      }
+    }
+
+    .fw-autocomplete-empty {
+      color: var(--fw-text-muted);
+      cursor: default;
+      padding: 10px;
+      text-align: center;
+      font-size: $fw-font-size-sm;
+
+      &:hover { background: none; }
+    }
+  }
+}
+
+// ============ Modals ============
+// Operational dialogs: compact, square, and visually subordinate to the record data.
+.modal {
+  --bs-modal-border-radius: 0;
+  --bs-modal-border-color: var(--fw-border-default);
+  --bs-modal-bg: var(--fw-surface-overlay);
+  --bs-modal-color: var(--fw-text-primary);
+  --bs-modal-header-border-color: var(--fw-border-default);
+  --bs-modal-footer-border-color: var(--fw-border-default);
+}
+
+.modal-content {
+  border: 1px solid var(--fw-border-default);
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--fw-surface-overlay);
+  overflow: hidden;
+}
+
+.modal-header {
+  min-height: 38px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--fw-border-default);
+  background: var(--fw-surface-alt);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  .modal-title {
+    font-size: $fw-font-size-sm;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--fw-text-heading);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    line-height: 1.2;
+
+    i {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      background: var(--fw-surface-overlay);
+      border: 1px solid var(--fw-border-default);
+      color: var(--fw-primary);
+    }
+  }
+
+  .btn-close {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+    opacity: .5;
+    background-size: 9px;
+    transition: opacity $fw-transition, background $fw-transition;
+    flex-shrink: 0;
+
+    &:hover {
+      opacity: .9;
+      background-color: var(--fw-border-light);
+    }
+  }
+}
+
+.modal-body {
+  padding: 10px;
+  font-size: $fw-font-size-sm;
+  color: var(--fw-text-primary);
+  background: var(--fw-surface-overlay);
+}
+
+.modal-footer {
+  min-height: 42px;
+  padding: 7px 10px;
+  border-top: 1px solid var(--fw-border-default);
+  background: var(--fw-surface-alt);
+  gap: 6px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-danger .modal-header { border-left: 3px solid $fw-red-500; }
+.modal-warning .modal-header { border-left: 3px solid $fw-amber-500; }
+.modal-success .modal-header { border-left: 3px solid $fw-emerald-500; }
+
+.fw-report-evidence-entry {
+  padding: 10px;
+  margin-bottom: 8px;
+  border: 1px solid var(--fw-border-default);
+  border-radius: 0;
+  background: var(--fw-surface-alt);
+
+  &:last-child { margin-bottom: 0; }
+}
+
