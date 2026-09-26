@@ -1,0 +1,174 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\ReportsView;
+    use WebKernel\ViewAuthorization;
+
+    /** @var ReportsView $reportsView */
+    $reportsView = WebSession::get('reports_view');
+?>
+                                    <table class="fw-table fw-table-hoverable fw-table-nowrap" id="table-reports">
+                                        <thead>
+                                            <tr>
+                                                <th><?php Functions::printl('uuid'); ?></th>
+                                                <th><?php Functions::printl('entity'); ?></th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('reports', queryParams: array_merge($reportsView->getBaseQuery(), ['sort_by' => 'incident_type', 'sort_order' => ($reportsView->getSortBy() === 'incident_type' && $reportsView->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('incident_type'); ?>
+                                                        <?php
+                                                            if ($reportsView->getSortBy() === 'incident_type')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($reportsView->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th><?php Functions::printl('status'); ?></th>
+                                                <th><?php Functions::printl('submitting_operator'); ?></th>
+                                                <th><?php Functions::printl('assigned_operator'); ?></th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('reports', queryParams: array_merge($reportsView->getBaseQuery(), ['sort_by' => 'created', 'sort_order' => ($reportsView->getSortBy() === 'created' && $reportsView->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('created'); ?>
+                                                        <?php
+                                                            if ($reportsView->getSortBy() === 'created')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($reportsView->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('reports', queryParams: array_merge($reportsView->getBaseQuery(), ['sort_by' => 'updated', 'sort_order' => ($reportsView->getSortBy() === 'updated' && $reportsView->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('updated'); ?>
+                                                        <?php
+                                                            if ($reportsView->getSortBy() === 'updated')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($reportsView->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th class="fw-col-actions"><?php Functions::printl('actions'); ?></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                                if ($reportsView->getReports() === null)
+                                                {
+                                                    ?>
+                                                    <tr>
+                                                        <td colspan="9">
+                                                            <div class="fw-empty">
+                                                                <i class="bi bi-exclamation-circle"></i>
+                                                                <p><?php Functions::printl('error_loading'); ?></p>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                }
+                                                elseif (empty($reportsView->getReports()))
+                                                {
+                                                    ?>
+                                                    <tr>
+                                                        <td colspan="9">
+                                                            <div class="fw-empty">
+                                                                <i class="bi bi-flag"></i>
+                                                                <p><?php Functions::printl('no_reports'); ?></p>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                }
+                                                else
+                                                {
+                                                    foreach ($reportsView->getReports() as $report)
+                                                    {
+                                                        ?>
+                                                        <tr class="fw-row-link" data-href="<?php Functions::printRoute('report_detail', ['report_uuid' => $report->getUuid()]); ?>">
+                                                            <td><span class="fw-uuid"><?php Functions::print($report->getUuid()); ?></span><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($report->getUuid()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></td>
+                                                            <td>
+                                                                <?php
+                                                                    $reportingEntity = $report->getReportingEntity();
+                                                                    if ($reportingEntity !== null)
+                                                                    {
+                                                                        ?>
+                                                                        <a href="<?php Functions::printRoute('entity_detail', ['entity_id' => $reportingEntity]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($reportsView->getEntityAddress($reportingEntity) ?? $reportingEntity); ?></a>
+                                                                        <button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($reportingEntity); ?>" title="Copy"><i class="bi bi-clipboard"></i></button>
+                                                                        <?php
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        ?><span class="fw-uuid">—</span><?php
+                                                                    }
+                                                                ?>
+                                                            </td>
+                                                            <td><span class="fw-badge <?php Functions::print($reportsView->getIncidentBadge($report->getIncidentType())); ?>"><?php Functions::printl('incident_' . strtolower($report->getIncidentType()->value)); ?></span></td>
+                                                            <td>
+                                                                <?php
+                                                                    if ($report->isOpened())
+                                                                    {
+                                                                        ?><span class="fw-dot amber"></span> <?php Functions::printl('open'); ?><?php
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        ?><span class="fw-dot green"></span> <?php Functions::printl('closed'); ?><?php
+                                                                    }
+                                                                ?>
+                                                            </td>
+                                                            <td>
+                                                                <?php $submittingOperator = $report->getSubmittingOperator(); ?>
+                                                                <a href="<?php Functions::printRoute('operator_detail', ['operator_id' => $submittingOperator]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($reportsView->getOperatorName($submittingOperator) ?? $submittingOperator); ?></a>
+                                                                <button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($submittingOperator); ?>" title="Copy"><i class="bi bi-clipboard"></i></button>
+                                                            </td>
+                                                            <td>
+                                                                <?php
+                                                                    $assignedOperator = $report->getAssignedOperator();
+                                                                    if ($assignedOperator !== null)
+                                                                    {
+                                                                        ?>
+                                                                        <a href="<?php Functions::printRoute('operator_detail', ['operator_id' => $assignedOperator]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($reportsView->getOperatorName($assignedOperator) ?? $assignedOperator); ?></a>
+                                                                        <button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($assignedOperator); ?>" title="Copy"><i class="bi bi-clipboard"></i></button>
+                                                                        <?php
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        ?><span class="fw-uuid">—</span><?php
+                                                                    }
+                                                                ?>
+                                                            </td>
+                                                            <td><span class="fw-uuid"><?php Functions::print($reportsView->formatDate($report->getCreated())); ?></span></td>
+                                                            <td>
+                                                                <?php
+                                                                    if ($report->getUpdated() !== null)
+                                                                    {
+                                                                        ?><span class="fw-uuid"><?php Functions::print($reportsView->formatDate($report->getUpdated())); ?></span><?php
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        ?><span class="fw-uuid">—</span><?php
+                                                                    }
+                                                                ?>
+                                                            </td>
+                                                            <td>
+                                                                <div class="fw-table-actions">
+                                                                    <a href="<?php Functions::printRoute('report_detail', ['report_uuid' => $report->getUuid()]); ?>" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('view'); ?>"><i class="bi bi-box-arrow-up-right"></i></a>
+                                                                    <a href="<?php Functions::printRoute('report_detail', ['report_uuid' => $report->getUuid()]); ?>" target="_blank" rel="noopener" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('open_in_new_tab'); ?>"><i class="bi bi-box-arrow-in-up-right"></i></a>
+                                                                    <?php
+                                                                        if (ViewAuthorization::canManageRecords())
+                                                                        {
+                                                                            if (ViewAuthorization::canCloseReport($report))
+                                                                            {
+                                                                                ?><button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('close_report'); ?>" data-bs-toggle="modal" data-bs-target="#closeReportModal" data-uuid="<?php Functions::print($report->getUuid()); ?>"><i class="bi bi-check-circle"></i></button><?php
+                                                                            }
+                                                                            ?><button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('delete_report'); ?>" data-bs-toggle="modal" data-bs-target="#deleteReportModal" data-uuid="<?php Functions::print($report->getUuid()); ?>"><i class="bi bi-trash"></i></button><?php
+                                                                        }
+                                                                    ?>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <?php
+                                                    }
+                                                }
+                                            ?>
+                                        </tbody>
+                                    </table>
