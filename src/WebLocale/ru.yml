@@ -1,0 +1,743 @@
+global:
+  nav_dashboard: Панель управления
+  operators: Операторы
+  entities: Сущности
+  known_entities: Известные сущности
+  evidence_records: Записи доказательств
+  blacklist_records: Записи чёрного списка
+  audit_log_records: Записи журнала аудита
+  reports: Отчёты
+  report: Отчёт
+  audit_log: Журнал аудита
+  attachments: Вложения
+  uuid: UUID
+  type: Тип
+  status: Статус
+  created: Создано
+  updated: Обновлено
+  timestamp: Метка времени
+  message: Сообщение
+  name: Имя
+  actions: Действия
+  enabled: Включено
+  disabled: Отключено
+  active: Активен
+  'yes': 'Да'
+  'no': 'Нет'
+  open: Открыт
+  closed: Закрыт
+  view: Просмотр
+  view_all: Посмотреть все
+  open_in_new_tab: Открыть в новой вкладке
+  back: Назад
+  cancel: Отмена
+  confirm_delete: Удалить
+  print_page: Печать
+  classification: Классификация
+  category: Категория
+  tag: Тег
+  expires: Истекает
+  incident_type: Тип инцидента
+  incident_malware: Вредоносное ПО
+  incident_illegal_content: Нелегальный контент
+  incident_phishing: Фишинг
+  incident_scam: Мошенничество
+  incident_service_abuse: Злоупотребление сервисом
+  incident_spam: Спам
+  incident_other: Другое
+  entity: Сущность
+  operator: Оператор
+  address: Адрес
+  related_records: Связанные записи
+  columns: Столбцы
+  detail_message: Сообщение
+  detail_metadata: Метаданные
+  document_generated: Документ сгенерирован
+  entity_blacklist: Чёрный список сущности
+  entity_evidence: Доказательства сущности
+  entity_reports: Отчёты сущности
+  evidence: Доказательства
+  filter_all_categories: Все категории
+  filter_placeholder: Поиск по UUID, сущности или оператору...
+  filter_reset: Сбросить
+  modal_delete_confirm_prefix: Вы уверены, что хотите удалить
+  modal_delete_confirm_suffix: Это действие нельзя отменить.
+  modal_edit_save: Сохранить изменения
+  new_report_title: Отправить отчёт
+  new_report_add_files: Добавить файлы
+  new_report_content_label: Содержание
+  new_report_entity_label: Сообщающая сущность
+  new_report_entity_new_label: Или укажите новую сущность
+  new_report_entity_select: Выберите существующую сущность или укажите новую
+  new_report_entity_placeholder: Введите адрес сущности или UUID для поиска...
+  new_report_evidence_tag_label: Тег доказательства (необязательно)
+  new_report_evidence_records_label: Записи доказательств
+  new_report_add_evidence: Добавить доказательство
+  new_report_remove_evidence: Удалить доказательство
+  new_report_files_help: Выберите один или несколько файлов для прикрепления в качестве доказательства
+  new_report_files_label: Прикреплённые файлы (необязательно)
+  new_report_select_type: -- Выберите тип инцидента --
+  new_report_submit: Отправить отчёт
+  create_entity_help: Сущность будет зарегистрирована в базе данных федерации.
+  next: Вперед
+  no_audit_logs: Записи в журнале аудита не найдены
+  no_audit_records: Нет записей в журнале аудита
+  no_blacklist: Записи в чёрном списке не найдены
+  no_blacklist_records: Нет записей в чёрном списке
+  no_evidence: Доказательства не найдены
+  no_evidence_records: Нет записей доказательств
+  no_report_records: Нет записей отчётов
+  previous: Назад
+  print_footer_brand: Панель управления FederationWeb
+  print_footer_subtitle: Официальный документ проверки
+  print_server_info: Сервер федерации
+  print_record_list: Список записей
+  print_filters: Фильтры
+  print_filters_none: Фильтры не применены
+  print_filter_search: Поиск
+  print_filter_category: Категория
+  print_filter_status: Статус
+  print_filter_permissions: Права доступа
+  print_filter_operator: Оператор
+  print_filter_entity: Сущность
+  print_filter_assigned_operator: Назначенный оператор
+  print_filter_sort: Сортировка
+  print_sort_asc: По возрастанию
+  print_sort_desc: По убыванию
+  expired: Истёк
+  detail_confidential: Конфиденциально
+  detail_tag: Тег
+  error_label: Ошибка
+  csrf_failed: Форма устарела. Пожалуйста, попробуйте снова.
+  reputation: Репутация
+  search_placeholder: Поиск записей...
+  status_active: Активен
+  status_lifted: Снят
+  submit_evidence: Отправить доказательство
+  language: Язык
+  language_select_title: Выберите язык
+  api_version: Версия API
+  assigned: Назначено
+  confidential: Конфиденциально
+  back_to_login: Авторизоваться
+  go_back: Вернуться
+  retry: Повторить
+  blacklist: Чёрный список
+  in_label: В
+  file_size_b: Б
+  file_size_kb: КБ
+  file_size_mb: МБ
+  file_too_large: Файл превышает максимальный размер загрузки
+  no_file_selected: Файл не выбран
+  upload_failed: Сбой загрузки с кодом ошибки
+  searching: Поиск...
+  no_entities_found: Сущности не найдены
+  no_operators_found: Операторы не найдены
+  no_evidence_found: Доказательства не найдены
+  no_reports_found: Отчёты не найдены
+  no_blacklist_found: Записи в чёрном списке не найдены
+  no_audit_logs_found: Записи в журнале аудита не найдены
+  overdue: Просрочено
+  permanent: Бессрочно
+  deprecated: Устарело
+  required_label: Обязательно
+  schemas: Схемы
+  component_schemas: схемы компонентов
+  spec_title: Название
+  spec_terms_of_service: Условия использования
+  spec_contact: Контакты
+  spec_license: Лицензия
+  spec_servers: Серверы
+  spec_external_docs: Внешняя документация
+  app_name: FederationWeb
+  anonymous: Анонимно
+  no_message: Нет сообщения
+  none: Нет
+  unknown_file: Неизвестный файл
+  unknown_type: Неизвестный тип
+  audit_log_entry: Запись журнала аудита
+  null_label: 'null'
+  true_label: 'true'
+  false_label: 'false'
+  classification_prefix: 'Классификация: '
+  entity_prefix: 'Сущность: '
+  auto_assign: Автоназначение
+  permissions: Права доступа
+  perm_client: Клиент
+  perm_blacklist: Управление
+  perm_operators: Операторы
+  detail_host: Хост
+  detail_whitelisted: В белом списке
+  detail_note: Заметка
+  detail_report: Связанный отчёт
+  detail_text_content: Текстовое содержимое
+  detail_timestamp: Метка времени
+  detail_operator: Оператор
+  detail_entity: Сущность
+  detail_blacklist: Связанный чёрный список
+  detail_evidence: Связанные доказательства
+  detail_file_attachment: Прикреплённый файл
+  download_attachment: Скачать
+  evidence_submit_failed: Не удалось отправить доказательство
+  view_operator: Просмотреть оператора
+  created_prefix: ' · Создано '
+  spec_search_placeholder: Поиск эндпоинтов, схем, путей...
+  example_entity_address: напр. example.com:user123
+  new_report_content_placeholder: Вставьте содержимое доказательства или опишите инцидент
+  remove: Удалить
+  modal_edit_metadata_value_placeholder: Значение
+  copy: Копировать
+  new_report_tag_placeholder: напр. phishing-url-001
+  api_specification: Спецификация API
+  assigned_operator: Назначенный оператор
+  automated: Автоматизировано
+  detail_lifted_by: Снято оператором
+  entity_unavailable: Данные сущности недоступны
+  failed_blacklist_records: Не удалось загрузить записи чёрного списка
+  failed_evidence_records: Не удалось загрузить записи доказательств
+  file_size: Размер
+  id: ID
+  operator_unavailable: Данные оператора недоступны
+  relationship: Связь
+  submitting_operator: Отправивший оператор
+fw_topbar:
+  overview: Обзор
+  page_operators: Операторы
+  page_entities: Сущности
+  record_title: Запись
+  page_search: Поиск
+  sign_out: Выйти
+  search_help: Нажмите Enter для поиска по всем записям
+  search_no_results: Результаты не найдены
+  search_view_all: Посмотреть все результаты
+  dark_mode_light: Светлая тема
+  dark_mode_dark: Тёмная тема
+dashboard:
+  page_title: '{server_name} - Панель управления'
+  back: Назад в панель управления
+  server_status: Статус сервера
+  server_name_label: Имя сервера
+  api_version_label: Версия API
+  online: В сети
+  total_records: Всего записей
+  registered_operators: Зарегистрированные операторы
+  public_visibility: Публичный доступ
+  reports_title: Отчёты
+  file_attachments: Вложения
+  record_counts: Количество записей
+  public: Публичный
+  public_audit_logs: Журналы аудита
+  public_evidence: Доказательства
+  public_blacklist: Чёрный список
+  public_entities: Известные сущности
+  public_reports: Отчёты
+  public_entity_metadata: Метаданные сущности
+  public_scan_content: Сканирование содержимого
+  public_query_entity: Запрос сущности
+  search_capabilities: Поиск
+  search_enabled: Поиск включен
+  public_search: Публичный поиск
+  enabled_search_types: Включённые типы поиска
+  public_search_types: Публичные типы поиска
+  recent_activity: Последняя активность аудита
+  top_threats: Основные угрозы
+  recent_evidence: Последние доказательства
+  blacklist_records: Чёрный список
+  incident_distribution: Распределение записей
+  activity_feed: Лента активности
+  audit_log_visibility: Видимость журнала аудита
+  entity_name: Сущность
+  no_top_threats: Угрозы не выявлены
+  failed_audit_logs: Не удалось загрузить журналы аудита
+  failed_top_threats: Не удалось загрузить угрозы
+  failed_evidence: Не удалось загрузить доказательства
+  api_summary: Сводка API
+  api_endpoints: Эндпоинты API
+  parameters_label: Параметры
+  request_body: Тело запроса
+  responses: Ответы
+  description_label: Описание
+  specification_raw: Исходная спецификация
+  endpoints_grouped_by_tag: Эндпоинты, сгруппированные по тегам
+  no_endpoints: Эндпоинты не определены
+  operational_overview: Оперативный обзор
+  public_overview: Публичный обзор
+  server_configuration: Конфигурация сервера
+  no_schemas: Схемы компонентов не определены
+  spec_load_failed: Не удалось загрузить спецификацию API
+  endpoint_count: 'Эндпоинтов: {count}'
+  endpoint_count_single: 1 эндпоинт
+404:
+  page_title: 404 Не найдено
+  error_code: Страница не найдена
+  error_description: Запрашиваемый ресурс не найден
+500:
+  page_title: 500 Внутренняя ошибка сервера
+  error_code: Внутренняя ошибка сервера
+  error_description: Произошла непредвиденная ошибка при обработке запроса
+authenticate:
+  page_title: '{server_name} - Авторизация'
+  form_title: Авторизация
+  form_subtitle: Подключитесь к вашему серверу федерации
+  server_host_label: Хост сервера
+  server_host_placeholder: https://federation.example.com
+  server_host_locked: Настроено администратором
+  access_token_label: Токен доступа
+  access_token_placeholder: Введите ваш токен доступа
+  access_token_optional: Оставьте пустым для анонимного подключения
+  access_token_required: Требуется аутентификация
+  submit_button: Авторизоваться
+  error_required: Пожалуйста, введите ваш токен доступа
+  error_invalid: Недействительный токен доступа. Пожалуйста, попробуйте снова.
+  error_disabled: Доступ отключен.
+  error_generic: Произошла ошибка. Пожалуйста, попробуйте снова.
+  error_server_unreachable: Не удалось подключиться к указанному серверу. Проверьте URL хоста.
+  server_name_fallback: Сервер федерации
+  error_anonymous_disabled: Анонимный доступ запрещён. Пожалуйста, укажите токен доступа.
+operators:
+  page_title: Операторы
+  heading: Операторы
+  subtitle: Управление операторами федерации и их правами доступа
+  showing_operators: 'Показано с {start} по {end} из {total} операторов'
+  back: Назад к операторам
+  record_title: Запись оператора
+  record_detail: Данные оператора
+  no_operators: Операторы не найдены
+  error_loading: Не удалось загрузить операторов. Пожалуйста, попробуйте снова.
+  error_loading_entry: Не удалось загрузить оператора. Возможно, он не существует или у вас нет прав на его просмотр.
+  filter_all_status: Любой статус
+  filter_all_permissions: Все права
+  access_token: Токен доступа
+  present: Присутствует
+  disabled_yes: Отключен
+  token_generated: Токен сгенерирован
+  related_summary: Связанная сводка
+  no_related_data: У этого оператора нет отправленных отчётов, доказательств, записей в чёрном списке или действий в журнале аудита.
+  create_operator: Создать оператора
+  edit_operator: Редактировать оператора
+  delete_operator: Удалить оператора
+  enable_operator: Включить
+  disable_operator: Отключить
+  generate_token: Сгенерировать токен доступа
+  set_permissions: Настроить права доступа
+  create_operator_heading: Новый оператор
+  create_operator_name_label: Имя оператора
+  create_operator_name_placeholder: Введите имя оператора
+  create_operator_help: Имя должно быть уникальным в пределах всей федерации.
+  modal_disable_title: Отключить оператора
+  modal_enable_title: Включить оператора
+  modal_disable_info: Отключение этого оператора заблокирует ему доступ к федерации. Его можно будет повторно включить в любое время.
+  modal_enable_info: Включение этого оператора восстановит его доступ к федерации.
+  modal_disable_confirm: Вы уверены, что хотите отключить
+  modal_enable_confirm: Вы уверены, что хотите включить
+  modal_disable_confirm_btn: Отключить оператора
+  modal_enable_confirm_btn: Включить оператора
+  modal_edit_title: Редактировать оператора
+  modal_edit_name_label: Имя оператора
+  modal_token_title: Сгенерировать токен доступа
+  modal_token_label: Новый токен
+  modal_token_generate: Сгенерировать новый токен
+  modal_close: Закрыть
+  modal_permissions_title: Настроить права доступа
+  modal_permissions_operator_name: Оператор
+  modal_permissions_operator_desc: Управление операторами и токенами доступа
+  modal_permissions_client_name: Клиент
+  modal_permissions_client_desc: Отправка отчётов и доказательств
+  modal_permissions_management_name: Управление
+  modal_permissions_management_desc: Управление отчётами, сущностями, доказательствами и чёрным списком
+  modal_permissions_save: Сохранить права доступа
+  delete_operator_confirm: 'Вы уверены, что хотите удалить "{name}"? Это действие нельзя отменить.'
+  profile_active_since: 'Активен с {date}'
+  operator_records: 'Записи: {count}'
+  operator_entries: 'Записи: {count}'
+  modal_delete_title: Удалить оператора
+  modal_delete_info: Удаление этого оператора навсегда удалит его учётную запись и аннулирует все сессии. Это действие нельзя отменить.
+  operator_created: Оператор успешно создан
+  operator_updated: Оператор успешно обновлён
+  operator_deleted: Оператор успешно удалён
+  operator_enabled: Оператор успешно включён
+  operator_disabled: Оператор успешно отключён
+  api_key_refreshed: Токен доступа успешно обновлён
+  permission_updated: Права доступа успешно обновлены
+  operator_created_failed: Не удалось создать оператора
+  operator_delete_failed: Не удалось удалить оператора
+  operator_enable_failed: Не удалось включить оператора
+  operator_disable_failed: Не удалось отключить оператора
+  operator_rename_failed: Не удалось переименовать оператора
+  api_key_refresh_failed: Не удалось обновить токен доступа
+  permission_update_failed: Не удалось обновить права доступа
+  enable_auto_assign: Включить автоназначение
+  disable_auto_assign: Отключить автоназначение
+  modal_auto_assign_title: Переключить автоназначение
+  modal_auto_assign_enable_info: Включение автоназначения позволяет автоматически закреплять отчёты за этим оператором.
+  modal_auto_assign_disable_info: Отключение автоназначения предотвращает автоматическое закрепление отчётов за этим оператором.
+  modal_auto_assign_confirm: Вы уверены, что хотите изменить автоназначение для
+  modal_auto_assign_enable_btn: Включить автоназначение
+  modal_auto_assign_disable_btn: Отключить автоназначение
+  auto_assign_enabled: Автоназначение успешно включено
+  auto_assign_disabled: Автоназначение успешно отключено
+  auto_assign_update_failed: Не удалось обновить статус автоназначения
+  submitted_reports: Отправленные отчёты
+  assigned_reports: Назначенные отчёты
+  latest_audit_activity: Последняя активность аудита
+  latest_report: Последний отчёт
+  latest_evidence: Последняя запись доказательства
+  latest_blacklist: Последняя запись чёрного списка
+  failed_audit_logs: Не удалось загрузить записи журнала аудита для этого оператора.
+  failed_reports: Не удалось загрузить записи отчётов для этого оператора.
+  failed_evidence: Не удалось загрузить записи доказательств для этого оператора.
+  failed_blacklist: Не удалось загрузить записи чёрного списка для этого оператора.
+entities:
+  page_title: Сущности
+  heading: Известные сущности
+  subtitle: Просмотр и управление известными сущностями федерации
+  showing_entities: 'Показано с {start} по {end} из {total} сущностей'
+  back: Назад к сущностям
+  record_title: Запись сущности
+  record_detail: Данные сущности
+  no_entities: Сущности не найдены
+  error_loading: Не удалось загрузить сущности. Пожалуйста, попробуйте снова.
+  error_loading_entry: Не удалось загрузить сущность. Возможно, она не существует или у вас нет прав на её просмотр.
+  filter_whitelisted: В белом списке
+  filter_not_whitelisted: Не в белом списке
+  filter_with_relationship: Со связью
+  filter_without_relationship: Без связи
+  host: Хост
+  whitelisted: В белом списке
+  detail_heading: Данные сущности
+  detail_hash: Хеш SHA-256
+  detail_relationship: Связь
+  detail_reputation_last_updated: Репутация последний раз обновлялась
+  reputation_score: Оценка репутации
+  reputation_range: 'Диапазон: от -1000 до 1000'
+  threat_summary: Сводка угроз
+  reports_count: Отчёты
+  evidence_count: Доказательства
+  blacklist_count: Чёрный список
+  relationship_alternative: Альтернатива
+  relationship_proxy: Прокси
+  relationship_child: Дочерняя
+  table_incident_type: Тип инцидента
+  edit_entity: Редактировать сущность
+  whitelist_entity: Добавить в белый список
+  unwhitelist_entity: Удалить из белого списка
+  blacklist_entity: Внести сущность в чёрный список
+  set_relationship: Установить связь
+  clear_relationship: Удалить связь
+  clear_reputation: Очистить репутацию
+  delete_entity: Удалить сущность
+  create_entity: Добавить сущность
+  create_entity_heading: Добавить новую сущность
+  create_entity_host_label: Хост
+  create_entity_host_placeholder: example.com
+  create_entity_id_label: Локальный ID (необязательно)
+  create_entity_id_placeholder: user@ или оставьте пустым только для домена
+  create_entity_metadata_label: Метаданные (JSON, необязательно)
+  query_entity: Запросить сущность
+  query_entity_help: Запросите сущность по её UUID, идентификатору SHA-256 или адресу сущности, чтобы просмотреть её группу связей и активные записи чёрного списка.
+  query_entity_identifier_label: Идентификатор сущности
+  query_entity_identifier_placeholder: UUID, хеш SHA-256 или user@example.com
+  query_entity_submit: Запросить сущность
+  query_entity_results_title: Результаты запроса сущности
+  query_entity_related_entities: Связанные сущности
+  query_entity_active_blacklists: Активные записи чёрного списка
+  query_entity_no_related: Связанные сущности не найдены.
+  query_entity_no_blacklists: Активные записи чёрного списка не найдены.
+  query_entity_error: Не удалось запросить сущность. Проверьте идентификатор и попробуйте снова.
+  modal_edit_title: Редактировать сущность
+  modal_edit_host_label: Хост
+  modal_edit_id_label: Локальный ID
+  modal_edit_metadata_label: Метаданные
+  modal_edit_metadata_key_placeholder: Ключ
+  modal_edit_metadata_add: Добавить запись
+  modal_edit_metadata_no_entries: Нет записей метаданных
+  modal_edit_metadata_type_string: Строка (String)
+  modal_edit_metadata_type_boolean: Логическое (Boolean)
+  modal_edit_metadata_type_integer: Целое число (Integer)
+  modal_edit_metadata_type_null: 'Null'
+  modal_evidence_title: Отправить доказательство
+  modal_evidence_text_label: Текстовое содержимое
+  modal_evidence_note_label: Заметка
+  modal_evidence_tag_label: Тег
+  modal_evidence_confidential_label: Отметить как конфиденциальное
+  modal_evidence_submit: Отправить доказательство
+  modal_blacklist_title: Внести сущность в чёрный список
+  modal_blacklist_report_label: UUID отчёта
+  modal_blacklist_type_label: Тип инцидента
+  modal_blacklist_expires_label: Истекает в (необязательно)
+  modal_blacklist_expires_help: Оставьте пустым для бессрочного чёрного списка. Выбранное местное время отправляется как точная метка времени Unix.
+  modal_blacklist_expires_placeholder: Выберите срок действия
+  modal_blacklist_expires_clear: Бессрочно
+  modal_blacklist_expires_apply: Применить срок действия
+  modal_blacklist_submit: Внести в чёрный список
+  modal_relationship_title: Установить связь
+  modal_relationship_target_label: 'Целевая сущность (UUID, хеш или адрес)'
+  modal_relationship_type_label: Тип связи
+  modal_relationship_set: Установить связь
+  modal_clear_relationship_title: Удалить связь
+  modal_clear_relationship_info: Это действие удалит связь между этой сущностью и связанной с ней сущностью.
+  modal_clear_relationship_confirm: 'Вы уверены, что хотите удалить связь для {address}?'
+  modal_clear_relationship_btn: Удалить связь
+  modal_clear_reputation_title: Очистить репутацию
+  modal_clear_reputation_info: Это действие сбросит оценку репутации этой сущности до нуля.
+  modal_clear_reputation_btn: Очистить репутацию
+  modal_clear_reputation_confirm: 'Вы уверены, что хотите очистить репутацию для {address}?'
+  modal_whitelist_title: Изменить статус белого списка
+  modal_whitelist_info: 'Вы уверены, что хотите изменить статус белого списка для {address}?'
+  modal_whitelist_confirm_remove: Удалить из белого списка
+  modal_whitelist_confirm_add: Добавить в белый список
+  delete_entity_confirm: 'Вы уверены, что хотите удалить "{address}"? Это действие нельзя отменить.'
+  modal_delete_info: Удаление этой сущности навсегда удалит её из базы данных федерации.
+  entity_created: Сущность успешно создана
+  entity_deleted: Сущность успешно удалена
+  entity_updated: Сущность успешно обновлена
+  entity_whitelisted: Сущность успешно добавлена в белый список
+  entity_unwhitelisted: Сущность успешно удалена из белого списка
+  evidence_submitted: Доказательство успешно отправлено
+  entity_blacklisted: Сущность успешно внесена в чёрный список
+  relationship_set: Связь успешно установлена
+  relationship_cleared: Связь успешно удалена
+  reputation_cleared: Репутация успешно очищена
+  entity_created_failed: Не удалось создать сущность
+  entity_delete_failed: Не удалось удалить сущность
+  entity_updated_failed: Не удалось обновить сущность
+  entity_whitelist_failed: Не удалось обновить статус белого списка
+  entity_blacklist_failed: Не удалось внести сущность в чёрный список
+  relationship_set_failed: Не удалось установить связь
+  relationship_clear_failed: Не удалось удалить связь
+  reputation_clear_failed: Не удалось очистить репутацию
+  relationship_target: Цель связи
+  relationship_target_missing: Не удалось загрузить запись связанной сущности.
+  relationship_none: У этой сущности не настроены связи.
+  primary_operator: Основной оператор
+  primary_operator_none: Ни один оператор ещё не взаимодействовал с этой сущностью.
+  primary_operator_missing: Не удалось загрузить запись оператора.
+  primary_operator_records: Связанные записи
+reports:
+  page_title: Отчёты
+  heading: Отчёты
+  subtitle: Просмотр и управление отчётами об инцидентах
+  showing_reports: 'Показано с {start} по {end} из {total} отчётов'
+  back: Назад к отчётам
+  record_title: Отчёт
+  record_detail: Данные отчёта
+  no_reports: Отчёты не найдены
+  error_loading: Не удалось загрузить отчёты. Пожалуйста, попробуйте снова.
+  error_loading_entry: Не удалось загрузить отчёт. Возможно, он не существует или у вас нет прав на его просмотр.
+  filter_opened: Открыт
+  filter_closed: Закрыт
+  filter_automated: Автоматизировано
+  filter_unassigned: Не назначено
+  filter_assigned: Назначено
+  reporting_entity: Сообщающая сущность
+  report_updated: Обновлено
+  detail_heading: Данные отчёта
+  detail_automated: Автоматически сгенерировано
+  related_evidence: Связанные доказательства
+  blacklist_records: Чёрный список
+  audit_log_records: Журнал аудита
+  evidence_records: Доказательства
+  no_evidence_records: К этому отчёту не привязаны записи доказательств
+  no_assigned_operator: Оператор не назначен
+  close_report: Закрыть отчёт
+  delete_report: Удалить отчёт
+  assign_operator: Назначить оператора
+  modal_close_title: Закрыть отчёт
+  modal_close_info: Закрытие этого отчёта отметит его как решённый. Вы можете необязательно указать классификацию.
+  modal_close_classification_label: Классификация
+  modal_close_classification_none: Без классификации
+  modal_close_classification_malicious: Вредоносный
+  modal_close_classification_suspicious: Подозрительный
+  modal_close_classification_normal: Нормальный
+  modal_close_confirm: Закрыть отчёт
+  modal_delete_title: Удалить отчёт
+  modal_delete_info: Удаление этого отчёта навсегда удалит его из базы данных. Это действие нельзя отменить.
+  modal_assign_title: Назначить оператора на отчёт
+  modal_assign_info: Выберите оператора для назначения на этот отчёт.
+  modal_assign_select_label: Оператор
+  modal_assign_select_placeholder: Выберите оператора...
+  modal_assign_confirm: Назначить
+  report_closed: Отчёт успешно закрыт
+  report_deleted: Отчёт успешно удалён
+  report_submitted: Отчёт успешно отправлен
+  operator_assigned: Оператор успешно назначен
+  report_close_failed: Не удалось закрыть отчёт
+  report_delete_failed: Не удалось удалить отчёт
+  operator_assign_failed: Не удалось назначить оператора
+  failed_audit_log_records: Не удалось загрузить записи журнала аудита
+  failed_entity_reports: Не удалось загрузить связанные отчёты
+  mime: MIME-тип
+  size: Размер
+evidence:
+  page_title: Записи доказательств
+  heading: Записи доказательств
+  subtitle: Просмотр и управление записями доказательств, отправленными операторами
+  showing_evidence: 'Показано с {start} по {end} из {total} доказательств'
+  back: Назад к записям доказательств
+  record_title: Запись доказательства
+  record_detail: Данные записи
+  error_loading: Не удалось загрузить записи доказательств. Пожалуйста, попробуйте снова.
+  error_loading_entry: Не удалось загрузить запись доказательства. Возможно, она не существует или у вас нет прав на её просмотр.
+  filter_all_categories: Все классификации
+  filter_confidential: Конфиденциально
+  filter_not_confidential: Не конфиденциально
+  filter_classified: С классификацией
+  filter_unclassified: Без классификации
+  detail_heading: Данные доказательства
+  delete_evidence: Удалить доказательство
+  mark_confidential: Отметить как конфиденциальное
+  remove_confidential: Снять метку конфиденциальности
+  update_tag: Обновить тег
+  add_to_report: Привязать к отчёту
+  upload_attachment: Загрузить вложение
+  delete_attachment: Удалить вложение
+  no_attachments_desc: К этой записи доказательства не прикреплено ни одного файла.
+  upload_attachment_modal_title: Загрузить вложение
+  upload_attachment_modal_desc: Выберите файл для прикрепления к этой записи доказательства
+  upload_attachment_modal_file_label: Файл
+  upload_attachment_modal_confirm: Загрузить
+  delete_attachment_modal_title: Удалить вложение
+  delete_attachment_modal_info: Удаление этого вложения навсегда удалит файл. Это действие нельзя отменить.
+  delete_attachment_modal_confirm_prefix: Вы уверены, что хотите удалить
+  delete_attachment_modal_confirm_suffix: Это действие нельзя отменить.
+  status_summary: Сводка статуса
+  modal_submit_title: Отправить доказательство
+  modal_submit_entity_label: Идентификатор сущности
+  modal_submit_entity_placeholder: UUID, хеш или адрес сущности
+  modal_submit_text_label: Текстовое содержимое
+  modal_submit_note_label: Заметка (необязательно)
+  modal_submit_tag_label: Тег (необязательно)
+  modal_submit_confidential_label: Отметить как конфиденциальное
+  modal_submit_confirm: Отправить доказательство
+  modal_delete_title: Удалить доказательство
+  modal_delete_info: Удаление этой записи доказательства навсегда удалит её из базы данных. Это действие нельзя отменить.
+  modal_tag_title: Обновить тег
+  modal_tag_label: Тег
+  modal_tag_placeholder: Введите тег
+  modal_tag_save: Сохранить тег
+  modal_report_title: Привязать к отчёту
+  modal_report_label: UUID отчёта
+  modal_report_placeholder: Введите UUID отчёта
+  modal_report_confirm: Привязать доказательство
+  evidence_deleted: Доказательство успешно удалено
+  confidential_set: Доказательство отмечено как конфиденциальное
+  confidential_unset: С доказательства снята метка конфиденциальности
+  tag_updated: Тег успешно обновлён
+  evidence_added_to_report: Доказательство успешно привязано к отчёту
+  upload_attachment_success: Вложение успешно загружено
+  delete_attachment_success: Вложение успешно удалено
+  attachment_download_failed: Не удалось скачать вложение
+  evidence_delete_failed: Не удалось удалить доказательство
+  confidential_toggle_failed: Не удалось изменить статус конфиденциальности
+  tag_update_failed: Не удалось обновить тег
+  evidence_add_to_report_failed: Не удалось привязать доказательство к отчёту
+  upload_attachment_failed: Не удалось загрузить вложение
+  delete_attachment_failed: Не удалось удалить вложение
+  blacklist_unavailable: Данные чёрного списка недоступны
+  derived_blacklist: Производный чёрный список
+  error_loading_attachments: Не удалось загрузить вложения
+  error_loading_audit_logs: Не удалось загрузить записи журнала аудита
+  error_loading_entity_blacklist: Не удалось загрузить записи чёрного списка
+  error_loading_entity_evidence: Не удалось загрузить записи доказательств
+  error_loading_entity_reports: Не удалось загрузить отчёты
+  mime_type: MIME-тип
+  owning_entity: Владеющая сущность
+  parent_report: Родительский отчёт
+  report_unavailable: Данные отчёта недоступны
+blacklist:
+  page_title: Записи чёрного списка
+  heading: Записи чёрного списка
+  subtitle: Просмотр и управление сущностями в чёрном списке
+  showing_blacklist: 'Показано с {start} по {end} из {total} записей'
+  back: Назад к чёрному списку
+  record_title: Запись чёрного списка
+  record_detail: Данные записи чёрного списка
+  confirm_delete: Удалить навсегда
+  error_loading: Не удалось загрузить записи чёрного списка. Пожалуйста, попробуйте снова.
+  error_loading_entry: Не удалось загрузить запись чёрного списка. Возможно, она не существует или у вас нет прав на её просмотр.
+  filter_active: Активные
+  filter_lifted: Снятые
+  filter_expired: Истёкшие
+  filter_permanent: Бессрочные
+  detail_heading: Данные записи чёрного списка
+  no_related_data: Нет доступных связанных записей
+  lift_blacklist: Снять с чёрного списка
+  delete_blacklist: Удалить из чёрного списка
+  extend_blacklist: Продлить
+  modal_lift_info: Вы уверены, что хотите снять эту запись чёрного списка? Сущность больше не будет находиться в чёрном списке.
+  modal_lift_confirm: Снять с чёрного списка
+  modal_delete_info: Удаление этой записи чёрного списка навсегда удалит её из базы данных. Это действие нельзя отменить.
+  modal_extend_title: Продлить пребывание в чёрном списке
+  modal_extend_info: Выберите новую дату и время окончания срока действия этой записи чёрного списка.
+  modal_extend_label: Новый срок действия
+  modal_extend_help: Выбранное местное время преобразуется в метку времени Unix; сервер получает только дополнительное время, необходимое для его достижения.
+  modal_extend_placeholder: Выберите новый срок действия
+  modal_extend_apply: Применить срок действия
+  confirm_extend: Продлить
+  blacklist_lifted: Блокировка в чёрном списке успешно снята
+  blacklist_extended: Срок действия в чёрном списке успешно продлён
+  blacklist_deleted: Запись чёрного списка успешно удалена
+  blacklist_lift_failed: Не удалось снять запись с чёрного списка
+  blacklist_extend_failed: Не удалось продлить запись чёрного списка
+  blacklist_delete_failed: Не удалось удалить запись чёрного списка
+  failed_reports: Не удалось загрузить отчёты
+  failed_audit_records: Не удалось загрузить записи журнала аудита
+  related_evidence: Связанные доказательства
+  mime: MIME-тип
+  size: Размер
+  no_linked_report: К этой записи не привязан отчёт
+  report_unavailable: Данные отчёта недоступны
+audit_log:
+  page_title: Журнал аудита
+  heading: Журнал аудита
+  subtitle: Просмотр и управление записями журнала аудита федерации
+  showing_audit_logs: 'Показано с {start} по {end} из {total} записей'
+  back: Назад к журналу аудита
+  record_title: Запись журнала аудита
+  error_loading: Не удалось загрузить записи журнала аудита. Пожалуйста, попробуйте снова.
+  error_loading_entry: Не удалось загрузить запись журнала аудита. Возможно, она не существует или у вас нет прав на её просмотр.
+  filter_operator_events: События операторов
+  filter_attachment_events: События вложений
+  filter_evidence_events: События доказательств
+  filter_report_events: События отчётов
+  filter_entity_events: События сущностей
+  filter_blacklist_events: События чёрного списка
+  filter_other: Другое
+  detail_heading: Данные журнала аудита
+  summary_heading: Подробности
+  detail_file_name: Имя файла
+  detail_mime: MIME-тип
+  detail_size: Размер
+  related_unavailable: Подробности связанной записи недоступны.
+  related_operator_logs: Активность оператора
+  related_entity_logs: Активность сущности
+search:
+  page_title: Результаты поиска
+  heading: Результаты поиска
+  subtitle: Найдено {count} результат(ов) по запросу "{query}"
+  no_results: 'Результаты по запросу "{query}" не найдены'
+  no_results_desc: Попробуйте использовать другие ключевые слова или проверьте орфографию.
+  search_help: Поиск по сущностям, доказательствам, отчётам, чёрному списку, операторам, журналам аудита и вложениям
+  search_empty: Введите поисковый запрос для поиска записей
+  search_empty_desc: Поиск по всем типам записей в федерации
+  error_loading: Не удалось выполнить поиск. Пожалуйста, попробуйте снова.
+  search_button: Найти
+  clear_button: Очистить
+  page_info: 'Страница {page}'
+  error_short_query: Введите не менее двух символов для поиска
+  result_entity: Сущность
+  result_evidence: Доказательство
+  result_report: Отчёт
+  result_blacklist: Чёрный список
+  result_operator: Оператор
+  result_audit_log: Журнал аудита
+  result_attachment: Вложение
+  file_name: Имя
+  mime_type: MIME-тип
+configuration_error:
+  page_title: Ошибка конфигурации
+  error_code: Ошибка
+  error_subtitle: Произошла ошибка конфигурации
+  server_unavailable: Сервер федерации в настоящее время недоступен. Убедитесь, что он запущен, и попробуйте снова.
+  missing_configuration: Не удалось запустить сервер федерации из-за отсутствия параметров конфигурации. Дополнительные сведения см. в журналах.
+  unknown_error: Произошла неизвестная ошибка при попытке запуска веб-приложения. Дополнительные сведения см. в журналах.
