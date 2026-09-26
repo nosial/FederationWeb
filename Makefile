@@ -6,8 +6,6 @@ target/release/net.nosial.federationweb.ncc:
 target/web_release/net.nosial.federationweb.ncc:
 	ncc build --configuration web_release --log-level debug
 
-
-
 docker-build:
 	docker build -t net.nosial.federationweb:1.0.0 .
 
@@ -23,9 +21,12 @@ docker-restart:
 docker-logs:
 	docker compose logs -f
 
-clean:
-	rm -f target/debug/net.nosial.federationweb.ncc
-	rm -f target/release/net.nosial.federationweb.ncc
-	rm -f target/web_release/net.nosial.federationweb.ncc
+configure:
+	ncc project stubs
 
-.PHONY: all install clean docker-build docker-up docker-down docker-restart docker-logs
+clean:
+	npm run clean
+	rm -rf src/WebResources/css src/WebResources/vendor src/WebResources/js/app.js src/WebResources/js/nav.js
+	rm -rf vendor target package-lock.json node_modules
+
+.PHONY: all install clean docker-build docker-up docker-down docker-restart docker-logs configure
