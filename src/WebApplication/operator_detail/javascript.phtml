@@ -1,0 +1,56 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\OperatorDetailView;
+
+    /** @var OperatorDetailView $view */
+    $view = WebSession::get('operator_detail_view');
+
+    if ($view->getOperator() === null)
+    {
+        return;
+    }
+?>
+<script>
+function copyOperatorToken() {
+    var input = document.getElementById('operatorToken');
+    if (!input) return;
+    input.select();
+    input.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(input.value);
+}
+</script>
+<script>
+(function() {
+    var viewAll = document.getElementById('opRelatedViewAll');
+    var tabs = document.getElementById('operatorRelatedTabs');
+    if (!viewAll || !tabs) return;
+    var links = {
+        tabOperatorAuditLog: '<?php Functions::printRoute('audit_log', queryParams: ['operator_id' => $view->getOperator()->getUuid()]); ?>',
+        tabOperatorSubmittedReports: '<?php Functions::printRoute('reports', queryParams: ['operator_id' => $view->getOperator()->getUuid()]); ?>',
+        tabOperatorAssignedReports: '<?php Functions::printRoute('reports', queryParams: ['assigned_operator_id' => $view->getOperator()->getUuid()]); ?>',
+        tabOperatorEvidence: '<?php Functions::printRoute('evidence', queryParams: ['operator_id' => $view->getOperator()->getUuid()]); ?>',
+        tabOperatorBlacklist: '<?php Functions::printRoute('blacklist', queryParams: ['operator_id' => $view->getOperator()->getUuid()]); ?>'
+    };
+    tabs.querySelectorAll('[data-bs-toggle="tab"]').forEach(function(button) {
+        button.addEventListener('shown.bs.tab', function() {
+            var url = links[this.getAttribute('data-bs-target').slice(1)];
+            viewAll.hidden = !url;
+            if (url) viewAll.href = url;
+        });
+    });
+})();
+</script>
+<?php
+    if ($view->getNewToken())
+    {
+        ?>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var tokenModal = document.getElementById('modalGenerateToken');
+            if (tokenModal) new bootstrap.Modal(tokenModal).show();
+        });
+        </script>
+        <?php
+    }
+?>
