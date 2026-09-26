@@ -1,0 +1,54 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use WebKernel\ViewAuthorization;
+?>
+<?php
+    if (ViewAuthorization::canManageRecords())
+    {
+        ?>
+        <div class="modal fade" id="liftBlacklistModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-check-circle"></i> <?php Functions::printl('lift_blacklist'); ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="POST" action="<?php Functions::printRoute('blacklist'); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                        <input type="hidden" name="action" value="lift_blacklist">
+                        <input type="hidden" name="blacklist_uuid" id="liftBlacklistUuid">
+                        <div class="modal-body text-center">
+                            <p><?php Functions::printl('modal_lift_info'); ?></p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                            <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl('modal_lift_confirm'); ?></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade modal-danger" id="deleteBlacklistModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-trash"></i> <?php Functions::printl('delete_blacklist'); ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="POST" action="<?php Functions::printRoute('blacklist'); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                        <input type="hidden" name="action" value="delete_blacklist">
+                        <input type="hidden" name="blacklist_uuid" id="deleteBlacklistUuid">
+                        <div class="modal-body text-center">
+                            <p><?php Functions::printl('modal_delete_confirm_prefix'); ?> <strong id="deleteBlacklistUuidDisplay"></strong> <?php Functions::printl('modal_delete_confirm_suffix'); ?></p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                            <button type="submit" class="fw-btn fw-btn-danger"><?php Functions::printl('confirm_delete'); ?></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+?>
