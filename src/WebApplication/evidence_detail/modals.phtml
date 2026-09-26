@@ -1,0 +1,158 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\EvidenceDetailView;
+    use WebKernel\ViewAuthorization;
+
+    /** @var EvidenceDetailView $view */
+    $view = WebSession::get('evidence_detail_view');
+?>
+<?php
+    if (ViewAuthorization::canManageEntityRelationships())
+    {
+        ?>
+                    <!-- Update Tag Modal -->
+                    <div class="modal fade" id="modalUpdateTag" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"><i class="bi bi-tag"></i> <?php Functions::printl('modal_tag_title'); ?></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form method="POST" action="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $view->getEvidence()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="update_tag">
+                                    <div class="modal-body">
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_tag_label'); ?></label>
+                                            <input type="text" class="fw-form-control" name="evidence_tag" value="<?php Functions::print($view->getEvidence()->getTag() ?? ''); ?>" placeholder="<?php Functions::printl('modal_tag_placeholder'); ?>" required autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl('modal_tag_save'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+        <?php
+    }
+?>
+
+<?php
+    if (ViewAuthorization::canContribute())
+    {
+        ?>
+                    <!-- Add to Report Modal -->
+                    <div class="modal fade" id="modalAddToReport" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"><i class="bi bi-link-45deg"></i> <?php Functions::printl('modal_report_title'); ?></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form method="POST" action="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $view->getEvidence()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="add_to_report">
+                                    <div class="modal-body">
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_report_label'); ?></label>
+                                            <input type="text" class="fw-form-control" name="report_uuid" placeholder="<?php Functions::printl('modal_report_placeholder'); ?>" required autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl('modal_report_confirm'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload Attachment Modal -->
+                    <div class="modal fade" id="modalUploadAttachment" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"><i class="bi bi-upload"></i> <?php Functions::printl('upload_attachment_modal_title'); ?></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form method="POST" action="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $view->getEvidence()->getUuid()]); ?>" enctype="multipart/form-data"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="upload_attachment">
+                                    <div class="modal-body">
+                                        <p class="fw-form-help mb-2"><?php Functions::printl('upload_attachment_modal_desc'); ?></p>
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('upload_attachment_modal_file_label'); ?></label>
+                                            <input type="file" class="fw-form-control" name="attachment_file" required>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-primary"><i class="bi bi-upload"></i> <?php Functions::printl('upload_attachment_modal_confirm'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+        <?php
+    }
+?>
+
+<?php
+    if (ViewAuthorization::canManageRecords())
+    {
+        ?>
+                    <!-- Delete Attachment Modal -->
+                    <div class="modal fade" id="modalDeleteAttachment" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"><i class="bi bi-trash"></i> <?php Functions::printl('delete_attachment_modal_title'); ?></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form method="POST" action="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $view->getEvidence()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="delete_attachment">
+                                    <input type="hidden" name="attachment_uuid" id="deleteAttachmentUuid">
+                                    <div class="modal-body">
+                                        <div class="fw-modal-alert fw-modal-alert-danger">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                            <span><?php Functions::printl('delete_attachment_modal_info'); ?></span>
+                                        </div>
+                                        <p class="fw-mb-0"><?php Functions::printl('delete_attachment_modal_confirm_prefix'); ?> <strong id="deleteAttachmentName"></strong>? <?php Functions::printl('delete_attachment_modal_confirm_suffix'); ?></p>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-danger"><?php Functions::printl('confirm_delete'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Evidence Modal -->
+                    <div class="modal fade modal-danger" id="modalDeleteEvidence" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"><i class="bi bi-trash"></i> <?php Functions::printl('delete_evidence'); ?></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form method="POST" action="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $view->getEvidence()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="delete_evidence">
+                                    <div class="modal-body">
+                                        <div class="fw-modal-alert fw-modal-alert-danger">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                            <span><?php Functions::printl('modal_delete_info'); ?></span>
+                                        </div>
+                                        <p class="fw-mb-0"><?php Functions::printl('modal_delete_confirm_prefix'); ?> <strong><?php Functions::print(substr($view->getEvidence()->getUuid(), 0, 8)); ?>…</strong>? <?php Functions::printl('modal_delete_confirm_suffix'); ?></p>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-danger"><?php Functions::printl('confirm_delete'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+        <?php
+    }
+?>
