@@ -6,13 +6,39 @@ assembly:
   package: net.nosial.federationweb
   version: 1.0.0
 dependencies:
+  net.nosial.loglib2: nosial/loglib2@github
   net.nosial.dynamicalweb: nosial/dynamicalweb@github
+  net.nosial.federation: nosial/federationlib@github
+pre_compile:
+  - npm_install
+  - npm_build
+
 execution_units:
   -
     name: web_entry
     type: php
     mode: auto
     entry: web_entry
+  -
+    name: npm_install
+    type: system
+    mode: auto
+    entry: npm
+    arguments:
+      - install
+    working_directory: '${PROJECT_PATH}'
+    timeout: 120
+  -
+    name: npm_build
+    type: system
+    mode: auto
+    entry: npm
+    arguments:
+      - run
+      - build
+    working_directory: '${PROJECT_PATH}'
+    timeout: 120
+
 build_configurations:
   -
     name: debug
@@ -31,17 +57,24 @@ build_configurations:
     definitions:
       NCC_DISABLE_LOGGING: '1'
     options:
+      static: true
       web_configuration:
         application:
           name: FederationWeb
           root: FederationWeb/WebApplication
           resources: FederationWeb/WebResources
           default_locale: en
-          report_errors: true
+          report_errors: false
           xss_level: 0
-          debug_panel: true
+          debug_panel: false
+          pre_request:
+            - "pre_processors/server.phtml"
+            - "pre_processors/authentication.phtml"
         locales:
           en: FederationWeb/WebLocale/en.yml
+          #cn: FederationWeb/WebLocale/cn.yml
+          #es: FederationWeb/WebLocale/es.yml
+          #ru: FederationWeb/WebLocale/ru.yml
         router:
           base_path: /
           response_handlers:
@@ -49,11 +82,243 @@ build_configurations:
             500: 500.phtml
           routes:
             -
-              id: home
+              id: dashboard
               path: /
               module: index.phtml
-              locale_id: home
+              locale_id: dashboard
               allowed_methods:
                 - GET
-                - WEBSOCKET
-        static: true
+            - id: configuration_error
+              path: /error
+              module: configuration_error.phtml
+              locale_id: configuration_error
+              allowed_methods:
+                - GET
+            -
+              id: authenticate
+              path: /authenticate
+              module: authenticate/index.phtml
+              locale_id: authenticate
+              allowed_methods:
+                - GET
+                - POST
+            -
+              id: logout
+              path: /logout
+              module: logout.phtml
+              allowed_methods:
+                - GET
+                - POST
+            -
+              id: operators
+              path: /operators
+              module: operators/index.phtml
+              locale_id: operators
+              allowed_methods:
+                - GET
+                - POST
+            -
+              id: operator_detail
+              path: /operators/{operator_id}
+              module: operator_detail/index.phtml
+              locale_id: operators
+              allowed_methods:
+                - GET
+                - POST
+            -
+              id: operators_list_print
+              path: /operators/print
+              module: operators/print.phtml
+              locale_id: operators
+              allowed_methods:
+                - GET
+            -
+              id: operator_detail_print
+              path: /operators/{operator_id}/print
+              module: operator_detail/print.phtml
+              locale_id: operators
+              allowed_methods:
+                - GET
+            -
+              id: entities
+              path: /entities
+              module: entities/index.phtml
+              locale_id: entities
+              allowed_methods:
+                - GET
+                - POST
+            -
+              id: entities_list_print
+              path: /entities/print
+              module: entities/print.phtml
+              locale_id: entities
+              allowed_methods:
+                - GET
+            -
+              id: entity_query
+              path: /entities/query
+              module: entity_detail/index.phtml
+              locale_id: entities
+              allowed_methods:
+                - GET
+            -
+              id: entity_detail
+              path: /entities/{entity_id}
+              module: entity_detail/index.phtml
+              locale_id: entities
+              allowed_methods:
+                - GET
+                - POST
+            -
+              id: entity_detail_print
+              path: /entities/{entity_id}/print
+              module: entity_detail/print.phtml
+              locale_id: entities
+              allowed_methods:
+                - GET
+            -
+              id: reports
+              path: /reports
+              module: reports/index.phtml
+              locale_id: reports
+              allowed_methods:
+                - GET
+                - POST
+            -
+              id: reports_list_print
+              path: /reports/print
+              module: reports/print.phtml
+              locale_id: reports
+              allowed_methods:
+                - GET
+            -
+              id: report_detail
+              path: /reports/{report_uuid}
+              module: report_detail/index.phtml
+              locale_id: reports
+              allowed_methods:
+                - GET
+                - POST
+            -
+              id: report_detail_print
+              path: /reports/{report_uuid}/print
+              module: report_detail/print.phtml
+              locale_id: reports
+              allowed_methods:
+                - GET
+            -
+              id: evidence
+              path: /evidence
+              module: evidence/index.phtml
+              locale_id: evidence
+              allowed_methods:
+                - GET
+                - POST
+            -
+              id: evidence_list_print
+              path: /evidence/print
+              module: evidence/print.phtml
+              locale_id: evidence
+              allowed_methods:
+                - GET
+            -
+              id: evidence_detail
+              path: /evidence/{evidence_uuid}
+              module: evidence_detail/index.phtml
+              locale_id: evidence
+              allowed_methods:
+                - GET
+                - POST
+            -
+              id: evidence_detail_print
+              path: /evidence/{evidence_uuid}/print
+              module: evidence_detail/print.phtml
+              locale_id: evidence
+              allowed_methods:
+                - GET
+            -
+              id: blacklist
+              path: /blacklist
+              module: blacklist/index.phtml
+              locale_id: blacklist
+              allowed_methods:
+                - GET
+                - POST
+            -
+              id: blacklist_list_print
+              path: /blacklist/print
+              module: blacklist/print.phtml
+              locale_id: blacklist
+              allowed_methods:
+                - GET
+            -
+              id: blacklist_detail
+              path: /blacklist/{blacklist_uuid}
+              module: blacklist_detail/index.phtml
+              locale_id: blacklist
+              allowed_methods:
+                - GET
+                - POST
+            -
+              id: blacklist_detail_print
+              path: /blacklist/{blacklist_uuid}/print
+              module: blacklist_detail/print.phtml
+              locale_id: blacklist
+              allowed_methods:
+                - GET
+            -
+              id: report_submission
+              path: /reports/submit
+              module: reports/submission.phtml
+              locale_id: reports
+              allowed_methods:
+                - POST
+            -
+              id: audit_log
+              path: /audit-log
+              module: audit_log/index.phtml
+              locale_id: audit_log
+              allowed_methods:
+                - GET
+            -
+              id: audit_log_list_print
+              path: /audit-log/print
+              module: audit_log/print.phtml
+              locale_id: audit_log
+              allowed_methods:
+                - GET
+            -
+              id: audit_log_detail
+              path: /audit-log/{audit_log_uuid}
+              module: audit_log_detail/index.phtml
+              locale_id: audit_log
+              allowed_methods:
+                - GET
+            -
+              id: audit_log_detail_print
+              path: /audit-log/{audit_log_uuid}/print
+              module: audit_log_detail/print.phtml
+              locale_id: audit_log
+              allowed_methods:
+                - GET
+            -
+              id: search
+              path: /search
+              module: search/index.phtml
+              locale_id: search
+              allowed_methods:
+                - GET
+                - POST
+            -
+              id: api_specification
+              path: /api-specification
+              module: api_specification/index.phtml
+              locale_id: dashboard
+              allowed_methods:
+                - GET
+            -
+              id: fw_toggle_dark_mode
+              path: /toggle-dark-mode
+              module: sections/toggle_dark_mode.phtml
+              allowed_methods:
+                - POST
