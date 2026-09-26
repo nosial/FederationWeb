@@ -1,0 +1,22 @@
+<script>
+    (function ()
+    {
+        // Tab bars are hidden in print documents and every pane is shown, so each pane is headed by the
+        // label and count of the tab that selects it on the record page.
+        document.querySelectorAll('.fw-print-view .fw-tabs .fw-tab[data-bs-target]').forEach(function (tab)
+        {
+            var pane = document.querySelector(tab.getAttribute('data-bs-target'));
+            if (!pane)
+            {
+                return;
+            }
+
+            var label = tab.querySelector('span:not(.fw-tab-badge)');
+            var badge = tab.querySelector('.fw-tab-badge');
+            var title = document.createElement('h6');
+            title.className = 'fw-print-pane-title';
+            title.textContent = (label ? label.textContent : tab.textContent).trim() + (badge ? ' (' + badge.textContent.trim() + ')' : '');
+            pane.insertBefore(title, pane.firstChild);
+        });
+    })();
+</script>
