@@ -1,0 +1,54 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\EvidenceDetailView;
+
+    /** @var EvidenceDetailView $view */
+    $view = WebSession::get('evidence_detail_view');
+?>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var deleteModal = document.getElementById('modalDeleteAttachment');
+            if (!deleteModal) return;
+            deleteModal.addEventListener('show.bs.modal', function(event) {
+                var button = event.relatedTarget;
+                if (!button) return;
+                document.getElementById('deleteAttachmentUuid').value = button.getAttribute('data-attachment-uuid');
+                document.getElementById('deleteAttachmentName').textContent = button.getAttribute('data-attachment-name');
+            });
+        });
+        </script>
+        <?php
+            if ($view->getEvidence() !== null)
+            {
+                $entityQuery = ['entity_id' => $view->getEntityRecord() !== null ? $view->getEntityRecord()->getUuid() : $view->getEvidence()->getEntityUuid()];
+                ?>
+                <script>
+                (function() {
+                    var viewAll = document.getElementById('evidenceRelatedViewAll');
+                    var tabs = document.getElementById('evidenceRelatedTabs');
+                    if (!viewAll || !tabs) return;
+
+                    var links = {
+                        tabEvidenceEntityEvidence: '<?php Functions::printRoute('evidence', queryParams: $entityQuery); ?>',
+                        tabEvidenceEntityBlacklist: '<?php Functions::printRoute('blacklist', queryParams: $entityQuery); ?>',
+                        tabEvidenceEntityReports: '<?php Functions::printRoute('reports', queryParams: $entityQuery); ?>',
+                        tabEvidenceAuditLog: '<?php Functions::printRoute('audit_log', queryParams: $entityQuery); ?>'
+                    };
+
+                    tabs.querySelectorAll('[data-bs-toggle="tab"]').forEach(function(button) {
+                        button.addEventListener('shown.bs.tab', function() {
+                            var target = this.getAttribute('data-bs-target').replace('#', '');
+                            if (links[target]) {
+                                viewAll.href = links[target];
+                                viewAll.classList.remove('fw-hidden');
+                            } else {
+                                viewAll.classList.add('fw-hidden');
+                            }
+                        });
+                    });
+                })();
+                </script>
+                <?php
+            }
+        ?>
