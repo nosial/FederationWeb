@@ -1,0 +1,24 @@
+<script>
+(function() {
+    var html = document.documentElement;
+
+    document.addEventListener('click', function(e) {
+        var toggle = e.target.closest('.fw-dark-mode-toggle');
+        if (!toggle) return;
+
+        var isDark = html.getAttribute('data-fw-theme') === 'dark';
+        var next = isDark ? '' : 'dark';
+        html.setAttribute('data-fw-theme', next);
+
+        var icon = toggle.querySelector('i');
+        if (icon) {
+            icon.className = next === 'dark' ? 'bi bi-sun' : 'bi bi-moon-stars';
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/toggle-dark-mode', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send();
+    });
+})();
+</script>
