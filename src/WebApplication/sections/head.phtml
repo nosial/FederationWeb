@@ -1,0 +1,39 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use WebKernel\Utilities;
+?>
+<link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96">
+        <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg">
+        <link rel="shortcut icon" href="/favicon/favicon.ico">
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+        <meta name="apple-mobile-web-app-title" content="Federation">
+        <link rel="manifest" href="/favicon/site.webmanifest">
+        <meta name="csrf-token" content="<?php Functions::print(Utilities::getCsrfToken()); ?>">
+        <script>
+            // State-changing requests must carry the session's CSRF token (checked in
+            // pre_processors/authentication.phtml). Forms include it as a hidden field; XHR POSTs to
+            // this site get it as a header here, so every script is covered without changes.
+            (function ()
+            {
+                var meta = document.querySelector('meta[name="csrf-token"]');
+                var token = meta ? meta.getAttribute('content') : '';
+                var open = XMLHttpRequest.prototype.open;
+                var send = XMLHttpRequest.prototype.send;
+
+                XMLHttpRequest.prototype.open = function (method, url)
+                {
+                    this.fwCsrf = String(method).toUpperCase() !== 'GET'
+                        && new URL(url, window.location.href).origin === window.location.origin;
+                    return open.apply(this, arguments);
+                };
+
+                XMLHttpRequest.prototype.send = function ()
+                {
+                    if (this.fwCsrf && token)
+                    {
+                        this.setRequestHeader('X-CSRF-Token', token);
+                    }
+                    return send.apply(this, arguments);
+                };
+            })();
+        </script>
