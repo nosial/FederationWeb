@@ -1,0 +1,187 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\OperatorsView;
+
+    /** @var OperatorsView $operatorsView */
+    $operatorsView = WebSession::get('operators_view');
+?>
+                                    <table class="fw-table fw-table-hoverable fw-table-nowrap" id="table-operators">
+                                        <thead>
+                                            <tr>
+                                                <th><?php Functions::printl('uuid'); ?></th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('operators', queryParams: array_merge($operatorsView->getBaseQuery(), ['sort_by' => 'name', 'sort_order' => ($operatorsView->getSortBy() === 'name' && $operatorsView->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('name'); ?>
+                                                        <?php
+                                                            if ($operatorsView->getSortBy() === 'name')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($operatorsView->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th><?php Functions::printl('status'); ?></th>
+                                                <th><?php Functions::printl('auto_assign'); ?></th>
+                                                <th><?php Functions::printl('permissions'); ?></th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('operators', queryParams: array_merge($operatorsView->getBaseQuery(), ['sort_by' => 'created', 'sort_order' => ($operatorsView->getSortBy() === 'created' && $operatorsView->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('created'); ?>
+                                                        <?php
+                                                            if ($operatorsView->getSortBy() === 'created')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($operatorsView->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('operators', queryParams: array_merge($operatorsView->getBaseQuery(), ['sort_by' => 'updated', 'sort_order' => ($operatorsView->getSortBy() === 'updated' && $operatorsView->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('updated'); ?>
+                                                        <?php
+                                                            if ($operatorsView->getSortBy() === 'updated')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($operatorsView->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th class="fw-col-actions"><?php Functions::printl('actions'); ?></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                                if ($operatorsView->getOperators() === null)
+                                                {
+                                                    ?>
+                                                    <tr>
+                                                        <td colspan="8">
+                                                            <div class="fw-empty">
+                                                                <i class="bi bi-exclamation-circle"></i>
+                                                                <p><?php Functions::printl('error_loading'); ?></p>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                }
+                                                elseif (empty($operatorsView->getOperators()))
+                                                {
+                                                    ?>
+                                                    <tr>
+                                                        <td colspan="8">
+                                                            <div class="fw-empty">
+                                                                <i class="bi bi-person-badge"></i>
+                                                                <p><?php Functions::printl('no_operators'); ?></p>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                }
+                                                else
+                                                {
+                                                    foreach ($operatorsView->getOperators() as $operator)
+                                                    {
+                                                        ?>
+                                                        <tr class="fw-row-link" data-href="<?php Functions::printRoute('operator_detail', ['operator_id' => $operator->getUuid()]); ?>">
+                                                            <td><span class="fw-uuid"><?php Functions::print($operator->getUuid()); ?></span><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($operator->getUuid()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></td>
+                                                            <td><a href="<?php Functions::printRoute('operator_detail', ['operator_id' => $operator->getUuid()]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($operator->getName()); ?></a><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($operator->getName()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></td>
+                                                            <td>
+                                                                <?php
+                                                                    if ($operator->isDisabled())
+                                                                    {
+                                                                        ?><span class="fw-dot red"></span> <?php Functions::printl('disabled'); ?><?php
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        ?><span class="fw-dot green"></span> <?php Functions::printl('active'); ?><?php
+                                                                    }
+                                                                ?>
+                                                            </td>
+                                                            <td>
+                                                                <?php
+                                                                    if ($operator->isAutoAssigned())
+                                                                    {
+                                                                        ?><span class="fw-dot green"></span> <?php Functions::printl('yes'); ?><?php
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        ?><span class="fw-dot gray"></span> <?php Functions::printl('no'); ?><?php
+                                                                    }
+                                                                ?>
+                                                            </td>
+                                                            <td>
+                                                                <div class="fw-permissions">
+                                                                    <?php
+                                                                        if ($operator->hasClientPermissions())
+                                                                        {
+                                                                            ?><span class="fw-badge fw-badge-blue"><?php Functions::printl('perm_client'); ?></span><?php
+                                                                        }
+                                                                        if ($operator->hasManagementPermissions())
+                                                                        {
+                                                                            ?><span class="fw-badge fw-badge-purple"><?php Functions::printl('perm_blacklist'); ?></span><?php
+                                                                        }
+                                                                        if ($operator->hasOperatorPermissions())
+                                                                        {
+                                                                            ?><span class="fw-badge fw-badge-amber"><?php Functions::printl('perm_operators'); ?></span><?php
+                                                                        }
+                                                                        if (!$operator->hasClientPermissions() && !$operator->hasManagementPermissions() && !$operator->hasOperatorPermissions())
+                                                                        {
+                                                                            ?><span class="fw-uuid">—</span><?php
+                                                                        }
+                                                                    ?>
+                                                                </div>
+                                                            </td>
+                                                            <td><span class="fw-uuid"><?php Functions::print($operatorsView->formatDate($operator->getCreated())); ?></span></td>
+                                                            <td>
+                                                                <?php
+                                                                    if ($operator->getUpdated() !== $operator->getCreated())
+                                                                    {
+                                                                        ?><span class="fw-uuid"><?php Functions::print($operatorsView->formatDate($operator->getUpdated())); ?></span><?php
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        ?><span class="fw-uuid">—</span><?php
+                                                                    }
+                                                                ?>
+                                                            </td>
+                                                            <td>
+                                                                <div class="fw-table-actions">
+                                                                    <?php
+                                                                        if ($operator->isDisabled())
+                                                                        {
+                                                                            ?>
+                                                                            <form method="POST" action="<?php Functions::printRoute('operators'); ?>" class="d-inline mb-0"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                                                                <input type="hidden" name="action" value="enable_operator">
+                                                                                <input type="hidden" name="operator_uuid" value="<?php Functions::print($operator->getUuid()); ?>">
+                                                                                <button type="submit" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('enable_operator'); ?>"><i class="bi bi-check-circle"></i></button>
+                                                                            </form>
+                                                                            <?php
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            ?>
+                                                                            <form method="POST" action="<?php Functions::printRoute('operators'); ?>" class="d-inline mb-0"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                                                                <input type="hidden" name="action" value="disable_operator">
+                                                                                <input type="hidden" name="operator_uuid" value="<?php Functions::print($operator->getUuid()); ?>">
+                                                                                <button type="submit" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('disable_operator'); ?>"><i class="bi bi-pause-circle"></i></button>
+                                                                            </form>
+                                                                            <?php
+                                                                        }
+                                                                    ?>
+                                                                    <form method="POST" action="<?php Functions::printRoute('operators'); ?>" class="d-inline mb-0"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                                                        <input type="hidden" name="action" value="toggle_auto_assign">
+                                                                        <input type="hidden" name="operator_uuid" value="<?php Functions::print($operator->getUuid()); ?>">
+                                                                        <button type="submit" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl($operator->isAutoAssigned() ? 'disable_auto_assign' : 'enable_auto_assign'); ?>"><i class="bi bi-toggle-<?php Functions::print($operator->isAutoAssigned() ? 'on' : 'off'); ?>"></i></button>
+                                                                    </form>
+                                                                    <a href="<?php Functions::printRoute('operator_detail', ['operator_id' => $operator->getUuid()]); ?>" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('view'); ?>"><i class="bi bi-box-arrow-up-right"></i></a>
+                                                                    <a href="<?php Functions::printRoute('operator_detail', ['operator_id' => $operator->getUuid()]); ?>" target="_blank" rel="noopener" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('open_in_new_tab'); ?>"><i class="bi bi-box-arrow-in-up-right"></i></a>
+                                                                    <button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('delete_operator'); ?>" data-bs-toggle="modal" data-bs-target="#deleteOperatorModal" data-uuid="<?php Functions::print($operator->getUuid()); ?>" data-name="<?php Functions::print($operator->getName()); ?>"><i class="bi bi-trash"></i></button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <?php
+                                                    }
+                                                }
+                                            ?>
+                                        </tbody>
+                                    </table>
