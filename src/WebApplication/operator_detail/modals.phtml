@@ -1,0 +1,252 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\OperatorDetailView;
+
+    /** @var OperatorDetailView $view */
+    $view = WebSession::get('operator_detail_view');
+?>
+                    <!-- Edit Operator Modal -->
+                    <div class="modal fade" id="modalEditOperator" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="POST" action="<?php Functions::printRoute('operator_detail', ['operator_id' => $view->getOperator()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="edit_operator">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"><i class="bi bi-pencil"></i> <?php Functions::printl('modal_edit_title'); ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_edit_name_label'); ?></label>
+                                            <input type="text" class="fw-form-control" name="operator_name" value="<?php Functions::print($view->getOperator()->getName()); ?>" required autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl('modal_edit_save'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Generate Token Modal -->
+                    <div class="modal fade modal-success" id="modalGenerateToken" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="POST" action="<?php Functions::printRoute('operator_detail', ['operator_id' => $view->getOperator()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="generate_token">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"><i class="bi bi-key"></i> <?php Functions::printl('modal_token_title'); ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_token_label'); ?></label>
+                                            <div class="fw-token-display">
+                                                <?php
+                                                    $displayToken = '';
+                                                    if ($view->getNewToken())
+                                                    {
+                                                        $displayToken = $view->getNewToken();
+                                                    }
+                                                    elseif ($view->getOperator()->hasOperatorPermissions() && $view->getOperator()->getAccessToken())
+                                                    {
+                                                        $displayToken = $view->getOperator()->getAccessToken();
+                                                    }
+                                                ?>
+                                                <?php
+                                                    if ($displayToken)
+                                                    {
+                                                        ?>
+                                                <input type="text" id="operatorToken" value="<?php Functions::print($displayToken); ?>" readonly>
+                                                <button type="button" class="fw-btn fw-btn-secondary" onclick="copyOperatorToken()"><i class="bi bi-clipboard"></i></button>
+                                                        <?php
+                                                    }
+                                                    else
+                                                    {
+                                                        ?>
+                                                <input type="text" id="operatorToken" value="••••••••••••••••" readonly>
+                                                <button type="button" class="fw-btn fw-btn-secondary" onclick="copyOperatorToken()"><i class="bi bi-clipboard"></i></button>
+                                                        <?php
+                                                    }
+                                                ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('modal_close'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl('modal_token_generate'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Set Permissions Modal -->
+                    <div class="modal fade" id="modalSetPermissions" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="POST" action="<?php Functions::printRoute('operator_detail', ['operator_id' => $view->getOperator()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="set_permissions">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"><i class="bi bi-person-gear"></i> <?php Functions::printl('modal_permissions_title'); ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="fw-permission-grid">
+                                            <div class="fw-permission-item">
+                                                <div class="fw-permission-info">
+                                                    <div class="fw-permission-name"><?php Functions::printl('modal_permissions_operator_name'); ?></div>
+                                                    <div class="fw-permission-desc"><?php Functions::printl('modal_permissions_operator_desc'); ?></div>
+                                                </div>
+                                                <div class="fw-form-check">
+                                                    <?php
+                                                        if ($view->getOperator()->hasOperatorPermissions())
+                                                        {
+                                                            ?>
+                                                    <input type="checkbox" name="perm_operator" value="1" checked>
+                                                            <?php
+                                                        }
+                                                        else
+                                                        {
+                                                            ?>
+                                                    <input type="checkbox" name="perm_operator" value="1">
+                                                            <?php
+                                                        }
+                                                    ?>
+                                                </div>
+                                            </div>
+                                            <div class="fw-permission-item">
+                                                <div class="fw-permission-info">
+                                                    <div class="fw-permission-name"><?php Functions::printl('modal_permissions_client_name'); ?></div>
+                                                    <div class="fw-permission-desc"><?php Functions::printl('modal_permissions_client_desc'); ?></div>
+                                                </div>
+                                                <div class="fw-form-check">
+                                                    <?php
+                                                        if ($view->getOperator()->hasClientPermissions())
+                                                        {
+                                                            ?>
+                                                    <input type="checkbox" name="perm_client" value="1" checked>
+                                                            <?php
+                                                        }
+                                                        else
+                                                        {
+                                                            ?>
+                                                    <input type="checkbox" name="perm_client" value="1">
+                                                            <?php
+                                                        }
+                                                    ?>
+                                                </div>
+                                            </div>
+                                            <div class="fw-permission-item">
+                                                <div class="fw-permission-info">
+                                                    <div class="fw-permission-name"><?php Functions::printl('modal_permissions_management_name'); ?></div>
+                                                    <div class="fw-permission-desc"><?php Functions::printl('modal_permissions_management_desc'); ?></div>
+                                                </div>
+                                                <div class="fw-form-check">
+                                                    <?php
+                                                        if ($view->getOperator()->hasManagementPermissions())
+                                                        {
+                                                            ?>
+                                                    <input type="checkbox" name="perm_management" value="1" checked>
+                                                            <?php
+                                                        }
+                                                        else
+                                                        {
+                                                            ?>
+                                                    <input type="checkbox" name="perm_management" value="1">
+                                                            <?php
+                                                        }
+                                                    ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl('modal_permissions_save'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Disable / Enable Operator Modal -->
+                    <div class="modal fade modal-warning" id="modalDisableOperator" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="POST" action="<?php Functions::printRoute('operator_detail', ['operator_id' => $view->getOperator()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="<?php Functions::print($view->getOperator()->isDisabled() ? 'enable_operator' : 'disable_operator'); ?>">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"><i class="bi bi-slash-circle"></i> <?php Functions::printl($view->getOperator()->isDisabled() ? 'modal_enable_title' : 'modal_disable_title'); ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="fw-modal-alert fw-modal-alert-warning">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                            <span><?php Functions::printl($view->getOperator()->isDisabled() ? 'modal_enable_info' : 'modal_disable_info'); ?></span>
+                                        </div>
+                                        <p class="fw-mb-0"><?php Functions::printl($view->getOperator()->isDisabled() ? 'modal_enable_confirm' : 'modal_disable_confirm'); ?> <strong><?php Functions::print($view->getOperator()->getName()); ?></strong>?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-danger"><?php Functions::printl($view->getOperator()->isDisabled() ? 'modal_enable_confirm_btn' : 'modal_disable_confirm_btn'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Toggle Auto-Assign Modal -->
+                    <div class="modal fade" id="modalToggleAutoAssign" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content">
+                                <form method="POST" action="<?php Functions::printRoute('operator_detail', ['operator_id' => $view->getOperator()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="toggle_auto_assign">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"><i class="bi bi-toggle-<?php Functions::print($view->getOperator()->isAutoAssigned() ? 'on' : 'off'); ?>"></i> <?php Functions::printl('modal_auto_assign_title'); ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="fw-modal-alert fw-modal-alert-warning">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                            <span><?php Functions::printl($view->getOperator()->isAutoAssigned() ? 'modal_auto_assign_disable_info' : 'modal_auto_assign_enable_info'); ?></span>
+                                        </div>
+                                        <p class="fw-mb-0"><?php Functions::printl('modal_auto_assign_confirm'); ?> <strong><?php Functions::print($view->getOperator()->getName()); ?></strong>?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl($view->getOperator()->isAutoAssigned() ? 'modal_auto_assign_disable_btn' : 'modal_auto_assign_enable_btn'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Operator Modal -->
+                    <div class="modal fade modal-danger" id="modalDeleteOperator" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="POST" action="<?php Functions::printRoute('operator_detail', ['operator_id' => $view->getOperator()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="delete_operator">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"><i class="bi bi-trash"></i> <?php Functions::printl('modal_delete_title'); ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="fw-modal-alert fw-modal-alert-danger">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                            <span><?php Functions::printl('modal_delete_info'); ?></span>
+                                        </div>
+                                        <p class="fw-mb-0"><?php Functions::printl('modal_delete_confirm_prefix'); ?> <strong><?php Functions::print($view->getOperator()->getName()); ?></strong>? <?php Functions::printl('modal_delete_confirm_suffix'); ?></p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-danger"><?php Functions::printl('confirm_delete'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
