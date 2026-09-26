@@ -50,7 +50,6 @@
                                             <th><?php Functions::printl('message'); ?></th>
                                             <th><?php Functions::printl('operator'); ?></th>
                                             <th><?php Functions::printl('entity'); ?></th>
-                                            <th><?php Functions::printl('related_records'); ?></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -82,29 +81,6 @@
                                                                 ?><a href="<?php Functions::printRoute('entity_detail', ['entity_id' => $log->getEntityUuid()]); ?>" class="fw-detail-link"><?php Functions::print($dashboardView->getEntityAddress($log->getEntityUuid()) ?? $log->getEntityUuid()); ?></a><?php
                                                             }
                                                             else
-                                                            {
-                                                                ?><span class="fw-uuid">—</span><?php
-                                                            }
-                                                        ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php
-                                                            if ($log->getBlacklistUuid())
-                                                            {
-                                                                ?><a href="<?php Functions::printRoute('blacklist_detail', ['blacklist_uuid' => $log->getBlacklistUuid()]); ?>" class="fw-detail-link"><?php Functions::printl('blacklist_records'); ?></a><?php
-                                                            }
-
-                                                            if ($log->getEvidenceUuid())
-                                                            {
-                                                                ?><a href="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $log->getEvidenceUuid()]); ?>" class="fw-detail-link"><?php Functions::printl('evidence'); ?></a><?php
-                                                            }
-
-                                                            if ($log->getFileAttachmentUuid())
-                                                            {
-                                                                ?><span class="fw-uuid"><?php Functions::printl('attachments'); ?>: <?php Functions::print(substr($log->getFileAttachmentUuid(), 0, 8)); ?>…</span><?php
-                                                            }
-
-                                                            if (!$log->getBlacklistUuid() && !$log->getEvidenceUuid() && !$log->getFileAttachmentUuid())
                                                             {
                                                                 ?><span class="fw-uuid">—</span><?php
                                                             }
@@ -361,6 +337,129 @@
                                     else
                                     {
                                         ?><span class="fw-dot red"></span> <?php Functions::printl('disabled'); ?><?php
+                                    }
+                                ?>
+                            </span>
+                        </div>
+                        <div class="fw-status-item">
+                            <span class="fw-status-label"><?php Functions::printl('public_entity_metadata'); ?></span>
+                            <span class="fw-status-value">
+                                <?php
+                                    if ($serverInformation->isPublicEntityMetadata())
+                                    {
+                                        ?><span class="fw-dot green"></span> <?php Functions::printl('enabled'); ?><?php
+                                    }
+                                    else
+                                    {
+                                        ?><span class="fw-dot red"></span> <?php Functions::printl('disabled'); ?><?php
+                                    }
+                                ?>
+                            </span>
+                        </div>
+                        <div class="fw-status-item">
+                            <span class="fw-status-label"><?php Functions::printl('public_scan_content'); ?></span>
+                            <span class="fw-status-value">
+                                <?php
+                                    if ($serverInformation->isPublicScanContent())
+                                    {
+                                        ?><span class="fw-dot green"></span> <?php Functions::printl('enabled'); ?><?php
+                                    }
+                                    else
+                                    {
+                                        ?><span class="fw-dot red"></span> <?php Functions::printl('disabled'); ?><?php
+                                    }
+                                ?>
+                            </span>
+                        </div>
+                        <div class="fw-status-item">
+                            <span class="fw-status-label"><?php Functions::printl('public_query_entity'); ?></span>
+                            <span class="fw-status-value">
+                                <?php
+                                    if ($serverInformation->isPublicQueryEntity())
+                                    {
+                                        ?><span class="fw-dot green"></span> <?php Functions::printl('enabled'); ?><?php
+                                    }
+                                    else
+                                    {
+                                        ?><span class="fw-dot red"></span> <?php Functions::printl('disabled'); ?><?php
+                                    }
+                                ?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fw-card">
+                <div class="fw-card-header">
+                    <h5><i class="bi bi-search fw-icon-blue"></i> <?php Functions::printl('search_capabilities'); ?></h5>
+                </div>
+                <div class="fw-card-body">
+                    <div class="fw-status-list">
+                        <div class="fw-status-item">
+                            <span class="fw-status-label"><?php Functions::printl('search_enabled'); ?></span>
+                            <span class="fw-status-value">
+                                <?php
+                                    if ($serverInformation->isSearchEnabled())
+                                    {
+                                        ?><span class="fw-dot green"></span> <?php Functions::printl('enabled'); ?><?php
+                                    }
+                                    else
+                                    {
+                                        ?><span class="fw-dot red"></span> <?php Functions::printl('disabled'); ?><?php
+                                    }
+                                ?>
+                            </span>
+                        </div>
+                        <div class="fw-status-item">
+                            <span class="fw-status-label"><?php Functions::printl('public_search'); ?></span>
+                            <span class="fw-status-value">
+                                <?php
+                                    if ($serverInformation->isPublicSearch())
+                                    {
+                                        ?><span class="fw-dot green"></span> <?php Functions::printl('enabled'); ?><?php
+                                    }
+                                    else
+                                    {
+                                        ?><span class="fw-dot red"></span> <?php Functions::printl('disabled'); ?><?php
+                                    }
+                                ?>
+                            </span>
+                        </div>
+                        <div class="fw-status-item">
+                            <span class="fw-status-label"><?php Functions::printl('enabled_search_types'); ?></span>
+                            <span class="fw-status-value">
+                                <?php
+                                    $enabledSearchTypes = $dashboardView->getSearchTypeNames();
+                                    if (empty($enabledSearchTypes))
+                                    {
+                                        ?><span class="fw-dot gray"></span> <?php Functions::printl('none'); ?><?php
+                                    }
+                                    else
+                                    {
+                                        foreach ($enabledSearchTypes as $searchType)
+                                        {
+                                            ?><span class="fw-badge fw-badge-blue"><?php Functions::print(str_replace('_', ' ', $searchType)); ?></span> <?php
+                                        }
+                                    }
+                                ?>
+                            </span>
+                        </div>
+                        <div class="fw-status-item">
+                            <span class="fw-status-label"><?php Functions::printl('public_search_types'); ?></span>
+                            <span class="fw-status-value">
+                                <?php
+                                    $publicSearchTypes = $dashboardView->getPublicSearchTypeNames();
+                                    if (empty($publicSearchTypes))
+                                    {
+                                        ?><span class="fw-dot gray"></span> <?php Functions::printl('none'); ?><?php
+                                    }
+                                    else
+                                    {
+                                        foreach ($publicSearchTypes as $searchType)
+                                        {
+                                            ?><span class="fw-badge fw-badge-purple"><?php Functions::print(str_replace('_', ' ', $searchType)); ?></span> <?php
+                                        }
                                     }
                                 ?>
                             </span>
