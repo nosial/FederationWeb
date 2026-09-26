@@ -1,0 +1,122 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\AuditLogView;
+
+    /** @var AuditLogView $auditLogView */
+    $auditLogView = WebSession::get('audit_log_view');
+?>
+                                    <table class="fw-table fw-table-hoverable fw-table-nowrap" id="table-audit-log">
+                                        <thead>
+                                            <tr>
+                                                <th><?php Functions::printl('uuid'); ?></th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('audit_log', queryParams: array_merge($auditLogView->getBaseQuery(), ['sort_by' => 'timestamp', 'sort_order' => ($auditLogView->getSortBy() === 'timestamp' && $auditLogView->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('timestamp'); ?>
+                                                        <?php
+                                                            if ($auditLogView->getSortBy() === 'timestamp')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($auditLogView->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th><?php Functions::printl('category'); ?></th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('audit_log', queryParams: array_merge($auditLogView->getBaseQuery(), ['sort_by' => 'type', 'sort_order' => ($auditLogView->getSortBy() === 'type' && $auditLogView->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('type'); ?>
+                                                        <?php
+                                                            if ($auditLogView->getSortBy() === 'type')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($auditLogView->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th><?php Functions::printl('message'); ?></th>
+                                                <th><?php Functions::printl('operator'); ?></th>
+                                                <th><?php Functions::printl('entity'); ?></th>
+                                                <th class="fw-col-actions"><?php Functions::printl('actions'); ?></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                                if ($auditLogView->getRecords() === null)
+                                                {
+                                                    ?>
+                                            <tr>
+                                                <td colspan="8">
+                                                    <div class="fw-empty">
+                                                        <i class="bi bi-exclamation-circle"></i>
+                                                        <p><?php Functions::printl('error_loading'); ?></p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                                    <?php
+                                                }
+                                                elseif (empty($auditLogView->getRecords()))
+                                                {
+                                                    ?>
+                                            <tr>
+                                                <td colspan="8">
+                                                    <div class="fw-empty">
+                                                        <i class="bi bi-journal-text"></i>
+                                                        <p><?php Functions::printl('no_audit_logs'); ?></p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                                    <?php
+                                                }
+                                                else
+                                                {
+                                                    foreach ($auditLogView->getRecords() as $al)
+                                                    {
+                                                        ?>
+                                            <tr class="fw-row-link" data-href="<?php Functions::printRoute('audit_log_detail', ['audit_log_uuid' => $al->getUuid()]); ?>">
+                                                <td><span class="fw-uuid"><?php Functions::print($al->getUuid()); ?></span><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($al->getUuid()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></td>
+                                                <td><span class="fw-uuid"><?php Functions::print($auditLogView->formatDate($al->getTimestamp())); ?></span></td>
+                                                <td><span class="fw-badge fw-badge-gray"><?php Functions::print(str_replace('_', ' ', $al->getType()->getCategory()->name)); ?></span></td>
+                                                <td><span class="fw-badge <?php Functions::print($auditLogView->getTypeBadgeColor($al->getType())); ?>"><?php Functions::print(str_replace('_', ' ', $al->getType()->name)); ?></span></td>
+                                                <td><span class="fw-uuid fw-fw-semibold fw-text-ellipsis"><?php Functions::print($al->getMessage()); ?></span></td>
+                                                <td>
+                                                    <?php
+                                                        $opUuid = $al->getOperatorUuid();
+                                                        if ($opUuid !== null)
+                                                        {
+                                                            $opName = $auditLogView->getOperatorNames()[$opUuid] ?? null;
+                                                            ?><a href="<?php Functions::printRoute('operator_detail', ['operator_id' => $opUuid]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($opName ?? $opUuid); ?></a>
+                                                    <button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($opUuid); ?>" title="Copy"><i class="bi bi-clipboard"></i></button><?php
+                                                        }
+                                                        else
+                                                        {
+                                                            ?><span class="fw-uuid">—</span><?php
+                                                        }
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                        $entUuid = $al->getEntityUuid();
+                                                        if ($entUuid !== null)
+                                                        {
+                                                            $entAddr = $auditLogView->getEntityAddresses()[$entUuid] ?? null;
+                                                            ?><a href="<?php Functions::printRoute('entity_detail', ['entity_id' => $entUuid]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($entAddr ?? $entUuid); ?></a>
+                                                    <button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($entUuid); ?>" title="Copy"><i class="bi bi-clipboard"></i></button><?php
+                                                        }
+                                                        else
+                                                        {
+                                                            ?><span class="fw-uuid">—</span><?php
+                                                        }
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <div class="fw-table-actions">
+                                                        <a href="<?php Functions::printRoute('audit_log_detail', ['audit_log_uuid' => $al->getUuid()]); ?>" target="_blank" rel="noopener" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('open_in_new_tab'); ?>"><i class="bi bi-box-arrow-in-up-right"></i></a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                                        <?php
+                                                    }
+                                                }
+                                            ?>
+                                        </tbody>
+                                    </table>
