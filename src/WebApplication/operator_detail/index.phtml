@@ -1,0 +1,125 @@
+<?php
+    use DynamicalWeb\Enums\RequestMethod;
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\OperatorDetailView;
+
+    Functions::loadLocalization('operators');
+
+    $view = new OperatorDetailView();
+    WebSession::set('operator_detail_view', $view);
+    if (WebSession::getRequest()->getMethod() === RequestMethod::POST && $view->getOperator())
+    {
+        $view->handlePostRequest();
+    }
+?>
+<!DOCTYPE html>
+<html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>" data-fw-theme="<?php Functions::print($view->isDarkMode() ? 'dark' : ''); ?>">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <?php Functions::insertSection('../sections/head.phtml'); ?>
+        <title><?php Functions::printl('record_title'); ?> - <?php Functions::print($view->getOperator() ? $view->getOperator()->getName() : 'Error'); ?></title>
+        <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="/css/federation.css">
+    </head>
+    <body class="fw-page--operator">
+        <div class="fw-wrapper">
+            <?php Functions::insertSection('../sections/fw_topbar.phtml'); ?>
+            <?php Functions::insertSection('../sections/fw_topnav.phtml'); ?>
+            <div class="fw-main">
+                <div class="fw-content">
+                    <?php
+                        if ($view->hasError() || !$view->getOperator())
+                        {
+                            ?>
+                            <div class="fw-error">
+                                <div class="fw-error-card">
+                                    <div class="fw-error-icon fw-error-icon-red">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                    </div>
+                                    <p class="fw-error-description"><?php Functions::printl('error_loading_entry'); ?></p>
+                                    <div class="fw-error-actions">
+                                        <a href="<?php Functions::printRoute('operators'); ?>" class="fw-btn fw-btn-primary">
+                                            <i class="bi bi-arrow-left"></i> <?php Functions::printl('back'); ?>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                        else
+                        {
+                            if ($view->getSuccessMessage())
+                            {
+                                ?>
+                                <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        <span><?php Functions::printl($view->getSuccessMessage()); ?></span>
+                                    </div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                                <?php
+                            }
+                            if ($view->getErrorMessage())
+                            {
+                                ?>
+                                <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-exclamation-triangle-fill"></i>
+                                        <div>
+                                            <strong><?php Functions::printl($view->getErrorMessage()); ?></strong>
+                                            <?php
+                                                if ($view->getErrorDetail())
+                                                {
+                                                    ?><br><span class="fw-error-detail"><?php Functions::print($view->getErrorDetail()); ?></span><?php
+                                                }
+                                            ?>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                                <?php
+                            }
+                            if ($view->getNewToken())
+                            {
+                                ?>
+                                <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-key-fill"></i>
+                                        <div>
+                                            <strong><?php Functions::printl('token_generated'); ?></strong><br>
+                                            <code class="fw-code-block"><?php Functions::print($view->getNewToken()); ?></code>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                                <?php
+                            }
+                            if (!$view->hasRelatedData())
+                            {
+                                ?>
+                                <div class="fw-alert fw-alert-info">
+                                    <i class="bi bi-info-circle"></i>
+                                    <span><?php Functions::printl('no_related_data'); ?></span>
+                                </div>
+                                <?php
+                            }
+                            ?>
+                            <?php
+                            Functions::insertSection('detail.phtml');
+                            Functions::insertSection('related.phtml');
+                            Functions::insertSection('modals.phtml');
+                        }
+                    ?>
+                </div>
+            </div>
+        </div>
+        <script src="/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+        <script src="/js/app.js"></script>
+        <script src="/js/nav.js"></script>
+        <?php Functions::insertSection('../sections/javascript.phtml'); ?>
+        <?php Functions::insertSection('javascript.phtml'); ?>
+    </body>
+</html>
