@@ -1,0 +1,159 @@
+// FederationWeb — Enterprise Management Panel
+// Bootstrap (official recommended @import approach for SCSS module compatibility)
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/variables-dark';
+@import 'bootstrap/scss/maps';
+@import 'bootstrap/scss/mixins';
+@import 'bootstrap/scss/root';
+
+// Bootstrap components
+@import 'bootstrap/scss/reboot';
+@import 'bootstrap/scss/type';
+@import 'bootstrap/scss/grid';
+@import 'bootstrap/scss/utilities';
+@import 'bootstrap/scss/utilities/api';
+@import 'bootstrap/scss/forms/form-check';
+@import 'bootstrap/scss/dropdown';
+@import 'bootstrap/scss/modal';
+@import 'bootstrap/scss/close';
+@import 'bootstrap/scss/transitions';
+
+// Our custom design system
+@import 'variables';
+@import 'layout/topbar';
+@import 'layout/topnav';
+@import 'layout/content';
+@import 'components/cards';
+@import 'components/tables';
+@import 'components/controls';
+@import 'components/tabs';
+@import 'components/overlays';
+@import 'components/misc';
+@import 'pages';
+@import 'demo';
+
+// Base overrides
+body {
+  font-family: $fw-font-family;
+  font-size: $fw-font-size-base;
+  line-height: $fw-line-height;
+  color: var(--fw-text-primary);
+  background: var(--fw-body-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+a {
+  color: var(--fw-link);
+  transition: color $fw-transition;
+  &:hover { color: var(--fw-link-hover); }
+}
+
+::selection {
+  background: rgba($fresh-sky, 0.35);
+  color: $white;
+}
+
+// === Dark Mode ===
+[data-fw-theme="dark"] {
+  // Topnav (stays ink-black but lightens text)
+  .fw-topnav { border-bottom-color: rgba($cerulean, 0.15); }
+  .fw-topnav-item { color: rgba($white, 0.55); &:hover { color: $white; } &.active { color: $fresh-sky; &::after { background: $fresh-sky; } } }
+
+  // Page identity banners & accent colors
+  .fw-page--report { --fw-page-accent: #{$fresh-sky}; --fw-page-accent-bg: #{rgba($fw-blue-500, 0.12)}; }
+  .fw-page--entity { --fw-page-accent: #{$fw-amber-400}; --fw-page-accent-bg: #{rgba($fw-amber-500, 0.12)}; }
+  .fw-page--evidence { --fw-page-accent: #{$fw-cyan-400}; --fw-page-accent-bg: #{rgba($fw-cyan-500, 0.12)}; }
+  .fw-page--operator { --fw-page-accent: #{$fw-emerald-400}; --fw-page-accent-bg: #{rgba($fw-emerald-500, 0.12)}; }
+  .fw-page--blacklist { --fw-page-accent: #{$fw-red-400}; --fw-page-accent-bg: #{rgba($fw-red-500, 0.12)}; }
+
+  // Banners
+  .fw-expiration-alert { background: rgba($fw-amber-600, 0.12); border-color: rgba($fw-amber-600, 0.2); color: $fw-amber-400; }
+
+  // Demo accents
+  .fw-filter-badge { color: $fresh-sky; background: rgba($fresh-sky, 0.1); border-color: rgba($fresh-sky, 0.2); }
+
+
+  // Close button
+  .btn-close { filter: brightness(0) invert(1); opacity: .5; &:hover { opacity: .85; } }
+
+  // Progress
+  .fw-progress-track { background: rgba($white, 0.1); }
+
+  // Stat icons (vibrant in dark)
+  .fw-stat-icon.blue { background: rgba($fresh-sky, 0.15); color: $fresh-sky; }
+  .fw-stat-icon.emerald { background: rgba($fw-emerald-500, 0.15); color: $fw-emerald-400; }
+  .fw-stat-icon.amber { background: rgba($fw-amber-500, 0.15); color: $fw-amber-400; }
+  .fw-stat-icon.red { background: rgba($fw-red-500, 0.15); color: $fw-red-400; }
+  .fw-stat-icon.purple { background: rgba($fw-purple-500, 0.15); color: $fw-purple-400; }
+  .fw-stat-icon.cyan { background: rgba($fw-cyan-500, 0.15); color: $fw-cyan-400; }
+
+  // Pages
+  .fw-status-list .fw-status-item { border-bottom-color: var(--fw-border-light); .fw-status-label { color: var(--fw-text-muted); } .fw-status-value { color: var(--fw-text-primary); } }
+  .fw-record-hero { background: var(--fw-surface-bg); border-color: var(--fw-border-default); .fw-record-hero-title .fw-record-hero-text { h1 { color: var(--fw-text-heading); } .fw-record-hero-subtitle { color: var(--fw-text-muted); } } }
+  // Reputation card (entity page) — full path to match base specificity
+  .fw-page--entity .fw-reputation-card { background: var(--fw-surface-bg); border-color: var(--fw-border-default); }
+  .fw-page--entity .fw-reputation-card .fw-reputation-score { color: var(--fw-dot-red); }
+  .fw-page--entity .fw-reputation-card .fw-reputation-label { color: var(--fw-text-muted); }
+  .fw-page--entity .fw-reputation-card .fw-reputation-bar { background: rgba($white, 0.1); }
+  // Threat items (entity page) — full path to match base specificity
+  .fw-page--entity .fw-threat-summary .fw-threat-item { background: var(--fw-surface-alt); border-color: var(--fw-border-default); }
+  .fw-page--entity .fw-threat-summary .fw-threat-item .fw-threat-value { color: var(--fw-text-heading); }
+  .fw-page--entity .fw-threat-summary .fw-threat-item .fw-threat-label { color: var(--fw-text-muted); }
+  // Attachment items (evidence page)
+  .fw-page--evidence .fw-attachment-item { border-color: var(--fw-border-default); }
+  .fw-page--evidence .fw-attachment-item .fw-attachment-icon { background: rgba($fw-cyan-600, 0.12); color: $fw-cyan-400; }
+  // Profile card (operator page) — full path to match base specificity
+  .fw-page--operator .fw-profile-card { background: var(--fw-surface-bg); border-color: var(--fw-border-default); }
+  .fw-page--operator .fw-profile-card .fw-profile-info .fw-profile-name { color: var(--fw-text-heading); }
+  .fw-page--operator .fw-profile-card .fw-profile-info .fw-profile-role { color: var(--fw-text-muted); }
+  // Search result page
+  .fw-search-input { background: var(--fw-input-bg); border-color: var(--fw-input-border); color: var(--fw-text-primary); &:focus { border-color: var(--fw-primary); background: var(--fw-surface-overlay); } &::placeholder { color: var(--fw-text-muted); } }
+  .fw-search-meta { border-bottom-color: var(--fw-border-light); }
+  .fw-search-pagination { border-top-color: var(--fw-border-light); }
+  // Login
+  .fw-login-card { background: var(--fw-surface-bg); border-color: var(--fw-border-default); }
+  .fw-login-pixel-bg { background-image: repeating-linear-gradient(0deg, transparent 0px, transparent 31px, rgba($fresh-sky, 0.06) 31px, rgba($fresh-sky, 0.06) 32px), repeating-linear-gradient(90deg, transparent 0px, transparent 31px, rgba($fresh-sky, 0.06) 31px, rgba($fresh-sky, 0.06) 32px); }
+  .fw-login-pixel-bg::before { background: radial-gradient(ellipse 70px 50px at 25% 25%, rgba($fresh-sky, 0.09) 0%, transparent 100%), radial-gradient(ellipse 60px 80px at 75% 60%, rgba($cerulean, 0.07) 0%, transparent 100%), radial-gradient(ellipse 80px 60px at 40% 75%, rgba($fresh-sky, 0.11) 0%, transparent 100%), radial-gradient(ellipse 50px 70px at 75% 25%, rgba($cerulean, 0.05) 0%, transparent 100%), radial-gradient(ellipse 90px 50px at 25% 75%, rgba($fresh-sky, 0.04) 0%, transparent 100%); }
+  .fw-login-pixel-bg::after { background: radial-gradient(circle, rgba($cerulean, 0.05) 0%, rgba($fresh-sky, 0.02) 50%, transparent 80%); }
+  .fw-login-title { color: var(--fw-text-heading); }
+  .fw-login-subtitle { color: var(--fw-text-muted); }
+  .fw-login-field label { color: var(--fw-text-primary); }
+  .fw-login-input-wrap input { background: var(--fw-input-bg); border-color: var(--fw-input-border); color: var(--fw-text-primary); &:focus { border-color: var(--fw-primary); } &:disabled, &[readonly] { background: var(--fw-surface-alt); color: var(--fw-text-muted); } }
+  .fw-login-input-wrap i { color: var(--fw-text-muted); }
+  .fw-login-field-note { color: var(--fw-text-muted); }
+  .fw-login-field-disabled label { color: var(--fw-text-muted); }
+  .fw-login-footer { border-top-color: var(--fw-border-light); }
+  .fw-login-theme-toggle { border-color: var(--fw-border-default); color: var(--fw-text-muted); &:hover { background: var(--fw-surface-alt); color: var(--fw-link); border-color: var(--fw-primary); } }
+  .fw-login-server-name { color: var(--fw-text-muted); }
+
+  // Error
+  .fw-error-card { background: var(--fw-surface-bg); border-color: var(--fw-border-default); }
+  .fw-error-code { color: var(--fw-text-heading); }
+  .fw-error-subtitle { color: var(--fw-text-primary); }
+  .fw-error-description { color: var(--fw-text-muted); }
+  .fw-error-icon-red { background: rgba($fw-red-600, 0.15); color: $fw-red-400; }
+  .fw-error-icon-amber { background: rgba($fw-amber-600, 0.15); color: $fw-amber-400; }
+  .fw-error-icon-blue { background: rgba($fresh-sky, 0.15); color: $fresh-sky; }
+
+  // Demo
+  .fw-filter-bar { background: var(--fw-surface-bg); border-color: var(--fw-border-default); }
+  .fw-filter-input { background: var(--fw-input-bg); border-color: var(--fw-input-border); color: var(--fw-text-primary); &:focus { border-color: var(--fw-primary); background: var(--fw-surface-overlay); } }
+  .fw-filter-select { background: var(--fw-input-bg); border-color: var(--fw-input-border); color: var(--fw-text-secondary); &:focus { border-color: var(--fw-primary); background: var(--fw-surface-overlay); } }
+  .fw-col-panel { background: var(--fw-surface-alt); border-color: var(--fw-border-default); label { color: var(--fw-text-secondary); &:hover { background: var(--fw-border-default); } } }
+  .fw-filter-suggestions { background: var(--fw-surface-overlay); border-color: var(--fw-border-default); }
+  .fw-filter-suggestion-item { color: var(--fw-text-primary); border-bottom-color: var(--fw-border-light); &:hover, &.active { background: var(--fw-surface-alt); } i { color: var(--fw-text-muted); } .fw-filter-suggestion-subtitle { color: var(--fw-text-muted); } }
+  .fw-filter-suggestion-empty { color: var(--fw-text-muted); }
+  .fw-spec-endpoint { border-bottom-color: var(--fw-border-light); }
+
+  // Copy button copied state
+  .fw-copy-btn.copied { color: $fw-emerald-400; }
+
+  // Operator tab badge
+  .fw-page--operator .fw-card-tabs .fw-tabs .fw-tab.active .fw-tab-badge {
+    background: rgba($fw-emerald-500, 0.15);
+    color: $fw-emerald-400;
+  }
+}
