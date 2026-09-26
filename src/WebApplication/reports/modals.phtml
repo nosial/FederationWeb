@@ -1,0 +1,71 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\ReportsView;
+    use WebKernel\ViewAuthorization;
+
+    /** @var ReportsView $reportsView */
+    $reportsView = WebSession::get('reports_view');
+?>
+<?php
+    if (ViewAuthorization::canManageRecords())
+    {
+        ?>
+        <div class="modal fade" id="closeReportModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-check-circle"></i> <?php Functions::printl('modal_close_title'); ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="POST" action="<?php Functions::printRoute('reports', queryParams: $reportsView->getBaseQuery()); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                        <input type="hidden" name="action" value="close_report">
+                        <input type="hidden" name="report_uuid" id="closeReportUuid">
+                        <div class="modal-body">
+                            <p><?php Functions::printl('modal_close_info'); ?></p>
+                            <div class="fw-form-group">
+                                <label class="fw-form-label"><?php Functions::printl('modal_close_classification_label'); ?></label>
+                                <select class="fw-form-control" name="classification">
+                                    <option value=""><?php Functions::printl('modal_close_classification_none'); ?></option>
+                                    <option value="MALICIOUS"><?php Functions::printl('modal_close_classification_malicious'); ?></option>
+                                    <option value="SUSPICIOUS"><?php Functions::printl('modal_close_classification_suspicious'); ?></option>
+                                    <option value="NORMAL"><?php Functions::printl('modal_close_classification_normal'); ?></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                            <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl('modal_close_confirm'); ?></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade modal-danger" id="deleteReportModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> <?php Functions::printl('modal_delete_title'); ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="POST" action="<?php Functions::printRoute('reports', queryParams: $reportsView->getBaseQuery()); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                        <input type="hidden" name="action" value="delete_report">
+                        <input type="hidden" name="report_uuid" id="deleteReportUuid">
+                        <div class="modal-body text-center">
+                            <div class="fw-modal-alert fw-modal-alert-danger">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                <span><?php Functions::printl('modal_delete_info'); ?></span>
+                            </div>
+                            <p class="fw-mb-0"><?php Functions::printl('modal_delete_confirm_prefix'); ?> <strong id="deleteReportUuidDisplay"></strong> <?php Functions::printl('modal_delete_confirm_suffix'); ?></p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                            <button type="submit" class="fw-btn fw-btn-danger"><?php Functions::printl('confirm_delete'); ?></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+?>
