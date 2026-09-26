@@ -1,0 +1,109 @@
+<script>
+function toggleRawSpec() {
+    var block = document.getElementById('rawSpecBlock');
+    var structured = document.getElementById('specStructured');
+    var search = document.getElementById('specSearchInput');
+    var showRaw = block.classList.contains('fw-hidden');
+
+    block.classList.toggle('fw-hidden', !showRaw);
+    structured.classList.toggle('fw-hidden', showRaw);
+    search.classList.toggle('fw-hidden', showRaw);
+}
+
+function filterSpec(query) {
+    query = query.toLowerCase().trim();
+    var clearBtn = document.getElementById('specSearchClear');
+    var hasQuery = query.length > 0;
+
+    clearBtn.classList.toggle('fw-hidden', !hasQuery);
+
+    var sections = document.querySelectorAll('#specStructured > .fw-spec-section');
+    sections.forEach(function(section) {
+        section.style.display = '';
+    });
+
+    var endpointsSection = null;
+    var schemasSection = null;
+    sections.forEach(function(s) {
+        var h = s.querySelector('.fw-spec-section-header h6');
+        if (h && h.textContent.indexOf('Endpoints') !== -1) endpointsSection = s;
+        if (h && h.textContent.indexOf('Schemas') !== -1) schemasSection = s;
+    });
+
+    var summarySection = null;
+    sections.forEach(function(s) {
+        var h = s.querySelector('.fw-spec-section-header h6');
+        if (h && h.textContent.indexOf('Summary') !== -1) summarySection = s;
+    });
+
+    if (!hasQuery) {
+        if (endpointsSection) endpointsSection.style.display = '';
+        if (schemasSection) schemasSection.style.display = '';
+        var allTags = document.querySelectorAll('.fw-spec-tag-group');
+        allTags.forEach(function(t) { t.style.display = ''; });
+        var allEndpoints = document.querySelectorAll('.fw-spec-endpoint');
+        allEndpoints.forEach(function(e) { e.style.display = ''; });
+        var allSchemas = document.querySelectorAll('.fw-spec-schema');
+        allSchemas.forEach(function(s) { s.style.display = ''; });
+        return;
+    }
+
+    var anyEndpointMatch = false;
+    var tagGroups = document.querySelectorAll('.fw-spec-tag-group');
+    tagGroups.forEach(function(tag) {
+        var tagSummary = tag.querySelector('.fw-spec-tag-summary');
+        var tagText = tagSummary ? tagSummary.textContent.toLowerCase() : '';
+        var tagMatch = tagText.indexOf(query) !== -1;
+
+        var endpoints = tag.querySelectorAll('.fw-spec-endpoint');
+        var hasVisibleEndpoint = false;
+        endpoints.forEach(function(ep) {
+            var epText = ep.querySelector('.fw-spec-endpoint-summary').textContent.toLowerCase();
+            var epBody = ep.querySelector('.fw-spec-endpoint-body');
+            var epBodyText = epBody ? epBody.textContent.toLowerCase() : '';
+            var match = epText.indexOf(query) !== -1 || epBodyText.indexOf(query) !== -1;
+            ep.style.display = match ? '' : 'none';
+            if (match) hasVisibleEndpoint = true;
+        });
+
+        if (tagMatch || hasVisibleEndpoint) {
+            tag.style.display = '';
+            if (tagMatch) {
+                endpoints.forEach(function(ep) { ep.style.display = ''; });
+            }
+        } else {
+            tag.style.display = 'none';
+        }
+        if (hasVisibleEndpoint || tagMatch) anyEndpointMatch = true;
+    });
+
+    if (endpointsSection) {
+        endpointsSection.style.display = anyEndpointMatch ? '' : 'none';
+    }
+
+    if (schemasSection) {
+        var schemas = schemasSection.querySelectorAll('.fw-spec-schema');
+        var anySchemaMatch = false;
+        schemas.forEach(function(s) {
+            var sText = s.querySelector('.fw-spec-schema-summary').textContent.toLowerCase();
+            var sBody = s.querySelector('.fw-spec-schema-body');
+            var sBodyText = sBody ? sBody.textContent.toLowerCase() : '';
+            var match = sText.indexOf(query) !== -1 || sBodyText.indexOf(query) !== -1;
+            s.style.display = match ? '' : 'none';
+            if (match) anySchemaMatch = true;
+        });
+        schemasSection.style.display = anySchemaMatch ? '' : 'none';
+    }
+
+    if (summarySection) {
+        var summaryText = summarySection.textContent.toLowerCase();
+        summarySection.style.display = summaryText.indexOf(query) !== -1 ? '' : 'none';
+    }
+}
+
+function clearSpecSearch() {
+    document.getElementById('specSearchInput').value = '';
+    filterSpec('');
+    document.getElementById('specSearchInput').focus();
+}
+</script>
