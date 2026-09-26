@@ -1,0 +1,743 @@
+global:
+  nav_dashboard: Panel principal
+  operators: Operadores
+  entities: Entidades
+  known_entities: Entidades conocidas
+  evidence_records: Registros de evidencia
+  blacklist_records: Registros de lista negra
+  audit_log_records: Registros de auditoría
+  reports: Informes
+  report: Informe
+  audit_log: Registro de auditoría
+  attachments: Adjuntos
+  uuid: UUID
+  type: Tipo
+  status: Estado
+  created: Creado
+  updated: Actualizado
+  timestamp: Marca de tiempo
+  message: Mensaje
+  name: Nombre
+  actions: Acciones
+  enabled: Habilitado
+  disabled: Deshabilitado
+  active: Activo
+  'yes': 'Sí'
+  'no': 'No'
+  open: Abierto
+  closed: Cerrado
+  view: Ver
+  view_all: Ver todo
+  open_in_new_tab: Abrir en una pestaña nueva
+  back: Volver
+  cancel: Cancelar
+  confirm_delete: Eliminar
+  print_page: Imprimir
+  classification: Clasificación
+  category: Categoría
+  tag: Etiqueta
+  expires: Expira
+  incident_type: Tipo de incidente
+  incident_malware: Malware
+  incident_illegal_content: Contenido ilegal
+  incident_phishing: Phishing
+  incident_scam: Estafa
+  incident_service_abuse: Abuso del servicio
+  incident_spam: Spam
+  incident_other: Otro
+  entity: Entidad
+  operator: Operador
+  address: Dirección
+  related_records: Registros relacionados
+  columns: Columnas
+  detail_message: Mensaje
+  detail_metadata: Metadatos
+  document_generated: Documento generado
+  entity_blacklist: Lista negra de la entidad
+  entity_evidence: Evidencia de la entidad
+  entity_reports: Informes de la entidad
+  evidence: Evidencia
+  filter_all_categories: Todas las categorías
+  filter_placeholder: Buscar por UUID, entidad u operador...
+  filter_reset: Restablecer
+  modal_delete_confirm_prefix: ¿Está seguro de que desea eliminar
+  modal_delete_confirm_suffix: Esta acción no se puede deshacer.
+  modal_edit_save: Guardar cambios
+  new_report_title: Enviar informe
+  new_report_add_files: Añadir archivos
+  new_report_content_label: Contenido
+  new_report_entity_label: Entidad informante
+  new_report_entity_new_label: O definir una nueva entidad
+  new_report_entity_select: Seleccione una entidad existente o defina una nueva
+  new_report_entity_placeholder: Escriba la dirección o UUID de la entidad para buscar...
+  new_report_evidence_tag_label: Etiqueta de evidencia (opcional)
+  new_report_evidence_records_label: Registros de evidencia
+  new_report_add_evidence: Añadir evidencia
+  new_report_remove_evidence: Eliminar evidencia
+  new_report_files_help: Seleccione uno o más archivos para adjuntar como evidencia
+  new_report_files_label: Archivos adjuntos (opcional)
+  new_report_select_type: -- Seleccionar tipo de incidente --
+  new_report_submit: Enviar informe
+  create_entity_help: La entidad se registrará en la base de datos de la federación.
+  next: Siguiente
+  no_audit_logs: No se encontraron entradas en el registro de auditoría
+  no_audit_records: Sin registros de auditoría
+  no_blacklist: No se encontraron registros en la lista negra
+  no_blacklist_records: Sin registros en la lista negra
+  no_evidence: No se encontraron registros de evidencia
+  no_evidence_records: Sin registros de evidencia
+  no_report_records: Sin registros de informes
+  previous: Anterior
+  print_footer_brand: Panel de administración de FederationWeb
+  print_footer_subtitle: Documento oficial de revisión
+  print_server_info: Servidor de la federación
+  print_record_list: Lista de registros
+  print_filters: Filtros
+  print_filters_none: Sin filtros aplicados
+  print_filter_search: Búsqueda
+  print_filter_category: Categoría
+  print_filter_status: Estado
+  print_filter_permissions: Permisos
+  print_filter_operator: Operador
+  print_filter_entity: Entidad
+  print_filter_assigned_operator: Operador asignado
+  print_filter_sort: Ordenar
+  print_sort_asc: Ascendente
+  print_sort_desc: Descendente
+  expired: Expirado
+  detail_confidential: Confidencial
+  detail_tag: Etiqueta
+  error_label: Error
+  csrf_failed: El formulario ha caducado. Por favor, inténtelo de nuevo.
+  reputation: Reputación
+  search_placeholder: Buscar registros...
+  status_active: Activo
+  status_lifted: Levantado
+  submit_evidence: Enviar evidencia
+  language: Idioma
+  language_select_title: Seleccionar idioma
+  api_version: Versión de API
+  assigned: Asignado
+  confidential: Confidencial
+  back_to_login: Autenticarse
+  go_back: Volver
+  retry: Reintentar
+  blacklist: Lista negra
+  in_label: En
+  file_size_b: B
+  file_size_kb: KB
+  file_size_mb: MB
+  file_too_large: El archivo excede el tamaño máximo de carga
+  no_file_selected: Ningún archivo seleccionado
+  upload_failed: La carga falló con el código de error
+  searching: Buscando...
+  no_entities_found: No se encontraron entidades
+  no_operators_found: No se encontraron operadores
+  no_evidence_found: No se encontró evidencia
+  no_reports_found: No se encontraron informes
+  no_blacklist_found: No se encontraron registros en la lista negra
+  no_audit_logs_found: No se encontraron registros de auditoría
+  overdue: Vencido
+  permanent: Permanente
+  deprecated: Obsoleto
+  required_label: Requerido
+  schemas: Esquemas
+  component_schemas: esquemas de componentes
+  spec_title: Título
+  spec_terms_of_service: Términos del servicio
+  spec_contact: Contacto
+  spec_license: Licencia
+  spec_servers: Servidores
+  spec_external_docs: Documentación externa
+  app_name: FederationWeb
+  anonymous: Anónimo
+  no_message: Sin mensaje
+  none: Ninguno
+  unknown_file: Archivo desconocido
+  unknown_type: Tipo desconocido
+  audit_log_entry: Entrada del registro de auditoría
+  null_label: 'nulo'
+  true_label: 'verdadero'
+  false_label: 'falso'
+  classification_prefix: 'Clasificación: '
+  entity_prefix: 'Entidad: '
+  auto_assign: Asignación automática
+  permissions: Permisos
+  perm_client: Cliente
+  perm_blacklist: Gestión
+  perm_operators: Operadores
+  detail_host: Host
+  detail_whitelisted: En lista blanca
+  detail_note: Nota
+  detail_report: Informe vinculado
+  detail_text_content: Contenido de texto
+  detail_timestamp: Marca de tiempo
+  detail_operator: Operador
+  detail_entity: Entidad
+  detail_blacklist: Lista negra relacionada
+  detail_evidence: Evidencia relacionada
+  detail_file_attachment: Archivo adjunto
+  download_attachment: Descargar
+  evidence_submit_failed: Error al enviar la evidencia
+  view_operator: Ver operador
+  created_prefix: ' · Creado '
+  spec_search_placeholder: Buscar puntos de enlace, esquemas, rutas...
+  example_entity_address: p. ej. ejemplo.com:usuario123
+  new_report_content_placeholder: Pegue el contenido de la evidencia o describa el incidente
+  remove: Eliminar
+  modal_edit_metadata_value_placeholder: Valor
+  copy: Copiar
+  new_report_tag_placeholder: p. ej. url-phishing-001
+  api_specification: Especificación de la API
+  assigned_operator: Operador asignado
+  automated: Automatizado
+  detail_lifted_by: Levantado por
+  entity_unavailable: Detalles de la entidad no disponibles
+  failed_blacklist_records: Error al cargar registros de la lista negra
+  failed_evidence_records: Error al cargar registros de evidencia
+  file_size: Tamaño
+  id: ID
+  operator_unavailable: Detalles del operador no disponibles
+  relationship: Relación
+  submitting_operator: Operador remitente
+fw_topbar:
+  overview: Resumen
+  page_operators: Operadores
+  page_entities: Entidades
+  record_title: Registro
+  page_search: Búsqueda
+  sign_out: Cerrar sesión
+  search_help: Presione Entrar para buscar en todos los registros
+  search_no_results: No se encontraron resultados
+  search_view_all: Ver todos los resultados
+  dark_mode_light: Modo claro
+  dark_mode_dark: Modo oscuro
+dashboard:
+  page_title: '{server_name} - Panel principal'
+  back: Volver al panel principal
+  server_status: Estado del servidor
+  server_name_label: Nombre del servidor
+  api_version_label: Versión de la API
+  online: En línea
+  total_records: Registros totales
+  registered_operators: Operadores registrados
+  public_visibility: Acceso público
+  reports_title: Informes
+  file_attachments: Archivos adjuntos
+  record_counts: Conteos de registros
+  public: Público
+  public_audit_logs: Registros de auditoría
+  public_evidence: Evidencia
+  public_blacklist: Lista negra
+  public_entities: Entidades conocidas
+  public_reports: Informes
+  public_entity_metadata: Metadatos de la entidad
+  public_scan_content: Escaneo de contenido
+  public_query_entity: Consulta de entidad
+  search_capabilities: Búsqueda
+  search_enabled: Búsqueda habilitada
+  public_search: Búsqueda pública
+  enabled_search_types: Tipos de búsqueda habilitados
+  public_search_types: Tipos de búsqueda pública
+  recent_activity: Actividad de auditoría reciente
+  top_threats: Principales amenazas
+  recent_evidence: Evidencia reciente
+  blacklist_records: Lista negra
+  incident_distribution: Distribución de registros
+  activity_feed: Feed de actividad
+  audit_log_visibility: Visibilidad del registro de auditoría
+  entity_name: Entidad
+  no_top_threats: No se identificaron amenazas
+  failed_audit_logs: Error al cargar los registros de auditoría
+  failed_top_threats: Error al cargar las amenazas
+  failed_evidence: Error al cargar la evidencia
+  api_summary: Resumen de la API
+  api_endpoints: Puntos de enlace de la API
+  parameters_label: Parámetros
+  request_body: Cuerpo de la solicitud
+  responses: Respuestas
+  description_label: Descripción
+  specification_raw: Especificación en bruto
+  endpoints_grouped_by_tag: Puntos de enlace agrupados por etiqueta
+  no_endpoints: No hay puntos de enlace definidos
+  operational_overview: Resumen operativo
+  public_overview: Resumen público
+  server_configuration: Configuración del servidor
+  no_schemas: No hay esquemas de componentes definidos
+  spec_load_failed: Error al cargar la especificación de la API
+  endpoint_count: '{count} puntos de enlace'
+  endpoint_count_single: 1 punto de enlace
+404:
+  page_title: 404 No encontrado
+  error_code: Página no encontrada
+  error_description: No se pudo encontrar el recurso solicitado
+500:
+  page_title: 500 Error interno del servidor
+  error_code: Error interno del servidor
+  error_description: Ocurrió un error inesperado al procesar la solicitud
+authenticate:
+  page_title: '{server_name} - Autenticación'
+  form_title: Autenticación
+  form_subtitle: Conectar a su servidor de federación
+  server_host_label: Host del servidor
+  server_host_placeholder: https://federacion.ejemplo.com
+  server_host_locked: Configurado por el administrador
+  access_token_label: Token de acceso
+  access_token_placeholder: Ingrese su token de acceso
+  access_token_optional: Dejar en blanco para conectar de forma anónima
+  access_token_required: Autenticación requerida
+  submit_button: Autenticarse
+  error_required: Por favor, ingrese su token de acceso
+  error_invalid: Token de acceso no válido. Inténtelo de nuevo.
+  error_disabled: El acceso está deshabilitado.
+  error_generic: Ocurrió un error. Por favor, inténtelo de nuevo.
+  error_server_unreachable: No se pudo conectar al servidor especificado. Compruebe la URL del host.
+  server_name_fallback: Servidor de la federación
+  error_anonymous_disabled: No se permite el acceso anónimo. Proporcione un token de acceso.
+operators:
+  page_title: Operadores
+  heading: Operadores
+  subtitle: Gestionar operadores de la federación y sus permisos
+  showing_operators: 'Mostrando {start} a {end} de {total} operadores'
+  back: Volver a Operadores
+  record_title: Registro de operador
+  record_detail: Detalles del operador
+  no_operators: No se encontraron operadores
+  error_loading: Error al cargar los operadores. Por favor, inténtelo de nuevo.
+  error_loading_entry: Error al cargar el operador. Es posible que no exista o que no tenga permiso para verlo.
+  filter_all_status: Todos los estados
+  filter_all_permissions: Todos los permisos
+  access_token: Token de acceso
+  present: Presente
+  disabled_yes: Deshabilitado
+  token_generated: Token generado
+  related_summary: Resumen relacionado
+  no_related_data: Este operador no tiene informes, evidencias, entradas en la lista negra o actividad de auditoría registrados.
+  create_operator: Crear operador
+  edit_operator: Editar operador
+  delete_operator: Eliminar operador
+  enable_operator: Habilitar
+  disable_operator: Deshabilitar
+  generate_token: Generar token de acceso
+  set_permissions: Establecer permisos
+  create_operator_heading: Nuevo operador
+  create_operator_name_label: Nombre del operador
+  create_operator_name_placeholder: Ingrese el nombre del operador
+  create_operator_help: El nombre debe ser único en toda la federación.
+  modal_disable_title: Deshabilitar operador
+  modal_enable_title: Habilitar operador
+  modal_disable_info: Deshabilitar a este operador le impedirá acceder a la federación. Se puede volver a habilitar en cualquier momento.
+  modal_enable_info: Habilitar a este operador le restaurará el acceso a la federación.
+  modal_disable_confirm: ¿Está seguro de que desea deshabilitar a
+  modal_enable_confirm: ¿Está seguro de que desea habilitar a
+  modal_disable_confirm_btn: Deshabilitar operador
+  modal_enable_confirm_btn: Habilitar operador
+  modal_edit_title: Editar operador
+  modal_edit_name_label: Nombre del operador
+  modal_token_title: Generar token de acceso
+  modal_token_label: Nuevo token
+  modal_token_generate: Generar nuevo token
+  modal_close: Cerrar
+  modal_permissions_title: Establecer permisos
+  modal_permissions_operator_name: Operador
+  modal_permissions_operator_desc: Gestionar operadores y tokens de acceso
+  modal_permissions_client_name: Cliente
+  modal_permissions_client_desc: Enviar informes y evidencias
+  modal_permissions_management_name: Gestión
+  modal_permissions_management_desc: Gestionar informes, entidades, evidencias y lista negra
+  modal_permissions_save: Guardar permisos
+  delete_operator_confirm: '¿Está seguro de que desea eliminar "{name}"? Esta acción no se puede deshacer.'
+  profile_active_since: 'Activo desde {date}'
+  operator_records: '{count} registros'
+  operator_entries: '{count} entradas'
+  modal_delete_title: Eliminar operador
+  modal_delete_info: Eliminar a este operador eliminará permanentemente su cuenta e invalidará todas sus sesiones. Esta acción no se puede deshacer.
+  operator_created: Operador creado con éxito
+  operator_updated: Operador actualizado con éxito
+  operator_deleted: Operador eliminado con éxito
+  operator_enabled: Operador habilitado con éxito
+  operator_disabled: Operador deshabilitado con éxito
+  api_key_refreshed: Token de acceso actualizado con éxito
+  permission_updated: Permisos me actualizados con éxito
+  operator_created_failed: Error al crear el operador
+  operator_delete_failed: Error al eliminar el operador
+  operator_enable_failed: Error al habilitar el operador
+  operator_disable_failed: Error al deshabilitar el operador
+  operator_rename_failed: Error al renombrar el operador
+  api_key_refresh_failed: Error al actualizar el token de acceso
+  permission_update_failed: Error al actualizar los permisos
+  enable_auto_assign: Habilitar asignación automática
+  disable_auto_assign: Deshabilitar asignación automática
+  modal_auto_assign_title: Alternar asignación automática
+  modal_auto_assign_enable_info: Habilitar la asignación automática permite que los informes se asignen automáticamente a este operador.
+  modal_auto_assign_disable_info: Deshabilitar la asignación automática evita que los informes se asignen automáticamente a este operador.
+  modal_auto_assign_confirm: ¿Está seguro de que desea alternar la asignación automática para
+  modal_auto_assign_enable_btn: Habilitar asignación automática
+  modal_auto_assign_disable_btn: Deshabilitar asignación automática
+  auto_assign_enabled: Asignación automática habilitada con éxito
+  auto_assign_disabled: Asignación automática deshabilitada con éxito
+  auto_assign_update_failed: Error al actualizar el estado de asignación automática
+  submitted_reports: Informes enviados
+  assigned_reports: Informes asignados
+  latest_audit_activity: Última actividad de auditoría
+  latest_report: Último informe
+  latest_evidence: Último registro de evidencia
+  latest_blacklist: Último registro de lista negra
+  failed_audit_logs: Error al cargar registros de auditoría para este operador.
+  failed_reports: Error al cargar registros de informes para este operador.
+  failed_evidence: Error al cargar registros de evidencia para este operador.
+  failed_blacklist: Error al cargar registros de lista negra para este operador.
+entities:
+  page_title: Entidades
+  heading: Entidades conocidas
+  subtitle: Explorar y gestionar entidades conocidas de la federación
+  showing_entities: 'Mostrando {start} a {end} de {total} entidades'
+  back: Volver a Entidades
+  record_title: Registro de entidad
+  record_detail: Detalles de la entidad
+  no_entities: No se encontraron entidades
+  error_loading: Error al cargar las entidades. Por favor, inténtelo de nuevo.
+  error_loading_entry: Error al cargar la entidad. Es posible que no exista o que no tenga permiso para verla.
+  filter_whitelisted: En lista blanca
+  filter_not_whitelisted: Fuera de lista blanca
+  filter_with_relationship: Tiene relación
+  filter_without_relationship: Sin relación
+  host: Host
+  whitelisted: En lista blanca
+  detail_heading: Detalles de la entidad
+  detail_hash: Hash SHA-256
+  detail_relationship: Relación
+  detail_reputation_last_updated: Última actualización de reputación
+  reputation_score: Puntuación de reputación
+  reputation_range: 'Rango: -1000 a 1000'
+  threat_summary: Resumen de amenazas
+  reports_count: Informes
+  evidence_count: Evidencias
+  blacklist_count: Lista negra
+  relationship_alternative: Alternativa
+  relationship_proxy: Proxy
+  relationship_child: Dependiente
+  table_incident_type: Tipo de incidente
+  edit_entity: Editar entidad
+  whitelist_entity: Añadir a lista blanca
+  unwhitelist_entity: Quitar de lista blanca
+  blacklist_entity: Incluir en lista negra
+  set_relationship: Establecer relación
+  clear_relationship: Borrar relación
+  clear_reputation: Borrar reputación
+  delete_entity: Eliminar entidad
+  create_entity: Añadir entidad
+  create_entity_heading: Añadir nueva entidad
+  create_entity_host_label: Host
+  create_entity_host_placeholder: ejemplo.com
+  create_entity_id_label: ID local (opcional)
+  create_entity_id_placeholder: usuario@ o dejar en blanco si es solo dominio
+  create_entity_metadata_label: Metadatos (JSON, opcional)
+  query_entity: Consultar entidad
+  query_entity_help: Consulte una entidad por su UUID, identificador SHA-256 o dirección para ver su grupo de relación y registros activos en la lista negra.
+  query_entity_identifier_label: Identificador de la entidad
+  query_entity_identifier_placeholder: UUID, hash SHA-256 o usuario@ejemplo.com
+  query_entity_submit: Consultar entidad
+  query_entity_results_title: Resultados de la consulta de entidad
+  query_entity_related_entities: Entidades relacionadas
+  query_entity_active_blacklists: Registros activos en la lista negra
+  query_entity_no_related: No se encontraron entidades relacionadas.
+  query_entity_no_blacklists: No se encontraron registros activos en la lista negra.
+  query_entity_error: No se pudo consultar la entidad. Verifique el identificador e inténtelo de nuevo.
+  modal_edit_title: Editar entidad
+  modal_edit_host_label: Host
+  modal_edit_id_label: ID local
+  modal_edit_metadata_label: Metadatos
+  modal_edit_metadata_key_placeholder: Clave
+  modal_edit_metadata_add: Añadir entrada
+  modal_edit_metadata_no_entries: Sin entradas de metadatos
+  modal_edit_metadata_type_string: Texto
+  modal_edit_metadata_type_boolean: Booleano
+  modal_edit_metadata_type_integer: Entero
+  modal_edit_metadata_type_null: 'Nulo'
+  modal_evidence_title: Enviar evidencia
+  modal_evidence_text_label: Contenido de texto
+  modal_evidence_note_label: Nota
+  modal_evidence_tag_label: Etiqueta
+  modal_evidence_confidential_label: Marcar como confidencial
+  modal_evidence_submit: Enviar evidencia
+  modal_blacklist_title: Incluir entidad en lista negra
+  modal_blacklist_report_label: UUID del informe
+  modal_blacklist_type_label: Tipo de incidente
+  modal_blacklist_expires_label: Expira el (opcional)
+  modal_blacklist_expires_help: Dejar en blanco para una inclusión permanente. La hora local seleccionada se envía como una marca de tiempo Unix exacta.
+  modal_blacklist_expires_placeholder: Seleccionar expiración
+  modal_blacklist_expires_clear: Permanente
+  modal_blacklist_expires_apply: Aplicar expiración
+  modal_blacklist_submit: Añadir a lista negra
+  modal_relationship_title: Establecer relación
+  modal_relationship_target_label: 'Entidad de destino (UUID, Hash o Dirección)'
+  modal_relationship_type_label: Tipo de relación
+  modal_relationship_set: Establecer relación
+  modal_clear_relationship_title: Borrar relación
+  modal_clear_relationship_info: Esto eliminará la relación entre esta entidad y su entidad relacionada.
+  modal_clear_relationship_confirm: '¿Está seguro de que desea borrar la relación para {address}?'
+  modal_clear_relationship_btn: Borrar relación
+  modal_clear_reputation_title: Borrar reputación
+  modal_clear_reputation_info: Esto restablecerá la puntuación de reputación de esta entidad a cero.
+  modal_clear_reputation_btn: Borrar reputación
+  modal_clear_reputation_confirm: '¿Está seguro de que desea borrar la reputación para {address}?'
+  modal_whitelist_title: Alternar estado de lista blanca
+  modal_whitelist_info: '¿Está seguro de que desea alternar el estado de lista blanca para {address}?'
+  modal_whitelist_confirm_remove: Quitar de lista blanca
+  modal_whitelist_confirm_add: Añadir a lista blanca
+  delete_entity_confirm: '¿Está seguro de que desea eliminar "{address}"? Esta acción no se puede deshacer.'
+  modal_delete_info: Eliminar esta entidad la eliminará permanentemente de la base de datos de la federación.
+  entity_created: Entidad creada con éxito
+  entity_deleted: Entidad eliminada con éxito
+  entity_updated: Entidad actualizada con éxito
+  entity_whitelisted: Entidad agregada a la lista blanca con éxito
+  entity_unwhitelisted: Entidad eliminada de la lista blanca con éxito
+  evidence_submitted: Evidencia enviada con éxito
+  entity_blacklisted: Entidad agregada a la lista negra con éxito
+  relationship_set: Relación establecida con éxito
+  relationship_cleared: Relación borrada con éxito
+  reputation_cleared: Reputación borrada con éxito
+  entity_created_failed: Error al crear la entidad
+  entity_delete_failed: Error al eliminar la entidad
+  entity_updated_failed: Error al actualizar la entidad
+  entity_whitelist_failed: Error al actualizar el estado de lista blanca
+  entity_blacklist_failed: Error al incluir la entidad en la lista negra
+  relationship_set_failed: Error al establecer la relación
+  relationship_clear_failed: Error al borrar la relación
+  reputation_clear_failed: Error al borrar la reputación
+  relationship_target: Destino de la relación
+  relationship_target_missing: No se pudo cargar el registro de la entidad relacionada.
+  relationship_none: Esta entidad no tiene ninguna relación configurada.
+  primary_operator: Operador principal
+  primary_operator_none: Ningún operador ha interactuado con esta entidad todavía.
+  primary_operator_missing: No se pudo cargar el registro del operador.
+  primary_operator_records: Registros vinculados
+reports:
+  page_title: Informes
+  heading: Informes
+  subtitle: Explorar y gestionar informes de incidentes
+  showing_reports: 'Mostrando {start} a {end} de {total} informes'
+  back: Volver a Informes
+  record_title: Informe
+  record_detail: Detalles del informe
+  no_reports: No se encontraron informes
+  error_loading: Error al cargar los informes. Por favor, inténtelo de nuevo.
+  error_loading_entry: Error al cargar el informe. Es posible que no exista o que no tenga permiso para verlo.
+  filter_opened: Abierto
+  filter_closed: Cerrado
+  filter_automated: Automatizado
+  filter_unassigned: Sin asignar
+  filter_assigned: Asignado
+  reporting_entity: Entidad informante
+  report_updated: Actualizado
+  detail_heading: Detalles del informe
+  detail_automated: Autogenerado
+  related_evidence: Evidencia relacionada
+  blacklist_records: Lista negra
+  audit_log_records: Registro de auditoría
+  evidence_records: Evidencia
+  no_evidence_records: No hay registros de evidencia vinculados a este informe
+  no_assigned_operator: Ningún operador asignado
+  close_report: Cerrar informe
+  delete_report: Eliminar informe
+  assign_operator: Asignar operador
+  modal_close_title: Cerrar informe
+  modal_close_info: Cerrar este informe lo marcará como resuelto. Opcionalmente, puede proporcionar una clasificación.
+  modal_close_classification_label: Clasificación
+  modal_close_classification_none: Sin clasificación
+  modal_close_classification_malicious: Malicioso
+  modal_close_classification_suspicious: Sospechoso
+  modal_close_classification_normal: Normal
+  modal_close_confirm: Cerrar informe
+  modal_delete_title: Eliminar informe
+  modal_delete_info: Eliminar este informe lo eliminará permanentemente de la base de datos. Esta acción no se puede deshacer.
+  modal_assign_title: Asignar operador al informe
+  modal_assign_info: Seleccione un operador para asignarle este informe.
+  modal_assign_select_label: Operador
+  modal_assign_select_placeholder: Seleccionar un operador...
+  modal_assign_confirm: Asignar
+  report_closed: Informe cerrado con éxito
+  report_deleted: Informe eliminado con éxito
+  report_submitted: Informe enviado con éxito
+  operator_assigned: Operador asignado con éxito
+  report_close_failed: Error al cerrar el informe
+  report_delete_failed: Error al eliminar el informe
+  operator_assign_failed: Error al asignar el operador
+  failed_audit_log_records: Error al cargar los registros de auditoría
+  failed_entity_reports: Error al cargar informes relacionados
+  mime: Tipo MIME
+  size: Tamaño
+evidence:
+  page_title: Registros de evidencia
+  heading: Registros de evidencia
+  subtitle: Explorar y gestionar registros de evidencia enviados por operadores
+  showing_evidence: 'Mostrando {start} a {end} de {total} evidencias'
+  back: Volver a Registros de evidencia
+  record_title: Registro de evidencia
+  record_detail: Detalles del registro
+  error_loading: Error al cargar los registros de evidencia. Por favor, inténtelo de nuevo.
+  error_loading_entry: Error al cargar el registro de evidencia. Es posible que no exista o que no tenga permiso para verlo.
+  filter_all_categories: Todas las clasificaciones
+  filter_confidential: Confidencial
+  filter_not_confidential: No confidencial
+  filter_classified: Clasificado
+  filter_unclassified: Sin clasificar
+  detail_heading: Detalles de la evidencia
+  delete_evidence: Eliminar evidencia
+  mark_confidential: Marcar como confidencial
+  remove_confidential: Quitar confidencialidad
+  update_tag: Actualizar etiqueta
+  add_to_report: Vincular a informe
+  upload_attachment: Cargar adjunto
+  delete_attachment: Eliminar adjunto
+  no_attachments_desc: No se han adjuntado archivos a este registro de evidencia.
+  upload_attachment_modal_title: Cargar adjunto
+  upload_attachment_modal_desc: Seleccione un archivo para adjuntarlo a este registro de evidencia
+  upload_attachment_modal_file_label: Archivo
+  upload_attachment_modal_confirm: Cargar
+  delete_attachment_modal_title: Eliminar adjunto
+  delete_attachment_modal_info: Eliminar este adjunto eliminará el archivo permanentemente. Esta acción no se puede deshacer.
+  delete_attachment_modal_confirm_prefix: ¿Está seguro de que desea eliminar
+  delete_attachment_modal_confirm_suffix: Esta acción no se puede deshacer.
+  status_summary: Resumen de estado
+  modal_submit_title: Enviar evidencia
+  modal_submit_entity_label: Identificador de entidad
+  modal_submit_entity_placeholder: UUID, hash o dirección de la entidad
+  modal_submit_text_label: Contenido de texto
+  modal_submit_note_label: Nota (opcional)
+  modal_submit_tag_label: Etiqueta (opcional)
+  modal_submit_confidential_label: Marcar como confidencial
+  modal_submit_confirm: Enviar evidencia
+  modal_delete_title: Eliminar evidencia
+  modal_delete_info: Eliminar este registro de evidencia lo eliminará permanentemente de la base de datos. Esta acción no se puede deshacer.
+  modal_tag_title: Actualizar etiqueta
+  modal_tag_label: Etiqueta
+  modal_tag_placeholder: Ingrese la etiqueta
+  modal_tag_save: Guardar etiqueta
+  modal_report_title: Vincular a informe
+  modal_report_label: UUID del informe
+  modal_report_placeholder: Ingrese el UUID del informe
+  modal_report_confirm: Vincular evidencia
+  evidence_deleted: Evidencia eliminada con éxito
+  confidential_set: Evidencia marcada como confidencial
+  confidential_unset: Confidencialidad de la evidencia removida
+  tag_updated: Etiqueta actualizada con éxito
+  evidence_added_to_report: Evidencia vinculada al informe con éxito
+  upload_attachment_success: Adjunto cargado con éxito
+  delete_attachment_success: Adjunto eliminado con éxito
+  attachment_download_failed: Error al descargar el adjunto
+  evidence_delete_failed: Error al eliminar la evidencia
+  confidential_toggle_failed: Error al cambiar el estado de confidencialidad
+  tag_update_failed: Error al actualizar la etiqueta
+  evidence_add_to_report_failed: Error al vincular la evidencia al informe
+  upload_attachment_failed: Error al cargar el adjunto
+  delete_attachment_failed: Error al eliminar el adjunto
+  blacklist_unavailable: Detalles de la lista negra no disponibles
+  derived_blacklist: Lista negra derivada
+  error_loading_attachments: Error al cargar los adjuntos
+  error_loading_audit_logs: Error al cargar registros de auditoría
+  error_loading_entity_blacklist: Error al cargar registros de la lista negra
+  error_loading_entity_evidence: Error al cargar registros de evidencia
+  error_loading_entity_reports: Error al cargar informes
+  mime_type: Tipo MIME
+  owning_entity: Entidad propietaria
+  parent_report: Informe principal
+  report_unavailable: Detalles del informe no disponibles
+blacklist:
+  page_title: Registros de lista negra
+  heading: Registros de lista negra
+  subtitle: Explorar y gestionar entidades en la lista negra
+  showing_blacklist: 'Mostrando {start} a {end} de {total} registros'
+  back: Volver a Lista negra
+  record_title: Registro de lista negra
+  record_detail: Detalles del registro de lista negra
+  confirm_delete: Eliminar permanentemente
+  error_loading: Error al cargar los registros de la lista negra. Por favor, inténtelo de nuevo.
+  error_loading_entry: Error al cargar el registro de la lista negra. Es posible que no exista o que no tenga permiso para verlo.
+  filter_active: Activo
+  filter_lifted: Levantado
+  filter_expired: Expirado
+  filter_permanent: Permanente
+  detail_heading: Detalles del registro de lista negra
+  no_related_data: No hay registros relacionados disponibles
+  lift_blacklist: Levantar de la lista negra
+  delete_blacklist: Eliminar de la lista negra
+  extend_blacklist: Extender
+  modal_lift_info: ¿Está seguro de que desea levantar este registro de la lista negra? La entidad ya no estará en la lista negra.
+  modal_lift_confirm: Levantar de la lista negra
+  modal_delete_info: Eliminar este registro de la lista negra lo eliminará permanentemente de la base de datos. Esta acción no se puede deshacer.
+  modal_extend_title: Extender lista negra
+  modal_extend_info: Seleccione la nueva fecha y hora de expiración para este registro de la lista negra.
+  modal_extend_label: Nueva expiración
+  modal_extend_help: La hora local seleccionada se convierte en una marca de tiempo Unix; el servidor recibe solo el tiempo adicional necesario para alcanzarla.
+  modal_extend_placeholder: Seleccionar nueva expiración
+  modal_extend_apply: Aplicar expiración
+  confirm_extend: Extender
+  blacklist_lifted: Lista negra levantada con éxito
+  blacklist_extended: Lista negra extendida con éxito
+  blacklist_deleted: Registro de lista negra eliminado con éxito
+  blacklist_lift_failed: Error al levantar la lista negra
+  blacklist_extend_failed: Error al extender la lista negra
+  blacklist_delete_failed: Error al eliminar el registro de la lista negra
+  failed_reports: Error al cargar informes
+  failed_audit_records: Error al cargar registros de auditoría
+  related_evidence: Evidencia relacionada
+  mime: Tipo MIME
+  size: Tamaño
+  no_linked_report: No hay informe vinculado a este registro
+  report_unavailable: Detalles del informe no disponibles
+audit_log:
+  page_title: Registro de auditoría
+  heading: Registro de auditoría
+  subtitle: Explorar y gestionar las entradas del registro de auditoría de la federación
+  showing_audit_logs: 'Mostrando {start} a {end} de {total} entradas'
+  back: Volver al Registro de auditoría
+  record_title: Registro de auditoría
+  error_loading: Error al cargar las entradas del registro de auditoría. Por favor, inténtelo de nuevo.
+  error_loading_entry: Error al cargar la entrada del registro de auditoría. Es posible que no exista o que no tenga permiso para verla.
+  filter_operator_events: Eventos de operador
+  filter_attachment_events: Eventos de adjuntos
+  filter_evidence_events: Eventos de evidencia
+  filter_report_events: Eventos de informes
+  filter_entity_events: Eventos de entidades
+  filter_blacklist_events: Eventos de lista negra
+  filter_other: Otro
+  detail_heading: Detalles del registro de auditoría
+  summary_heading: Detalles
+  detail_file_name: Nombre del archivo
+  detail_mime: Tipo MIME
+  detail_size: Tamaño
+  related_unavailable: Los detalles del registro relacionado no están disponibles.
+  related_operator_logs: Actividad del operador
+  related_entity_logs: Actividad de la entidad
+search:
+  page_title: Resultados de búsqueda
+  heading: Resultados de búsqueda
+  subtitle: Se encontraron {count} resultado(s) para "{query}"
+  no_results: 'No se encontraron resultados para "{query}"'
+  no_results_desc: Intente con palabras clave diferentes o verifique la ortografía.
+  search_help: Buscar en entidades, evidencias, informes, lista negra, operadores, registros de auditoría y adjuntos
+  search_empty: Ingrese una consulta de búsqueda para encontrar registros
+  search_empty_desc: Buscar en todos los tipos de registro de la federación
+  error_loading: Error al realizar la búsqueda. Por favor, inténtelo de nuevo.
+  search_button: Buscar
+  clear_button: Limpiar
+  page_info: 'Página {page}'
+  error_short_query: Ingrese al menos dos caracteres para buscar
+  result_entity: Entidad
+  result_evidence: Evidencia
+  result_report: Informe
+  result_blacklist: Lista negra
+  result_operator: Operador
+  result_audit_log: Registro de auditoría
+  result_attachment: Adjunto
+  file_name: Nombre
+  mime_type: MIME
+configuration_error:
+  page_title: Error de configuración
+  error_code: Error
+  error_subtitle: Ocurrió un error de configuración
+  server_unavailable: El servidor de la federación no está disponible actualmente. Compruebe que esté funcionando e inténtelo de nuevo.
+  missing_configuration: No se pudo iniciar el servidor de la federación porque faltan parámetros de configuración. Consulte los registros para obtener más detalles.
+  unknown_error: Ocurrió un error desconocido al intentar iniciar la aplicación web. Consulte los registros para obtener más detalles.
