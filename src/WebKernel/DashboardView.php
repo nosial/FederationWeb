@@ -129,6 +129,42 @@
         }
 
         /**
+         * Retrieve the record types with enabled dedicated search endpoints.
+         *
+         * @return string[] Names of record types with enabled search endpoints.
+         */
+        public function getSearchTypeNames(): array
+        {
+            try
+            {
+                return array_map(static fn($type): string => $type->name ?? (string)$type, $this->serverInformation->getSearchTypes());
+            }
+            catch (Exception $exception)
+            {
+                Logger::getLogger()->warning('Unable to load enabled search types', $exception);
+                return [];
+            }
+        }
+
+        /**
+         * Retrieve the record types whose dedicated search endpoints are publicly accessible.
+         *
+         * @return string[] Names of publicly searchable record types.
+         */
+        public function getPublicSearchTypeNames(): array
+        {
+            try
+            {
+                return array_map(static fn($type): string => $type->name ?? (string)$type, $this->serverInformation->getPublicSearchTypes());
+            }
+            catch (Exception $exception)
+            {
+                Logger::getLogger()->warning('Unable to load public search types', $exception);
+                return [];
+            }
+        }
+
+        /**
          * Resolve an operator UUID to its current display name.
          */
         public function getOperatorName(?string $uuid): ?string
@@ -141,6 +177,11 @@
             if (array_key_exists($uuid, $this->operatorNames))
             {
                 return $this->operatorNames[$uuid];
+            }
+
+            if (!ViewAuthorization::canReadOperatorRecords())
+            {
+                return $this->operatorNames[$uuid] = null;
             }
 
             try
@@ -249,9 +290,8 @@
                 AuditLogType::EVIDENCE_DELETED,
                 AuditLogType::REPORT_DELETED,
                 AuditLogType::ENTITY_DELETED,
-                AuditLogType::BLACKLIST_RECORD_DELETED,
+                AuditLogType::BLACKLIST_DELETED,
                 AuditLogType::OPERATOR_DISABLED => 'red',
-                AuditLogType::OPERATOR_PERMISSIONS_CHANGED,
 
                 AuditLogType::ENTITY_BLACKLISTED => 'amber',
 
@@ -282,7 +322,7 @@
                 AuditLogType::EVIDENCE_DELETED,
                 AuditLogType::REPORT_DELETED,
                 AuditLogType::ENTITY_DELETED,
-                AuditLogType::BLACKLIST_RECORD_DELETED,
+                AuditLogType::BLACKLIST_DELETED,
                 AuditLogType::OPERATOR_DISABLED,
                 AuditLogType::ENTITY_BLACKLISTED => 'danger',
 
@@ -290,10 +330,8 @@
                 AuditLogType::OPERATOR_ENABLED,
                 AuditLogType::BLACKLIST_LIFTED => 'success',
 
-                AuditLogType::OPERATOR_PERMISSIONS_CHANGED,
-                AuditLogType::OPERATOR_NAME_CHANGED,
-                AuditLogType::OPERATOR_AUTO_ASSIGN_CHANGED,
-                AuditLogType::ENTITY_WHITELIST_CHANGED => 'warning',
+                AuditLogType::OPERATOR_UPDATED,
+                AuditLogType::ENTITY_UPDATED => 'warning',
 
                 default => 'active',
             };
