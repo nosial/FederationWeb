@@ -1,0 +1,885 @@
+// FederationWeb — Print Stylesheet
+// Standalone stylesheet for printable report pages.
+// No Bootstrap is used; everything below is custom.
+
+// === Variables ===
+$print-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+$print-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', ui-monospace, monospace;
+$print-serif: 'Georgia', 'Times New Roman', serif;
+
+$ink: #0a0a0a;
+$ink-soft: #333;
+$ink-muted: #555;
+$border: #777;
+$border-light: #bbb;
+$table-bg: #f7f7f7;
+
+// === Reset ===
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $print-font;
+  font-size: 9pt;
+  line-height: 1.3;
+  color: $ink;
+  background: #e5e5e5;
+}
+
+a {
+  color: $ink;
+  text-decoration: none;
+}
+
+// === Screen preview chrome ===
+.fw-print-page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 20px auto;
+  padding: 14mm 16mm;
+  background: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 6px 30px rgba(0,0,0,0.12);
+  position: relative;
+}
+
+.fw-print-controls {
+  width: 210mm;
+  margin: 0 auto 12px;
+  padding: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.fw-print-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  font-size: .75rem;
+  font-weight: 500;
+  border-radius: 5px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #334155;
+  cursor: pointer;
+  transition: background 150ms ease;
+
+  &:hover {
+    background: #f1f5f9;
+  }
+}
+
+// === Document header (first page only) ===
+.fw-print-docheader {
+  border-bottom: 2px solid $ink;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  .fw-print-brand {
+    .fw-print-title {
+      font-family: $print-serif;
+      font-size: 17pt;
+      font-weight: 700;
+      letter-spacing: .02em;
+      color: $ink;
+      margin: 0;
+      string-set: doc-title content();
+    }
+
+    .fw-print-subtitle {
+      font-size: 8pt;
+      color: $ink-muted;
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+  }
+
+  .fw-print-meta {
+    text-align: right;
+    font-size: 7.5pt;
+    color: $ink-muted;
+    line-height: 1.35;
+
+    .generated {
+      string-set: generated content();
+    }
+  }
+}
+
+// === Page title / record identity ===
+.fw-print-identity {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid $border-light;
+
+  .fw-print-record-type {
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: $ink-muted;
+  }
+
+  .fw-print-record-title {
+    font-family: $print-serif;
+    font-size: 14pt;
+    font-weight: 700;
+    color: $ink;
+    margin: 2px 0 0;
+  }
+
+  .fw-print-record-uuid {
+    font-family: $print-mono;
+    font-size: 8pt;
+    color: $ink-muted;
+    margin-top: 2px;
+  }
+}
+
+// === Section blocks ===
+.fw-print-section {
+  margin-bottom: 10px;
+
+  .fw-print-section-title {
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: $ink;
+    border-bottom: 1px solid $border;
+    padding-bottom: 2px;
+    margin: 0 0 6px;
+  }
+}
+
+// === Field grid ===
+.fw-print-fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px 18px;
+}
+
+.fw-print-field {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 2px 0;
+  border-bottom: 1px dotted $border-light;
+
+  &.fw-print-field-full {
+    grid-column: 1 / -1;
+  }
+
+  .fw-print-label {
+    flex-shrink: 0;
+    width: 100px;
+    font-size: 7pt;
+    font-weight: 700;
+    color: $ink-muted;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+  }
+
+  .fw-print-value {
+    flex: 1;
+    font-size: 8.5pt;
+    color: $ink;
+    word-break: break-word;
+
+    &.mono {
+      font-family: $print-mono;
+      font-size: 7.5pt;
+    }
+  }
+}
+
+.fw-print-value--pre {
+  white-space: pre-wrap;
+}
+
+// === Metadata list within print fields ===
+.fw-print-meta-item {
+  display: block;
+  font-size: 7.5pt;
+  line-height: 1.5;
+
+  .fw-print-meta-key {
+    font-weight: 700;
+    color: $ink;
+  }
+
+  .fw-print-meta-val {
+    font-family: $print-mono;
+    color: $ink-soft;
+  }
+
+  .fw-print-meta-type {
+    font-size: 6.5pt;
+    color: $ink-muted;
+  }
+}
+
+// === Tables ===
+.fw-print-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 7.5pt;
+  margin-bottom: 6px;
+
+  thead {
+    display: table-header-group;
+
+    th {
+      text-align: left;
+      font-weight: 700;
+      color: $ink;
+      background: $table-bg;
+      border-top: 1.5px solid $ink;
+      border-bottom: 1px solid $ink;
+      padding: 4px 5px;
+      white-space: nowrap;
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid $border-light;
+      page-break-inside: avoid;
+    }
+
+    td {
+      padding: 3px 5px;
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) {
+      background: rgba(0,0,0,0.015);
+    }
+  }
+
+  .mono {
+    font-family: $print-mono;
+    font-size: 7pt;
+  }
+}
+
+.fw-print-section {
+  break-inside: auto;
+  page-break-inside: auto;
+}
+
+.fw-print-fields {
+  break-inside: auto;
+  page-break-inside: auto;
+}
+
+.fw-print-field {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+// === Status labels ===
+.fw-print-status {
+  display: inline-block;
+  padding: 1px 4px;
+  border: 1px solid $border;
+  border-radius: 3px;
+  font-size: 6.5pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  line-height: 1.2;
+
+  &.active { border-color: #047857; color: #047857; }
+  &.inactive { border-color: #64748b; color: #64748b; }
+  &.danger { border-color: #b91c1c; color: #b91c1c; }
+  &.warning { border-color: #b45309; color: #b45309; }
+  &.info { border-color: #1d4ed8; color: #1d4ed8; }
+}
+
+.fw-print-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 2px;
+
+  &.green { background: #047857; }
+  &.red { background: #b91c1c; }
+  &.gray { background: #94a3b8; }
+}
+
+// === Summary / counts row ===
+.fw-print-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+  gap: 6px;
+  margin-bottom: 10px;
+
+  .fw-print-summary-item {
+    border: 1px solid $border-light;
+    padding: 4px 6px;
+    text-align: center;
+
+    .value {
+      font-size: 11pt;
+      font-weight: 700;
+      color: $ink;
+    }
+
+    .label {
+      font-size: 6.5pt;
+      color: $ink-muted;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+  }
+}
+
+// === Document footer (first page content footer) ===
+.fw-print-docfooter {
+  margin-top: 16px;
+  padding-top: 6px;
+  border-top: 1px solid $border-light;
+  font-size: 7pt;
+  color: $ink-muted;
+  display: flex;
+  justify-content: space-between;
+}
+
+// === Record page sections rendered as a document ===
+// Record print pages include the same detail and related partials as the record pages, so their
+// screen components are restyled here and interactive controls are removed.
+.fw-print-view {
+  --fw-dot-green: #047857;
+  --fw-dot-red: #b91c1c;
+  --fw-text-muted: #{$ink-muted};
+
+  // Controls and anything that only makes sense on screen
+  button,
+  form,
+  .fw-btn,
+  .fw-copy-btn,
+  .fw-tabs,
+  .fw-detail-actions,
+  .fw-table-actions,
+  .fw-col-actions,
+  td:has(> .fw-table-actions),
+  .fw-sortable i,
+  .fw-hidden,
+  .fw-record-hero-icon,
+  .fw-tab-empty > i,
+  .fw-empty-sm > i,
+  .fw-card-header h5 i,
+  .fw-card:has(> .fw-card-body > .fw-detail-actions) {
+    display: none !important;
+  }
+
+  .row,
+  [class*="col-"] {
+    display: block;
+    width: auto;
+  }
+
+  // Record identity
+  .fw-record-hero {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid $border-light;
+
+    h1 {
+      font-family: $print-serif;
+      font-size: 14pt;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .fw-record-hero-subtitle {
+      font-family: $print-mono;
+      font-size: 8pt;
+      color: $ink-muted;
+      margin-top: 2px;
+    }
+
+    .fw-record-hero-status {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+  }
+
+  // Cards become document sections
+  .fw-card {
+    margin-bottom: 10px;
+    break-inside: auto;
+  }
+
+  .fw-card-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    border-bottom: 1px solid $border;
+    padding-bottom: 2px;
+    margin-bottom: 6px;
+    break-after: avoid;
+    page-break-after: avoid;
+
+    h5 {
+      font-size: 8pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin: 0;
+    }
+
+    .fw-card-actions {
+      display: flex;
+      gap: 4px;
+    }
+  }
+
+  .fw-card-body {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 18px;
+
+    > * {
+      flex: 0 0 100%;
+      min-width: 0;
+    }
+
+    > .fw-detail-row {
+      flex: 0 0 calc(50% - 9px);
+    }
+
+    > .fw-detail-row-full {
+      flex-basis: 100%;
+    }
+  }
+
+  // Nested record cards (e.g. each evidence record of a report)
+  .fw-card-body-list > .fw-card,
+  .fw-record-detail-card {
+    border-left: 2px solid $border-light;
+    padding-left: 8px;
+
+    .fw-card-header {
+      border-bottom-style: dotted;
+    }
+  }
+
+  // Fields
+  .fw-detail-row {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    padding: 2px 0;
+    border-bottom: 1px dotted $border-light;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .fw-detail-label {
+    flex-shrink: 0;
+    width: 100px;
+    font-size: 7pt;
+    font-weight: 700;
+    color: $ink-muted;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+  }
+
+  .fw-detail-value {
+    flex: 1;
+    min-width: 0;
+    font-size: 8.5pt;
+    word-break: break-word;
+  }
+
+  .fw-mono,
+  .fw-uuid {
+    font-family: $print-mono;
+    font-size: 7.5pt;
+  }
+
+  .fw-detail-meta,
+  .fw-detail-extra {
+    font-size: 7pt;
+    color: $ink-muted;
+  }
+
+  .fw-detail-value--pre,
+  .fw-text-block,
+  .fw-text-block-lg {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .fw-text-block,
+  .fw-text-block-lg {
+    display: block;
+    border: 1px solid $border-light;
+    padding: 4px 6px;
+    font-size: 8pt;
+  }
+
+  .fw-permissions {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+
+  // Badges and status dots
+  .fw-badge {
+    display: inline-block;
+    padding: 1px 4px;
+    border: 1px solid $border;
+    border-radius: 3px;
+    font-size: 6.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    line-height: 1.2;
+    color: $ink-soft;
+
+    &.fw-badge-red, &.fw-badge-overdue { border-color: #b91c1c; color: #b91c1c; }
+    &.fw-badge-amber { border-color: #b45309; color: #b45309; }
+    &.fw-badge-green, &.fw-badge-emerald { border-color: #047857; color: #047857; }
+    &.fw-badge-blue, &.fw-badge-navy, &.fw-badge-cyan, &.fw-badge-purple { border-color: #1d4ed8; color: #1d4ed8; }
+    &.fw-badge-gray, &.fw-badge-muted { border-color: #64748b; color: #64748b; }
+  }
+
+  .fw-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 2px;
+    background: #94a3b8;
+
+    &.green { background: #047857; }
+    &.red { background: #b91c1c; }
+    &.amber { background: #b45309; }
+    &.blue { background: #1d4ed8; }
+  }
+
+  // Tables
+  .fw-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 7.5pt;
+    margin-bottom: 6px;
+    page-break-inside: auto;
+
+    thead {
+      display: table-header-group;
+    }
+
+    th {
+      text-align: left;
+      font-weight: 700;
+      background: $table-bg;
+      border-top: 1.5px solid $ink;
+      border-bottom: 1px solid $ink;
+      padding: 4px 5px;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 3px 5px;
+      vertical-align: top;
+      word-break: break-word;
+    }
+
+    td.fw-mono {
+      white-space: nowrap;
+      word-break: normal;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid $border-light;
+      page-break-inside: avoid;
+    }
+  }
+
+  // Every tab pane is shown, headed by its tab's label (added by print_javascript.phtml)
+  .tab-pane {
+    display: block !important;
+    opacity: 1 !important;
+    margin-bottom: 8px;
+  }
+
+  .fw-print-pane-title {
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: $ink-soft;
+    margin: 8px 0 4px;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  // Empty states
+  .fw-tab-empty,
+  .fw-empty-sm,
+  .fw-empty {
+    font-size: 8pt;
+    font-style: italic;
+    color: $ink-muted;
+    padding: 2px 0 6px;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  // Evidence metadata
+  .fw-metadata-item {
+    display: block;
+    font-size: 7.5pt;
+    line-height: 1.5;
+  }
+
+  .fw-metadata-key {
+    font-weight: 700;
+    margin-right: 4px;
+  }
+
+  .fw-metadata-value {
+    font-family: $print-mono;
+    color: $ink-soft;
+    margin-right: 4px;
+  }
+
+  // Attachments
+  .fw-attachment-item {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 2px 0;
+    border-bottom: 1px dotted $border-light;
+  }
+
+  .fw-attachment-name {
+    font-weight: 700;
+  }
+
+  .fw-attachment-meta {
+    display: flex;
+    gap: 4px;
+    font-size: 7pt;
+    color: $ink-muted;
+  }
+
+  // Blacklist expiration notice
+  .fw-expiration-alert {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+    border: 1px solid #b45309;
+    padding: 4px 6px;
+    margin-bottom: 8px;
+    font-size: 8pt;
+  }
+
+  // Entity reputation and threat summary
+  .fw-reputation-card {
+    border: 1px solid $border-light;
+    padding: 6px 8px;
+    margin-bottom: 10px;
+    break-inside: avoid;
+
+    .fw-reputation-score {
+      font-size: 14pt;
+      font-weight: 700;
+    }
+
+    .fw-reputation-label {
+      font-size: 7pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: $ink-muted;
+    }
+
+    .fw-reputation-bar {
+      margin-top: 4px;
+    }
+  }
+
+  .fw-reputation-bar {
+    height: 5px;
+    border: 1px solid $border-light;
+
+    &.fw-reputation-bar--sm {
+      display: inline-block;
+      width: 40px;
+      vertical-align: middle;
+    }
+  }
+
+  .fw-reputation-fill {
+    height: 100%;
+  }
+
+  .fw-threat-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+    gap: 6px;
+  }
+
+  .fw-threat-item {
+    border: 1px solid $border-light;
+    padding: 4px 6px;
+    text-align: center;
+  }
+
+  .fw-threat-value {
+    font-size: 11pt;
+    font-weight: 700;
+  }
+
+  .fw-threat-label {
+    font-size: 6.5pt;
+    color: $ink-muted;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+
+  // Operator profile
+  .fw-profile-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .fw-profile-avatar {
+    width: 22px;
+    height: 22px;
+    border: 1px solid $border;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+
+  .fw-profile-name {
+    font-weight: 700;
+  }
+
+  .fw-profile-role {
+    font-size: 7pt;
+    color: $ink-muted;
+  }
+}
+
+// === Page break helpers ===
+// === Print media overrides ===
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 20mm 16mm 18mm 16mm;
+
+    @top-left {
+      content: "FederationWeb";
+      font-size: 7pt;
+      color: #666;
+      font-weight: 600;
+    }
+
+    @top-right {
+      content: string(doc-title);
+      font-size: 7pt;
+      color: #666;
+      font-weight: 600;
+    }
+
+    @bottom-left {
+      content: "federation.example.com";
+      font-size: 6.5pt;
+      color: #888;
+    }
+
+    @bottom-center {
+      content: "Generated: " string(generated);
+      font-size: 6.5pt;
+      color: #888;
+    }
+
+    @bottom-right {
+      content: "Page " counter(page) " of " counter(pages);
+      font-size: 6.5pt;
+      color: #888;
+    }
+  }
+
+  html, body {
+    background: #fff;
+  }
+
+  body {
+    font-size: 9pt;
+  }
+
+  .fw-print-controls,
+  .fw-print-btn {
+    display: none !important;
+  }
+
+  .fw-print-page {
+    width: auto;
+    min-height: auto;
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background: #fff;
+  }
+
+  .fw-print-docheader {
+    border-bottom: 2px solid $ink;
+  }
+
+  .fw-print-table {
+    page-break-inside: auto;
+  }
+
+  .fw-print-table thead {
+    display: table-header-group;
+  }
+
+  .fw-print-table tr {
+    page-break-inside: avoid;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  // Ensure backgrounds and colors print
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+}
