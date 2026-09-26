@@ -72,9 +72,9 @@ build_configurations:
             - "pre_processors/authentication.phtml"
         locales:
           en: FederationWeb/WebLocale/en.yml
-          #cn: FederationWeb/WebLocale/cn.yml
-          #es: FederationWeb/WebLocale/es.yml
-          #ru: FederationWeb/WebLocale/ru.yml
+          cn: FederationWeb/WebLocale/cn.yml
+          es: FederationWeb/WebLocale/es.yml
+          ru: FederationWeb/WebLocale/ru.yml
         router:
           base_path: /
           response_handlers:
