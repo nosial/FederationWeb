@@ -1,0 +1,85 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\Utilities;
+
+    Functions::loadLocalization('configuration_error');
+
+    $cookieSession = WebSession::get('cookie_session');
+    $darkMode = Utilities::getDarkMode();
+    $error = WebSession::getRequest()->getParameter('error');
+    $retryPath = WebSession::getRequest()->getParameter('retry');
+    $canRetry = $error === 'server_unavailable'
+        && (bool)$cookieSession?->get('authenticated', false)
+        && is_string($retryPath)
+        && str_starts_with($retryPath, '/')
+        && !str_starts_with($retryPath, '//')
+        && !str_contains($retryPath, '\\')
+        && $retryPath !== '/error';
+?>
+<!DOCTYPE html>
+<html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>" data-fw-theme="<?php Functions::print($darkMode ? 'dark' : ''); ?>">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <?php Functions::insertSection('sections/head.phtml'); ?>
+        <title><?php Functions::printl('page_title') ?></title>
+        <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="/css/federation.css">
+    </head>
+    <body class="fw-error-page">
+        <div class="fw-error">
+            <div class="fw-error-card">
+                <div class="fw-error-icon fw-error-icon-blue">
+                    <i class="bi bi-gear"></i>
+                </div>
+                <div class="fw-error-code"><?php Functions::printl('error_code'); ?></div>
+                <div class="fw-error-subtitle"><?php Functions::printl('error_subtitle'); ?></div>
+                <p class="fw-error-description">
+                    <?php
+                        switch($error)
+                        {
+                            case 'server_unavailable':
+                                Functions::printl('server_unavailable');
+                                break;
+
+                            case 'missing_configuration':
+                                Functions::printl('missing_configuration');
+                                break;
+
+                            default:
+                                Functions::printl('unknown_error');
+                                break;
+                        }
+                    ?>
+                </p>
+            <div class="fw-error-actions">
+                <?php
+                    if($canRetry)
+                    {
+                        ?>
+                <a href="<?php Functions::print($retryPath); ?>" class="fw-btn fw-btn-primary">
+                    <i class="bi bi-arrow-clockwise"></i> <?php Functions::printl('retry'); ?>
+                </a>
+                <form method="POST" action="<?php Functions::printRoute('logout'); ?>" class="d-inline mb-0"><?php Functions::insertSection('sections/csrf_field.phtml'); ?>
+                    <button type="submit" class="fw-btn fw-btn-secondary">
+                        <i class="bi bi-box-arrow-right"></i> <?php Functions::printl('back_to_login'); ?>
+                    </button>
+                </form>
+                <?php
+                    }
+                    else
+                    {
+                        ?>
+                <button type="button" class="fw-btn fw-btn-primary" onclick="window.history.back()">
+                    <i class="bi bi-arrow-left"></i> <?php Functions::printl('go_back'); ?>
+                </button>
+                <?php
+                    }
+                ?>
+            </div>
+            </div>
+        </div>
+        <script src="/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
