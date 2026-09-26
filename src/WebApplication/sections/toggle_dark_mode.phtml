@@ -1,0 +1,20 @@
+<?php
+
+    use DynamicalWeb\WebSession;
+
+    $cookieSession = WebSession::get('cookie_session');
+    if ($cookieSession === null)
+    {
+        $cookieSession = WebSession::createCookieSession([
+            'authenticated' => false,
+            'api_key' => null,
+        ], 'web_session');
+    }
+    $current = (bool)$cookieSession->get('dark_mode', true);
+    $cookieSession->set('dark_mode', !$current);
+    WebSession::saveCookieSession($cookieSession);
+
+    WebSession::getResponse()->setJson([
+        'dark_mode' => !$current,
+    ]);
+    WebSession::endSession(0);
