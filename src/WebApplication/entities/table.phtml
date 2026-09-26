@@ -1,0 +1,210 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\EntitiesView;
+    use WebKernel\ViewAuthorization;
+
+    /** @var EntitiesView $entitiesView */
+    $entitiesView = WebSession::get('entities_view');
+?>
+                                    <table class="fw-table fw-table-hoverable fw-table-nowrap" id="table-entities">
+                                        <thead>
+                                            <tr>
+                                                <th><?php Functions::printl('uuid'); ?></th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('entities', queryParams: array_merge($entitiesView->getBaseQuery(), ['sort_by' => 'id', 'sort_order' => ($entitiesView->getSortBy() === 'id' && $entitiesView->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('id'); ?>
+                                                        <?php
+                                                            if ($entitiesView->getSortBy() === 'id')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($entitiesView->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('entities', queryParams: array_merge($entitiesView->getBaseQuery(), ['sort_by' => 'host', 'sort_order' => ($entitiesView->getSortBy() === 'host' && $entitiesView->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('host'); ?>
+                                                        <?php
+                                                            if ($entitiesView->getSortBy() === 'host')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($entitiesView->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('entities', queryParams: array_merge($entitiesView->getBaseQuery(), ['sort_by' => 'reputation', 'sort_order' => ($entitiesView->getSortBy() === 'reputation' && $entitiesView->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('reputation'); ?>
+                                                        <?php
+                                                            if ($entitiesView->getSortBy() === 'reputation')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($entitiesView->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th><?php Functions::printl('whitelisted'); ?></th>
+                                                <th><?php Functions::printl('relationship'); ?></th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('entities', queryParams: array_merge($entitiesView->getBaseQuery(), ['sort_by' => 'created', 'sort_order' => ($entitiesView->getSortBy() === 'created' && $entitiesView->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('created'); ?>
+                                                        <?php
+                                                            if ($entitiesView->getSortBy() === 'created')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($entitiesView->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('entities', queryParams: array_merge($entitiesView->getBaseQuery(), ['sort_by' => 'updated', 'sort_order' => ($entitiesView->getSortBy() === 'updated' && $entitiesView->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('updated'); ?>
+                                                        <?php
+                                                            if ($entitiesView->getSortBy() === 'updated')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($entitiesView->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th class="fw-col-actions"><?php Functions::printl('actions'); ?></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                                if ($entitiesView->getEntities() === null)
+                                                {
+                                                    ?>
+                                            <tr>
+                                                <td colspan="9">
+                                                    <div class="fw-empty">
+                                                        <i class="bi bi-exclamation-circle"></i>
+                                                        <p><?php Functions::printl('error_loading'); ?></p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                                    <?php
+                                                }
+                                                elseif (empty($entitiesView->getEntities()))
+                                                {
+                                                    ?>
+                                            <tr>
+                                                <td colspan="9">
+                                                    <div class="fw-empty">
+                                                        <i class="bi bi-person"></i>
+                                                        <p><?php Functions::printl('no_entities'); ?></p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                                    <?php
+                                                }
+                                                else
+                                                {
+                                                    foreach ($entitiesView->getEntities() as $entity)
+                                                    {
+                                                        ?>
+                                            <tr class="fw-row-link" data-href="<?php Functions::printRoute('entity_detail', ['entity_id' => $entity->getUuid()]); ?>">
+                                                <td><span class="fw-uuid"><?php Functions::print($entity->getUuid()); ?></span><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($entity->getUuid()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></td>
+                                                <td>
+                                                    <?php
+                                                        $entityId = $entity->getId();
+                                                        if ($entityId !== null)
+                                                        {
+                                                            ?><span class="fw-uuid"><?php Functions::print($entityId); ?></span><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($entityId); ?>" title="Copy"><i class="bi bi-clipboard"></i></button><?php
+                                                        }
+                                                        else
+                                                        {
+                                                            ?><span class="fw-uuid">—</span><?php
+                                                        }
+                                                    ?>
+                                                </td>
+                                                <td><a href="<?php Functions::printRoute('entity_detail', ['entity_id' => $entity->getUuid()]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($entity->getHost()); ?></a><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($entity->getHost()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></td>
+                                                <td>
+                                                    <?php
+                                                        $rep = $entity->getReputation();
+                                                        $repClass = match(true)
+                                                        {
+                                                            $rep < 0 => 'fw-text-danger',
+                                                            $rep > 0 => 'fw-text-success',
+                                                            default => '',
+                                                        };
+                                                        $repPct = $rep === 0 ? 0 : min(100, max(0, abs($rep) / 10));
+                                                        $repColor = $rep > 0 ? '#28a745' : ($rep < 0 ? '#dc3545' : 'transparent');
+                                                    ?>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <span class="<?php Functions::print($repClass); ?> fw-fw-semibold"><?php Functions::print($rep); ?></span>
+                                                        <div class="fw-reputation-bar fw-reputation-bar--sm">
+                                                            <?php
+                                                                if ($rep !== 0)
+                                                                {
+                                                                    ?><div class="fw-reputation-fill" style="width: <?php Functions::print($repPct); ?>%; background: <?php Functions::print($repColor); ?>;"></div><?php
+                                                                }
+                                                            ?>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                        if ($entity->isWhitelisted())
+                                                        {
+                                                            ?><span class="fw-dot green"></span> <?php Functions::printl('yes');
+                                                        }
+                                                        else
+                                                        {
+                                                            ?><span class="fw-dot gray"></span> <?php Functions::printl('no');
+                                                        }
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                        $relType = $entity->getRelationshipType();
+                                                        $relEntity = $entity->getRelationshipEntity();
+                                                        if ($relType !== null && $relEntity !== null)
+                                                        {
+                                                            ?>
+                                                    <div class="d-flex flex-column gap-1">
+                                                        <span class="fw-badge fw-badge-blue fw-badge-start"><?php Functions::printl('relationship_' . strtolower($relType->value)); ?></span>
+                                                        <a href="<?php Functions::printRoute('entity_detail', ['entity_id' => $relEntity]); ?>" class="fw-detail-link"><?php Functions::print($entitiesView->getRelatedEntityAddress($relEntity)); ?></a>
+                                                    </div>
+                                                            <?php
+                                                        }
+                                                        else
+                                                        {
+                                                            ?><span class="fw-uuid">—</span><?php
+                                                        }
+                                                    ?>
+                                                </td>
+                                                <td><span class="fw-uuid"><?php Functions::print($entitiesView->formatDate($entity->getCreated())); ?></span></td>
+                                                <td>
+                                                    <?php
+                                                        $updated = $entity->getUpdated();
+                                                        if ($updated !== null)
+                                                        {
+                                                            ?><span class="fw-uuid"><?php Functions::print($entitiesView->formatDate($updated)); ?></span><?php
+                                                        }
+                                                        else
+                                                        {
+                                                            ?><span class="fw-uuid">—</span><?php
+                                                        }
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <div class="fw-table-actions">
+                                                        <a href="<?php Functions::printRoute('entity_detail', ['entity_id' => $entity->getUuid()]); ?>" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('view'); ?>"><i class="bi bi-box-arrow-up-right"></i></a>
+                                                        <a href="<?php Functions::printRoute('entity_detail', ['entity_id' => $entity->getUuid()]); ?>" target="_blank" rel="noopener" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('open_in_new_tab'); ?>"><i class="bi bi-box-arrow-in-up-right"></i></a>
+                                                        <?php
+                                                            if (ViewAuthorization::canManageRecords())
+                                                            {
+                                                                ?><button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('delete_entity'); ?>" data-bs-toggle="modal" data-bs-target="#deleteEntityModal" data-identifier="<?php Functions::print($entity->getUuid()); ?>" data-address="<?php Functions::print($entity->getAddress()); ?>"><i class="bi bi-trash"></i></button><?php
+                                                            }
+                                                        ?>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                                        <?php
+                                                    }
+                                                }
+                                            ?>
+                                        </tbody>
+                                    </table>
