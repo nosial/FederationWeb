@@ -1,0 +1,143 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use FederationLib\Objects\ServerInformation;
+    use WebKernel\ViewAuthorization;
+
+    Functions::loadLocalization('dashboard');
+
+    /** @var ServerInformation $serverInformation */
+    $serverInformation = WebSession::get('server_information');
+
+    $currentRouteId = WebSession::getCurrentRoute()->getId();
+
+    $navMap = [
+        'dashboard' => 'dashboard',
+        'operators' => 'operators',
+        'operator_detail' => 'operators',
+        'entities' => 'entities',
+        'entity_detail' => 'entities',
+        'reports' => 'reports',
+        'report_detail' => 'reports',
+        'evidence' => 'evidence',
+        'evidence_detail' => 'evidence',
+        'blacklist' => 'blacklist',
+        'blacklist_detail' => 'blacklist',
+        'audit_log' => 'audit_log',
+        'audit_log_detail' => 'audit_log',
+    ];
+
+    $activeNav = $navMap[$currentRouteId] ?? null;
+?>
+<nav class="fw-topnav">
+    <button class="fw-topnav-toggle" type="button" aria-label="Toggle navigation">
+        <i class="bi bi-list"></i>
+    </button>
+    <div class="fw-topnav-inner">
+        <a href="<?php Functions::printRoute('dashboard'); ?>" class="fw-topnav-item<?php
+            if ($activeNav === 'dashboard')
+            {
+                ?> active<?php
+            }
+        ?>">
+            <i class="bi bi-speedometer2"></i> <?php Functions::printl('nav_dashboard'); ?>
+            <span class="fw-topnav-badge"><?php Functions::print(number_format($serverInformation->getAuditLogRecords())); ?></span>
+        </a>
+        <?php
+            if (ViewAuthorization::canViewRoute('operators', $serverInformation))
+            {
+                ?>
+        <a href="<?php Functions::printRoute('operators'); ?>" class="fw-topnav-item<?php
+            if ($activeNav === 'operators')
+            {
+                ?> active<?php
+            }
+        ?>">
+            <i class="bi bi-person-badge"></i> <?php Functions::printl('operators'); ?>
+            <span class="fw-topnav-badge"><?php Functions::print(number_format($serverInformation->getOperators())); ?></span>
+        </a>
+                <?php
+            }
+        ?>
+        <?php
+            if (ViewAuthorization::canViewRoute('entities', $serverInformation))
+            {
+                ?>
+        <a href="<?php Functions::printRoute('entities'); ?>" class="fw-topnav-item<?php
+            if ($activeNav === 'entities')
+            {
+                ?> active<?php
+            }
+        ?>">
+            <i class="bi bi-person"></i> <?php Functions::printl('entities'); ?>
+            <span class="fw-topnav-badge"><?php Functions::print(number_format($serverInformation->getKnownEntities())); ?></span>
+        </a>
+                <?php
+            }
+        ?>
+        <?php
+            if (ViewAuthorization::canViewRoute('reports', $serverInformation))
+            {
+                ?>
+        <a href="<?php Functions::printRoute('reports'); ?>" class="fw-topnav-item<?php
+            if ($activeNav === 'reports')
+            {
+                ?> active<?php
+            }
+        ?>">
+            <i class="bi bi-flag"></i> <?php Functions::printl('reports'); ?>
+            <span class="fw-topnav-badge"><?php Functions::print(number_format($serverInformation->getReports())); ?></span>
+        </a>
+                <?php
+            }
+        ?>
+        <?php
+            if (ViewAuthorization::canViewRoute('evidence', $serverInformation))
+            {
+                ?>
+        <a href="<?php Functions::printRoute('evidence'); ?>" class="fw-topnav-item<?php
+            if ($activeNav === 'evidence')
+            {
+                ?> active<?php
+            }
+        ?>">
+            <i class="bi bi-file-earmark-text"></i> <?php Functions::printl('evidence_records'); ?>
+            <span class="fw-topnav-badge"><?php Functions::print(number_format($serverInformation->getEvidenceRecords())); ?></span>
+        </a>
+                <?php
+            }
+        ?>
+        <?php
+            if (ViewAuthorization::canViewRoute('blacklist', $serverInformation))
+            {
+                ?>
+        <a href="<?php Functions::printRoute('blacklist'); ?>" class="fw-topnav-item<?php
+            if ($activeNav === 'blacklist')
+            {
+                ?> active<?php
+            }
+        ?>">
+            <i class="bi bi-shield-exclamation"></i> <?php Functions::printl('blacklist_records'); ?>
+            <span class="fw-topnav-badge"><?php Functions::print(number_format($serverInformation->getBlacklistRecords())); ?></span>
+        </a>
+                <?php
+            }
+        ?>
+        <?php
+            if (ViewAuthorization::canViewRoute('audit_log', $serverInformation))
+            {
+                ?>
+        <a href="<?php Functions::printRoute('audit_log'); ?>" class="fw-topnav-item<?php
+            if ($activeNav === 'audit_log')
+            {
+                ?> active<?php
+            }
+        ?>">
+            <i class="bi bi-journal-text"></i> <?php Functions::printl('audit_log'); ?>
+            <span class="fw-topnav-badge"><?php Functions::print(number_format($serverInformation->getAuditLogRecords())); ?></span>
+        </a>
+                <?php
+            }
+        ?>
+    </div>
+</nav>
