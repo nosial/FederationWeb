@@ -1,0 +1,348 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use FederationLib\Enums\IncidentType;
+    use FederationLib\FederationClient;
+    use WebKernel\ViewAuthorization;
+
+    Functions::loadLocalization('fw_topbar');
+
+    $cookieSession = WebSession::get('cookie_session');
+    $darkMode = (bool)($cookieSession?->get('dark_mode', true) ?? true);
+    $currentRouteId = WebSession::getCurrentRoute()->getId();
+    $currentLocale = WebSession::getLocale()->getLocaleCode();
+    $locales = [
+        ['code' => 'en', 'label' => 'English', 'flag' => 'gb'],
+        ['code' => 'cn', 'label' => '中文', 'flag' => 'cn'],
+        ['code' => 'es', 'label' => 'Español', 'flag' => 'es'],
+        ['code' => 'ru', 'label' => 'Русский', 'flag' => 'ru'],
+    ];
+    $returnPath = WebSession::getCurrentRoute()->getPath();
+    $breadcrumbMap = [
+        'dashboard' => ['title' => 'nav_dashboard', 'label' => 'overview'],
+        'operators' => ['title' => 'page_operators', 'label' => 'operators'],
+        'operator_detail' => ['title' => 'record_title', 'label' => 'operators', 'parent' => 'operators', 'param' => 'operator_id'],
+        'entities' => ['title' => 'page_entities', 'label' => 'entities'],
+        'entity_detail' => ['title' => 'record_title', 'label' => 'entities', 'parent' => 'entities', 'param' => 'entity_id'],
+        'reports' => ['title' => 'reports', 'label' => 'reports'],
+        'report_detail' => ['title' => 'record_title', 'label' => 'reports', 'parent' => 'reports', 'param' => 'report_uuid'],
+        'evidence' => ['title' => 'evidence_records', 'label' => 'evidence_records'],
+        'evidence_detail' => ['title' => 'record_title', 'label' => 'evidence_records', 'parent' => 'evidence', 'param' => 'evidence_uuid'],
+        'blacklist' => ['title' => 'blacklist_records', 'label' => 'blacklist_records'],
+        'blacklist_detail' => ['title' => 'record_title', 'label' => 'blacklist_records', 'parent' => 'blacklist', 'param' => 'blacklist_uuid'],
+        'audit_log' => ['title' => 'audit_log', 'label' => 'audit_log'],
+        'audit_log_detail' => ['title' => 'record_title', 'label' => 'audit_log', 'parent' => 'audit_log', 'param' => 'audit_log_uuid'],
+        'search' => ['title' => 'page_search', 'label' => 'page_search'],
+        'api_specification' => ['title' => 'api_specification', 'label' => 'api_specification'],
+    ];
+
+    $crumb = $breadcrumbMap[$currentRouteId] ?? ['title' => 'nav_dashboard', 'label' => 'overview'];
+
+    /** @var FederationClient $federationClient */
+    $federationClient = WebSession::get('federation_client');
+    $operatorName = $cookieSession?->get('operator_name', '') ?? '';
+    $operatorUuid = $cookieSession?->get('operator_uuid', '') ?? '';
+    $isAnonymous = ViewAuthorization::isAnonymous();
+    $canContribute = ViewAuthorization::canContribute();
+    $serverInformation = WebSession::get('server_information');
+    $canSearch = $serverInformation !== null && ViewAuthorization::canViewRoute('search', $serverInformation);
+    $canViewSpecification = ViewAuthorization::supportsSpecification();
+
+    if (!$isAnonymous && empty($operatorUuid) && $federationClient !== null)
+    {
+        try
+        {
+            $self = $federationClient->getSelf();
+            $operatorName = $self->getName();
+            $operatorUuid = $self->getUuid();
+        }
+        catch (Exception $e) {}
+    }
+
+    $assignedReportsCount = 0;
+    if(!empty($operatorUuid) && $federationClient !== null)
+    {
+        try
+        {
+            $assignedReports = $federationClient->listAssignedOperatorReports($operatorUuid, 1, 250, 'OPENED');
+            $assignedReportsCount = count(array_filter($assignedReports, fn($report) => $report->isOpened()));
+        }
+        catch (Exception $e) {}
+    }
+
+    $incidentTypes = IncidentType::cases();
+    WebSession::set('fw_topbar_operator_uuid', $operatorUuid);
+?>
+<link rel="stylesheet" href="/vendor/flag-icons/css/flag-icons.min.css">
+<header class="fw-topbar">
+    <div class="fw-topbar-left">
+        <div>
+            <div class="fw-topbar-title"><?php Functions::printl($crumb['title']); ?></div>
+                    <div class="fw-topbar-breadcrumb">
+                <a href="<?php Functions::printRoute('dashboard'); ?>"><?php Functions::printl('nav_dashboard'); ?></a><span class="sep">/</span>
+                <?php
+                    if (isset($crumb['parent']))
+                    {
+                        ?>
+                <a href="<?php Functions::printRoute($crumb['parent']); ?>"><?php Functions::printl($crumb['label']); ?></a><span class="sep">/</span><span><?php Functions::print(WebSession::getRequest()->getPathParameter($crumb['param'])); ?></span>
+                <?php
+                    }
+                    else
+                    {
+                        ?>
+                <span><?php Functions::printl($crumb['label']); ?></span>
+                <?php
+                    }
+                ?>
+            </div>
+        </div>
+    </div>
+    <?php
+        if ($canSearch)
+        {
+            ?>
+    <div class="fw-topbar-search" id="globalSearch">
+        <div class="fw-topbar-search-inner">
+            <i class="bi bi-search"></i>
+            <input type="text" class="fw-topbar-search-input" id="globalSearchInput"
+                placeholder="<?php Functions::printl('search_placeholder'); ?>"
+                title="<?php Functions::printl('search_help'); ?>"
+                autocomplete="off" minlength="2">
+            <div class="fw-topbar-search-results" id="globalSearchResults"></div>
+        </div>
+        <button class="fw-topbar-search-toggle" id="globalSearchToggle" type="button" title="<?php Functions::printl('search_placeholder'); ?>">
+            <i class="bi bi-search"></i>
+        </button>
+    </div>
+            <?php
+        }
+    ?>
+    <div class="fw-topbar-right">
+        <?php
+            if ($canViewSpecification)
+            {
+                ?>
+            <a href="<?php Functions::printRoute('api_specification'); ?>" class="fw-topbar-btn fw-topbar-profile<?php
+                if ($currentRouteId === 'api_specification')
+                {
+                    ?> active<?php
+                }
+            ?>">
+                <i class="bi bi-code-slash"></i>
+                <span class="fw-topbar-label"><?php Functions::printl('api_specification'); ?></span>
+            </a>
+                <?php
+            }
+        ?>
+        <?php
+            if (!$isAnonymous)
+            {
+                ?>
+        <div class="dropdown fw-topbar-dropdown">
+            <button class="fw-topbar-btn fw-topbar-profile" data-bs-toggle="dropdown" type="button">
+                <span class="fw-topbar-profile-icon">
+                    <i class="bi bi-person-circle"></i>
+                    <?php
+                        if ($assignedReportsCount > 0)
+                        {
+                            ?><span class="fw-topbar-badge"><?php Functions::print($assignedReportsCount); ?></span><?php
+                        }
+                    ?>
+                </span>
+                <span class="fw-topbar-label"><?php Functions::print($operatorName); ?></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end fw-dropdown-menu">
+                <?php
+                    if ($operatorUuid)
+                    {
+                        ?>
+                <li><a class="dropdown-item fw-dropdown-item" href="<?php Functions::printRoute('operator_detail', ['operator_id' => $operatorUuid]); ?>"><i class="bi bi-person-badge"></i> <?php Functions::printl('view_operator'); ?></a></li>
+                <?php
+                    if ($canContribute)
+                    {
+                        ?><li><button class="dropdown-item fw-dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#submitReportModal"><i class="bi bi-file-earmark-plus"></i> <?php Functions::printl('new_report_title'); ?></button></li><?php
+                    }
+                ?>
+                <li><hr class="dropdown-divider fw-dropdown-divider"></li>
+                <li><a class="dropdown-item fw-dropdown-item" href="<?php Functions::printRoute('audit_log', queryParams: ['operator_id' => $operatorUuid]); ?>"><i class="bi bi-journal-text"></i> <?php Functions::printl('audit_log'); ?></a></li>
+                <li><a class="dropdown-item fw-dropdown-item" href="<?php Functions::printRoute('evidence', queryParams: ['operator_id' => $operatorUuid]); ?>"><i class="bi bi-file-earmark-text"></i> <?php Functions::printl('evidence_records'); ?></a></li>
+                <li><hr class="dropdown-divider fw-dropdown-divider"></li>
+                <li><a class="dropdown-item fw-dropdown-item" href="<?php Functions::printRoute('reports', queryParams: ['assigned_operator_id' => $operatorUuid, 'category_filter' => 'opened']); ?>"><i class="bi bi-flag"></i> <?php Functions::printl('reports'); ?><?php
+                    if ($assignedReportsCount > 0)
+                    {
+                        ?><span class="fw-badge fw-badge-red fw-badge-sm fw-report-badge"><?php Functions::print($assignedReportsCount); ?></span><?php
+                    }
+                ?></a></li>
+                <li><hr class="dropdown-divider fw-dropdown-divider"></li>
+                <?php
+                    }
+                ?>
+                <li><button class="dropdown-item fw-dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#languageModal"><i class="bi bi-globe"></i> <?php Functions::printl('language'); ?></button></li>
+                <li><hr class="dropdown-divider fw-dropdown-divider"></li>
+                <li><button class="dropdown-item fw-dropdown-item fw-dark-mode-toggle" type="button"><i class="bi bi-moon-stars"></i> <span><?php Functions::printl($darkMode ? 'dark_mode_light' : 'dark_mode_dark'); ?></span></button></li>
+                <li><hr class="dropdown-divider fw-dropdown-divider"></li>
+                <li>
+                    <form method="POST" action="<?php Functions::printRoute('logout'); ?>" class="mb-0"><?php Functions::insertSection('csrf_field.phtml'); ?>
+                        <button type="submit" class="dropdown-item fw-dropdown-item"><i class="bi bi-box-arrow-right"></i> <?php Functions::printl('sign_out'); ?></button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+                <?php
+            }
+            else
+            {
+                ?>
+        <form method="POST" action="<?php Functions::printRoute('logout'); ?>" class="d-flex mb-0"><?php Functions::insertSection('csrf_field.phtml'); ?>
+            <button type="submit" class="fw-topbar-btn fw-topbar-profile">
+                <i class="bi bi-box-arrow-right"></i>
+                <span class="fw-topbar-label"><?php Functions::printl('back_to_login'); ?></span>
+            </button>
+        </form>
+                <?php
+            }
+        ?>
+    </div>
+</header>
+
+<span id="fw-copy-label" class="fw-hidden" data-label="<?php Functions::printl('copy'); ?>"></span>
+<?php
+    if ($canContribute)
+    {
+        ?>
+        <div class="modal fade" id="submitReportModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-file-earmark-plus fw-icon-red"></i> <?php Functions::printl('new_report_title'); ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="POST" action="<?php Functions::printRoute('report_submission'); ?>" enctype="multipart/form-data"><?php Functions::insertSection('csrf_field.phtml'); ?>
+                        <input type="hidden" name="action" value="submit_report">
+                        <div class="modal-body">
+                            <div class="fw-form-group">
+                                <label class="fw-form-label"><?php Functions::printl('new_report_entity_label'); ?></label>
+                                <div class="fw-entity-options">
+                                    <label class="fw-entity-option fw-form-check">
+                                        <input type="radio" name="entity_mode" value="search" checked onchange="toggleEntityMode()">
+                                        <span><?php Functions::printl('new_report_entity_select'); ?></span>
+                                    </label>
+                                    <div id="entitySearchWrap" class="fw-autocomplete-wrap">
+                                        <input type="text" id="entitySearchInput" class="fw-form-control"
+                                            placeholder="<?php Functions::printl('new_report_entity_placeholder'); ?>"
+                                            autocomplete="off">
+                                        <input type="hidden" name="entity_identifier" id="entityIdentifier">
+                                        <div id="entityDropdown" class="fw-autocomplete-dropdown"></div>
+                                    </div>
+
+                                    <label class="fw-entity-option fw-form-check">
+                                        <input type="radio" name="entity_mode" value="new" onchange="toggleEntityMode()">
+                                        <span><?php Functions::printl('new_report_entity_new_label'); ?></span>
+                                    </label>
+                                    <div id="newEntityWrap" class="fw-hidden">
+                                        <input type="text" name="new_entity_address" class="fw-form-control"
+                                            placeholder="<?php Functions::printl('example_entity_address'); ?>"
+                                            autocomplete="off">
+                                        <div class="fw-form-help"><?php Functions::printl('create_entity_help'); ?></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="fw-form-group">
+                                <label class="fw-form-label"><?php Functions::printl('incident_type'); ?></label>
+                                <select name="incident_type" class="fw-form-control" required>
+                                    <option value=""><?php Functions::printl('new_report_select_type'); ?></option>
+                                    <?php
+                                        foreach ($incidentTypes as $it)
+                                        {
+                                            ?>
+                                    <option value="<?php Functions::print($it->value); ?>"><?php Functions::printl('incident_' . strtolower($it->value)); ?></option>
+                                    <?php
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+
+                            <div class="fw-form-group">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label class="fw-form-label mb-0"><?php Functions::printl('new_report_evidence_records_label'); ?></label>
+                                    <button type="button" class="fw-btn fw-btn-secondary fw-btn-sm" id="addReportEvidence"><i class="bi bi-plus-lg"></i> <?php Functions::printl('new_report_add_evidence'); ?></button>
+                                </div>
+                                <div id="reportEvidenceList">
+                                    <div class="fw-report-evidence-entry" data-report-evidence>
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('new_report_content_label'); ?></label>
+                                            <textarea name="evidence[0][content]" data-evidence-field="content" class="fw-form-control fw-form-textarea fw-textarea-code" rows="4" placeholder="<?php Functions::printl('new_report_content_placeholder'); ?>" required></textarea>
+                                        </div>
+                                        <div class="fw-form-group mb-0">
+                                            <label class="fw-form-label"><?php Functions::printl('new_report_evidence_tag_label'); ?></label>
+                                            <input type="text" name="evidence[0][tag]" data-evidence-field="tag" class="fw-form-control" placeholder="<?php Functions::printl('new_report_tag_placeholder'); ?>" autocomplete="off">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="fw-form-group">
+                                <label class="fw-form-label"><?php Functions::printl('new_report_files_label'); ?></label>
+                                <div class="fw-dropzone" id="dropzone">
+                                    <i class="bi bi-cloud-upload"></i>
+                                    <span><?php Functions::printl('new_report_add_files'); ?></span>
+                                </div>
+                                <input type="file" name="files[]" id="fileInput" multiple class="fw-hidden">
+                                <div class="fw-file-list" id="fileList"></div>
+                                <div class="fw-form-help"><?php Functions::printl('new_report_files_help'); ?></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                            <button type="submit" class="fw-btn fw-btn-primary" id="submitBtn">
+                                <i class="bi bi-send"></i> <?php Functions::printl('new_report_submit'); ?>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="languageModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-globe"></i> <?php Functions::printl('language_select_title'); ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="fw-locale-grid">
+                            <?php
+                                foreach ($locales as $locale)
+                                {
+                                    $isActive = ($locale['code'] === $currentLocale);
+                                    ?>
+                            <a href="/dynaweb/language/<?php Functions::print($locale['code']); ?>?r=<?php Functions::print(urlencode($returnPath)); ?>"
+                               class="fw-locale-option<?php
+                                   if ($isActive)
+                                   {
+                                       ?> fw-locale-active<?php
+                                   }
+                               ?>">
+                                <span class="fi fi-<?php Functions::print($locale['flag']); ?> fis"></span>
+                                <span class="fw-locale-name"><?php Functions::print($locale['label']); ?></span>
+                                <?php
+                                    if ($isActive)
+                                    {
+                                        ?>
+                                <span class="fw-locale-check"><i class="bi bi-check-lg"></i></span>
+                                <?php
+                                    }
+                                ?>
+                            </a>
+                            <?php
+                                }
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+?>
