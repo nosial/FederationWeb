@@ -1,0 +1,56 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use WebKernel\ViewAuthorization;
+?>
+<?php
+    if (ViewAuthorization::canManageOperators())
+    {
+        ?>
+<div class="modal fade" id="modalNewOperator" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-person-badge"></i> <?php Functions::printl('create_operator_heading'); ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="<?php Functions::printRoute('operators'); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                <input type="hidden" name="action" value="create_operator">
+                <div class="modal-body">
+                    <div class="fw-form-group">
+                        <label class="fw-form-label"><?php Functions::printl('create_operator_name_label'); ?></label>
+                        <input type="text" class="fw-form-control" name="operator_name" placeholder="<?php Functions::printl('create_operator_name_placeholder'); ?>" required autocomplete="off">
+                        <div class="fw-form-help"><?php Functions::printl('create_operator_help'); ?></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                    <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl('create_operator'); ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deleteOperatorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> <?php Functions::printl('delete_operator'); ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="<?php Functions::printRoute('operators'); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                <input type="hidden" name="action" value="delete_operator">
+                <input type="hidden" name="operator_uuid" id="deleteOperatorUuid">
+                <div class="modal-body text-center">
+                    <p id="deleteOperatorText"><?php Functions::printl('delete_operator_confirm', ['name' => '{name}'], false); ?></p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                    <button type="submit" class="fw-btn fw-btn-danger"><?php Functions::printl('confirm_delete'); ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+        <?php
+    }
+?>
