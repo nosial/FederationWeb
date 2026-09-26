@@ -1,0 +1,36 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\ReportDetailView;
+
+    /** @var ReportDetailView $reportDetailView */
+    $reportDetailView = WebSession::get('report_detail_view');
+
+    if ($reportDetailView->getReport())
+    {
+        $recordQuery = $reportDetailView->getReportingEntity()
+            ? ['entity_id' => $reportDetailView->getReportingEntity()->getUuid()]
+            : ['operator_id' => $reportDetailView->getReport()->getSubmittingOperator()];
+        ?>
+        <script>
+        (function() {
+            var viewAll = document.getElementById('reportRelatedViewAll');
+            var tabs = document.getElementById('reportRelatedTabs');
+            if (!viewAll || !tabs) return;
+            var links = {
+                tabReportEvidence: '<?php Functions::printRoute('evidence', queryParams: $recordQuery); ?>',
+                tabReportBlacklist: '<?php Functions::printRoute('blacklist', queryParams: $recordQuery); ?>',
+                tabReportReports: '<?php Functions::printRoute('reports', queryParams: $recordQuery); ?>',
+                tabReportAuditLog: '<?php Functions::printRoute('audit_log', queryParams: $recordQuery); ?>'
+            };
+            tabs.querySelectorAll('[data-bs-toggle="tab"]').forEach(function(button) {
+                button.addEventListener('shown.bs.tab', function() {
+                    var href = links[this.getAttribute('data-bs-target').slice(1)];
+                    if (href) viewAll.href = href;
+                });
+            });
+        })();
+        </script>
+        <?php
+    }
+?>
