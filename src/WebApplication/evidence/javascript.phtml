@@ -1,0 +1,172 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+?>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var deleteModal = document.getElementById('deleteEvidenceModal');
+            if (!deleteModal) return;
+            deleteModal.addEventListener('show.bs.modal', function(event) {
+                var button = event.relatedTarget;
+                if (!button) return;
+                var uuid = button.getAttribute('data-uuid');
+                document.getElementById('deleteEvidenceUuid').value = uuid;
+                document.getElementById('deleteEvidenceUuidDisplay').textContent = uuid;
+            });
+        });
+        </script>
+        <script>
+        (function() {
+            var suggestions = document.getElementById('suggestions-evidence');
+            if (!suggestions) return;
+            var search = suggestions.closest('.fw-filter-search');
+            var input = search ? search.querySelector('input[name="search_query"]') : null;
+            if (!input) return;
+            var form = input.closest('form');
+            var timer = null, selectedIndex = -1;
+
+            function escapeHtml(str) {
+                var div = document.createElement('div');
+                div.textContent = str === null || str === undefined ? '' : str;
+                return div.innerHTML;
+            }
+
+            function closeDropdown() { suggestions.classList.remove('open'); suggestions.innerHTML = ''; selectedIndex = -1; }
+
+            function doSearch(query) {
+                if (query.length < 2) { closeDropdown(); return; }
+                suggestions.innerHTML = '<div class="fw-filter-suggestion-item fw-filter-suggestion-item--searching"><?php Functions::printl('searching'); ?></div>';
+                suggestions.classList.add('open');
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '<?php Functions::printRoute('evidence'); ?>', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        try { var resp = JSON.parse(xhr.responseText); renderResults(resp.results || []); }
+                        catch(e) { closeDropdown(); }
+                    } else { closeDropdown(); }
+                };
+                xhr.onerror = function() { closeDropdown(); };
+                xhr.send('action=search_suggestions&q=' + encodeURIComponent(query));
+            }
+
+            function renderResults(results) {
+                suggestions.innerHTML = '';
+                if (results.length === 0) {
+                    suggestions.innerHTML = '<div class="fw-filter-suggestion-item fw-filter-suggestion-empty"><?php Functions::printl('no_evidence_found'); ?></div>';
+                    suggestions.classList.add('open'); return;
+                }
+                results.forEach(function(item, i) {
+                    var div = document.createElement('a');
+                    div.className = 'fw-filter-suggestion-item';
+                    div.href = item.url;
+                    div.innerHTML = '<i class="bi bi-file-earmark-text"></i><div class="fw-filter-suggestion-info"><div class="fw-filter-suggestion-title">' + escapeHtml(item.title) + '</div><div class="fw-filter-suggestion-subtitle">' + escapeHtml(item.subtitle) + '</div></div>';
+                    div.addEventListener('click', function(e) { e.preventDefault(); closeDropdown(); input.value = ''; window.location.href = this.href; });
+                    div.addEventListener('mouseenter', function() { suggestions.querySelectorAll('.fw-filter-suggestion-item').forEach(function(el) { el.classList.remove('active'); }); div.classList.add('active'); selectedIndex = i; });
+                    suggestions.appendChild(div);
+                });
+                suggestions.classList.add('open'); selectedIndex = -1;
+            }
+
+            function updateActive(items) { items.forEach(function(el, i) { el.classList.toggle('active', i === selectedIndex); }); }
+
+            input.addEventListener('input', function() { clearTimeout(timer); var val = this.value.trim(); if (val.length >= 2) { timer = setTimeout(function() { doSearch(val); }, 250); } else { closeDropdown(); } });
+            input.addEventListener('keydown', function(e) {
+                var items = suggestions.querySelectorAll('.fw-filter-suggestion-item:not(.fw-filter-suggestion-empty)');
+                if (e.key === 'Enter') { e.preventDefault(); var active = suggestions.querySelector('.fw-filter-suggestion-item.active'); if (active && active.href) { closeDropdown(); input.value = ''; window.location.href = active.href; } else { form.submit(); } }
+                else if (e.key === 'ArrowDown') { e.preventDefault(); selectedIndex = Math.min(selectedIndex + 1, items.length - 1); updateActive(items); }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); selectedIndex = Math.max(selectedIndex - 1, -1); updateActive(items); }
+                else if (e.key === 'Escape') { closeDropdown(); input.blur(); }
+            });
+            input.addEventListener('focus', function() { var val = this.value.trim(); if (val.length >= 2 && suggestions.children.length > 0) suggestions.classList.add('open'); });
+            document.addEventListener('click', function(e) { if (!e.target.closest('.fw-filter-search')) closeDropdown(); });
+        })();
+        </script>
+        <script>
+        (function() {
+            var input = document.getElementById('entitySearchInput');
+            if (!input) return;
+            var hidden = document.getElementById('entityIdentifier');
+            var dropdown = document.getElementById('entityDropdown');
+            if (!hidden || !dropdown) return;
+            var timer = null, selectedIndex = -1, currentResults = [];
+
+            function escapeHtml(str) {
+                var div = document.createElement('div');
+                div.textContent = str === null || str === undefined ? '' : str;
+                return div.innerHTML;
+            }
+
+            function closeDropdown() { dropdown.classList.remove('open'); dropdown.innerHTML = ''; selectedIndex = -1; }
+
+            function selectItem(item) {
+                hidden.value = item.uuid;
+                input.value = item.address;
+                closeDropdown();
+            }
+
+            function renderResults(results) {
+                dropdown.innerHTML = '';
+                if (results.length === 0) {
+                    dropdown.innerHTML = '<div class="fw-autocomplete-empty"><?php Functions::printl('no_entities_found'); ?></div>';
+                    dropdown.classList.add('open'); return;
+                }
+                currentResults = results;
+                results.forEach(function(item, i) {
+                    var div = document.createElement('div');
+                    div.className = 'fw-autocomplete-item';
+                    div.innerHTML = '<span class="fw-ae-addr">' + escapeHtml(item.address) + '</span><span class="fw-ae-uuid">' + escapeHtml(item.uuid.substring(0, 8)) + '…</span>';
+                    div.addEventListener('click', function() { selectItem(item); });
+                    div.addEventListener('mouseenter', function() {
+                        dropdown.querySelectorAll('.fw-autocomplete-item').forEach(function(el) { el.classList.remove('active'); });
+                        div.classList.add('active'); selectedIndex = i;
+                    });
+                    dropdown.appendChild(div);
+                });
+                dropdown.classList.add('open'); selectedIndex = -1;
+            }
+
+            function doSearch(query) {
+                if (query.length < 2) { closeDropdown(); return; }
+                dropdown.innerHTML = '<div class="fw-autocomplete-loading"><?php Functions::printl('searching'); ?></div>';
+                dropdown.classList.add('open');
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '<?php Functions::printRoute('evidence'); ?>', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        try { var resp = JSON.parse(xhr.responseText); renderResults(resp.results || []); }
+                        catch(e) { closeDropdown(); }
+                    } else { closeDropdown(); }
+                };
+                xhr.onerror = function() { closeDropdown(); };
+                xhr.send('action=search_entities&q=' + encodeURIComponent(query));
+            }
+
+            function updateActive(items) {
+                items.forEach(function(el, i) { el.classList.toggle('active', i === selectedIndex); });
+                if (selectedIndex >= 0 && currentResults[selectedIndex]) {
+                    hidden.value = currentResults[selectedIndex].uuid;
+                }
+            }
+
+            input.addEventListener('input', function() {
+                hidden.value = '';
+                clearTimeout(timer);
+                var val = this.value.trim();
+                if (val.length >= 2) { timer = setTimeout(function() { doSearch(val); }, 250); }
+                else { closeDropdown(); }
+            });
+
+            input.addEventListener('keydown', function(e) {
+                var items = dropdown.querySelectorAll('.fw-autocomplete-item');
+                if (e.key === 'ArrowDown') { e.preventDefault(); selectedIndex = Math.min(selectedIndex + 1, items.length - 1); updateActive(items); }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); selectedIndex = Math.max(selectedIndex - 1, -1); updateActive(items); }
+                else if (e.key === 'Enter') { e.preventDefault(); var active = dropdown.querySelector('.fw-autocomplete-item.active'); var idx = Array.from(items).indexOf(active); if (idx >= 0 && currentResults[idx]) selectItem(currentResults[idx]); }
+                else if (e.key === 'Escape') { closeDropdown(); }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.fw-autocomplete-wrap')) closeDropdown();
+            });
+        })();
+        </script>
