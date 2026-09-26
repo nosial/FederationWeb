@@ -1,0 +1,25 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\AuditLogDetailView;
+
+    /** @var AuditLogDetailView $view */
+    $view = WebSession::get('audit_log_detail_view');
+?>
+        <script>
+        (function() {
+            var viewAll = document.getElementById('auditRelatedViewAll');
+            var tabs = document.getElementById('auditRelatedTabs');
+            if (!viewAll || !tabs) return;
+            var links = {
+                tabAuditOperatorLogs: '<?php Functions::printRoute('audit_log', queryParams: ['operator_id' => $view->getRecord()?->getOperatorUuid() ?? '']); ?>',
+                tabAuditEntityLogs: '<?php Functions::printRoute('audit_log', queryParams: ['entity_id' => $view->getRecord()?->getEntityUuid() ?? '']); ?>'
+            };
+            tabs.querySelectorAll('[data-bs-toggle="tab"]').forEach(function(button) {
+                button.addEventListener('shown.bs.tab', function() {
+                    var link = links[this.getAttribute('data-bs-target').slice(1)];
+                    if (link) viewAll.href = link;
+                });
+            });
+        })();
+        </script>
