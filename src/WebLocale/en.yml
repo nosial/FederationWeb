@@ -1,0 +1,743 @@
+global:
+  nav_dashboard: Dashboard
+  operators: Operators
+  entities: Entities
+  known_entities: Known Entities
+  evidence_records: Evidence Records
+  blacklist_records: Blacklist Records
+  audit_log_records: Audit Log Records
+  reports: Reports
+  report: Report
+  audit_log: Audit Log
+  attachments: Attachments
+  uuid: UUID
+  type: Type
+  status: Status
+  created: Created
+  updated: Updated
+  timestamp: Timestamp
+  message: Message
+  name: Name
+  actions: Actions
+  enabled: Enabled
+  disabled: Disabled
+  active: Active
+  'yes': 'Yes'
+  'no': 'No'
+  open: Open
+  closed: Closed
+  view: View
+  view_all: View All
+  open_in_new_tab: Open in New Tab
+  back: Back
+  cancel: Cancel
+  confirm_delete: Delete
+  print_page: Print
+  classification: Classification
+  category: Category
+  tag: Tag
+  expires: Expires
+  incident_type: Incident Type
+  incident_malware: Malware
+  incident_illegal_content: Illegal Content
+  incident_phishing: Phishing
+  incident_scam: Scam
+  incident_service_abuse: Service Abuse
+  incident_spam: Spam
+  incident_other: Other
+  entity: Entity
+  operator: Operator
+  address: Address
+  related_records: Related Records
+  columns: Columns
+  detail_message: Message
+  detail_metadata: Metadata
+  document_generated: Document Generated
+  entity_blacklist: Entity Blacklist
+  entity_evidence: Entity Evidence
+  entity_reports: Entity Reports
+  evidence: Evidence
+  filter_all_categories: All Categories
+  filter_placeholder: Search by UUID, entity, or operator...
+  filter_reset: Reset
+  modal_delete_confirm_prefix: Are you sure you want to delete
+  modal_delete_confirm_suffix: This action cannot be undone.
+  modal_edit_save: Save Changes
+  new_report_title: Submit Report
+  new_report_add_files: Add Files
+  new_report_content_label: Content
+  new_report_entity_label: Reporting Entity
+  new_report_entity_new_label: Or Define a New Entity
+  new_report_entity_select: Select an existing entity or define a new one
+  new_report_entity_placeholder: Type entity address or UUID to search...
+  new_report_evidence_tag_label: Evidence Tag (optional)
+  new_report_evidence_records_label: Evidence Records
+  new_report_add_evidence: Add Evidence
+  new_report_remove_evidence: Remove Evidence
+  new_report_files_help: Select one or more files to attach as evidence
+  new_report_files_label: File Attachments (optional)
+  new_report_select_type: -- Select Incident Type --
+  new_report_submit: Submit Report
+  create_entity_help: The entity will be registered in the federation database.
+  next: Next
+  no_audit_logs: No audit log entries found
+  no_audit_records: No audit log records
+  no_blacklist: No blacklist records found
+  no_blacklist_records: No blacklist records
+  no_evidence: No evidence records found
+  no_evidence_records: No evidence records
+  no_report_records: No report records
+  previous: Previous
+  print_footer_brand: FederationWeb Management Panel
+  print_footer_subtitle: Official review document
+  print_server_info: Federation Server
+  print_record_list: Record List
+  print_filters: Filters
+  print_filters_none: No filters applied
+  print_filter_search: Search
+  print_filter_category: Category
+  print_filter_status: Status
+  print_filter_permissions: Permissions
+  print_filter_operator: Operator
+  print_filter_entity: Entity
+  print_filter_assigned_operator: Assigned Operator
+  print_filter_sort: Sort
+  print_sort_asc: Ascending
+  print_sort_desc: Descending
+  expired: Expired
+  detail_confidential: Confidential
+  detail_tag: Tag
+  error_label: Error
+  csrf_failed: The form was out of date. Please try again.
+  reputation: Reputation
+  search_placeholder: Search records...
+  status_active: Active
+  status_lifted: Lifted
+  submit_evidence: Submit Evidence
+  language: Language
+  language_select_title: Select Language
+  api_version: API Version
+  assigned: Assigned
+  confidential: Confidential
+  back_to_login: Authenticate
+  go_back: Go Back
+  retry: Retry
+  blacklist: Blacklist
+  in_label: In
+  file_size_b: B
+  file_size_kb: KB
+  file_size_mb: MB
+  file_too_large: File exceeds maximum upload size
+  no_file_selected: No file selected
+  upload_failed: Upload failed with error code
+  searching: Searching...
+  no_entities_found: No entities found
+  no_operators_found: No operators found
+  no_evidence_found: No evidence found
+  no_reports_found: No reports found
+  no_blacklist_found: No blacklist records found
+  no_audit_logs_found: No audit logs found
+  overdue: Overdue
+  permanent: Permanent
+  deprecated: Deprecated
+  required_label: Required
+  schemas: Schemas
+  component_schemas: component schemas
+  spec_title: Title
+  spec_terms_of_service: Terms of Service
+  spec_contact: Contact
+  spec_license: License
+  spec_servers: Servers
+  spec_external_docs: External Docs
+  app_name: FederationWeb
+  anonymous: Anonymous
+  no_message: No message
+  none: None
+  unknown_file: Unknown File
+  unknown_type: Unknown type
+  audit_log_entry: Audit Log Entry
+  null_label: 'null'
+  true_label: 'true'
+  false_label: 'false'
+  classification_prefix: 'Classification: '
+  entity_prefix: 'Entity: '
+  auto_assign: Auto-Assign
+  permissions: Permissions
+  perm_client: Client
+  perm_blacklist: Management
+  perm_operators: Operators
+  detail_host: Host
+  detail_whitelisted: Whitelisted
+  detail_note: Note
+  detail_report: Linked Report
+  detail_text_content: Text Content
+  detail_timestamp: Timestamp
+  detail_operator: Operator
+  detail_entity: Entity
+  detail_blacklist: Related Blacklist
+  detail_evidence: Related Evidence
+  detail_file_attachment: File Attachment
+  download_attachment: Download
+  evidence_submit_failed: Failed to submit evidence
+  view_operator: View Operator
+  created_prefix: ' · Created '
+  spec_search_placeholder: Search endpoints, schemas, paths...
+  example_entity_address: e.g. example.com:user123
+  new_report_content_placeholder: Paste the evidence content or describe the incident
+  remove: Remove
+  modal_edit_metadata_value_placeholder: Value
+  copy: Copy
+  new_report_tag_placeholder: e.g. phishing-url-001
+  api_specification: API Specification
+  assigned_operator: Assigned Operator
+  automated: Automated
+  detail_lifted_by: Lifted By
+  entity_unavailable: Entity details unavailable
+  failed_blacklist_records: Failed to load blacklist records
+  failed_evidence_records: Failed to load evidence records
+  file_size: Size
+  id: ID
+  operator_unavailable: Operator details unavailable
+  relationship: Relationship
+  submitting_operator: Submitting Operator
+fw_topbar:
+  overview: Overview
+  page_operators: Operators
+  page_entities: Entities
+  record_title: Record
+  page_search: Search
+  sign_out: Sign Out
+  search_help: Press Enter to search all records
+  search_no_results: No results found
+  search_view_all: View all results
+  dark_mode_light: Light Mode
+  dark_mode_dark: Dark Mode
+dashboard:
+  page_title: '{server_name} - Dashboard'
+  back: Back to Dashboard
+  server_status: Server Status
+  server_name_label: Server Name
+  api_version_label: API Version
+  online: Online
+  total_records: Total Records
+  registered_operators: Registered Operators
+  public_visibility: Public Access
+  reports_title: Reports
+  file_attachments: File Attachments
+  record_counts: Record Counts
+  public: Public
+  public_audit_logs: Audit Logs
+  public_evidence: Evidence
+  public_blacklist: Blacklist
+  public_entities: Known Entities
+  public_reports: Reports
+  public_entity_metadata: Entity Metadata
+  public_scan_content: Content Scanning
+  public_query_entity: Entity Querying
+  search_capabilities: Search
+  search_enabled: Search Enabled
+  public_search: Public Search
+  enabled_search_types: Enabled Search Types
+  public_search_types: Public Search Types
+  recent_activity: Recent Audit Activity
+  top_threats: Top Threats
+  recent_evidence: Recent Evidence
+  blacklist_records: Blacklist
+  incident_distribution: Record Distribution
+  activity_feed: Activity Feed
+  audit_log_visibility: Audit Log Visibility
+  entity_name: Entity
+  no_top_threats: No threats identified
+  failed_audit_logs: Failed to load audit logs
+  failed_top_threats: Failed to load threats
+  failed_evidence: Failed to load evidence
+  api_summary: API Summary
+  api_endpoints: API Endpoints
+  parameters_label: Parameters
+  request_body: Request Body
+  responses: Responses
+  description_label: Description
+  specification_raw: Raw Specification
+  endpoints_grouped_by_tag: Endpoints grouped by tag
+  no_endpoints: No endpoints defined
+  operational_overview: Operational Overview
+  public_overview: Public Overview
+  server_configuration: Server Configuration
+  no_schemas: No component schemas defined
+  spec_load_failed: Failed to load the API specification
+  endpoint_count: '{count} endpoints'
+  endpoint_count_single: 1 endpoint
+404:
+  page_title: 404 Not Found
+  error_code: Page Not Found
+  error_description: The requested resource could not be found
+500:
+  page_title: 500 Internal Server Error
+  error_code: Internal Server Error
+  error_description: An unexpected error occurred while processing the request
+authenticate:
+  page_title: '{server_name} - Authenticate'
+  form_title: Authenticate
+  form_subtitle: Connect to your Federation server
+  server_host_label: Server Host
+  server_host_placeholder: https://federation.example.com
+  server_host_locked: Configured by administrator
+  access_token_label: Access Token
+  access_token_placeholder: Enter your access token
+  access_token_optional: Leave blank to connect anonymously
+  access_token_required: Authentication required
+  submit_button: Authenticate
+  error_required: Please enter your access token
+  error_invalid: Invalid access token. Please try again.
+  error_disabled: Access is disabled.
+  error_generic: An error occurred. Please try again.
+  error_server_unreachable: Could not connect to the specified server. Please check the host URL.
+  server_name_fallback: Federation Server
+  error_anonymous_disabled: Anonymous access is not allowed. Please provide an access token.
+operators:
+  page_title: Operators
+  heading: Operators
+  subtitle: Manage federation operators and their permissions
+  showing_operators: 'Showing {start} to {end} of {total} operators'
+  back: Back to Operators
+  record_title: Operator Record
+  record_detail: Operator Details
+  no_operators: No operators found
+  error_loading: Failed to load operators. Please try again.
+  error_loading_entry: Failed to load operator. It may not exist or you may not have permission to view it.
+  filter_all_status: All Status
+  filter_all_permissions: All Permissions
+  access_token: Access Token
+  present: Present
+  disabled_yes: Disabled
+  token_generated: Token Generated
+  related_summary: Related Summary
+  no_related_data: This operator has no submitted reports, evidence, blacklist entries, or audit activity recorded.
+  create_operator: Create Operator
+  edit_operator: Edit Operator
+  delete_operator: Delete Operator
+  enable_operator: Enable
+  disable_operator: Disable
+  generate_token: Generate Access Token
+  set_permissions: Set Permissions
+  create_operator_heading: New Operator
+  create_operator_name_label: Operator Name
+  create_operator_name_placeholder: Enter operator name
+  create_operator_help: Name must be unique across the federation.
+  modal_disable_title: Disable Operator
+  modal_enable_title: Enable Operator
+  modal_disable_info: Disabling this operator will prevent them from accessing the federation. They can be re-enabled at any time.
+  modal_enable_info: Enabling this operator will restore their access to the federation.
+  modal_disable_confirm: Are you sure you want to disable
+  modal_enable_confirm: Are you sure you want to enable
+  modal_disable_confirm_btn: Disable Operator
+  modal_enable_confirm_btn: Enable Operator
+  modal_edit_title: Edit Operator
+  modal_edit_name_label: Operator Name
+  modal_token_title: Generate Access Token
+  modal_token_label: New Token
+  modal_token_generate: Generate New Token
+  modal_close: Close
+  modal_permissions_title: Set Permissions
+  modal_permissions_operator_name: Operator
+  modal_permissions_operator_desc: Manage operators and access tokens
+  modal_permissions_client_name: Client
+  modal_permissions_client_desc: Submit reports and evidence
+  modal_permissions_management_name: Management
+  modal_permissions_management_desc: Manage reports, entities, evidence, and blacklist
+  modal_permissions_save: Save Permissions
+  delete_operator_confirm: 'Are you sure you want to delete "{name}"? This action cannot be undone.'
+  profile_active_since: 'Active since {date}'
+  operator_records: '{count} records'
+  operator_entries: '{count} entries'
+  modal_delete_title: Delete Operator
+  modal_delete_info: Deleting this operator will permanently remove their account and invalidate all sessions. This action cannot be undone.
+  operator_created: Operator created successfully
+  operator_updated: Operator updated successfully
+  operator_deleted: Operator deleted successfully
+  operator_enabled: Operator enabled successfully
+  operator_disabled: Operator disabled successfully
+  api_key_refreshed: Access token refreshed successfully
+  permission_updated: Permissions updated successfully
+  operator_created_failed: Failed to create operator
+  operator_delete_failed: Failed to delete operator
+  operator_enable_failed: Failed to enable operator
+  operator_disable_failed: Failed to disable operator
+  operator_rename_failed: Failed to rename operator
+  api_key_refresh_failed: Failed to refresh access token
+  permission_update_failed: Failed to update permissions
+  enable_auto_assign: Enable Auto-Assign
+  disable_auto_assign: Disable Auto-Assign
+  modal_auto_assign_title: Toggle Auto-Assign
+  modal_auto_assign_enable_info: Enabling auto-assign allows reports to be automatically assigned to this operator.
+  modal_auto_assign_disable_info: Disabling auto-assign prevents reports from being automatically assigned to this operator.
+  modal_auto_assign_confirm: Are you sure you want to toggle auto-assign for
+  modal_auto_assign_enable_btn: Enable Auto-Assign
+  modal_auto_assign_disable_btn: Disable Auto-Assign
+  auto_assign_enabled: Auto-assign enabled successfully
+  auto_assign_disabled: Auto-assign disabled successfully
+  auto_assign_update_failed: Failed to update auto-assign status
+  submitted_reports: Submitted Reports
+  assigned_reports: Assigned Reports
+  latest_audit_activity: Latest Audit Activity
+  latest_report: Latest Report
+  latest_evidence: Latest Evidence Record
+  latest_blacklist: Latest Blacklist Record
+  failed_audit_logs: Failed to load audit log records for this operator.
+  failed_reports: Failed to load report records for this operator.
+  failed_evidence: Failed to load evidence records for this operator.
+  failed_blacklist: Failed to load blacklist records for this operator.
+entities:
+  page_title: Entities
+  heading: Known Entities
+  subtitle: Browse and manage known federation entities
+  showing_entities: 'Showing {start} to {end} of {total} entities'
+  back: Back to Entities
+  record_title: Entity Record
+  record_detail: Entity Details
+  no_entities: No entities found
+  error_loading: Failed to load entities. Please try again.
+  error_loading_entry: Failed to load entity. It may not exist or you may not have permission to view it.
+  filter_whitelisted: Whitelisted
+  filter_not_whitelisted: Not Whitelisted
+  filter_with_relationship: Has Relationship
+  filter_without_relationship: No Relationship
+  host: Host
+  whitelisted: Whitelisted
+  detail_heading: Entity Details
+  detail_hash: SHA-256 Hash
+  detail_relationship: Relationship
+  detail_reputation_last_updated: Reputation Last Updated
+  reputation_score: Reputation Score
+  reputation_range: 'Range: -1000 to 1000'
+  threat_summary: Threat Summary
+  reports_count: Reports
+  evidence_count: Evidence
+  blacklist_count: Blacklist
+  relationship_alternative: Alternative
+  relationship_proxy: Proxy
+  relationship_child: Dependent
+  table_incident_type: Incident Type
+  edit_entity: Edit Entity
+  whitelist_entity: Add to Whitelist
+  unwhitelist_entity: Remove from Whitelist
+  blacklist_entity: Blacklist Entity
+  set_relationship: Set Relationship
+  clear_relationship: Clear Relationship
+  clear_reputation: Clear Reputation
+  delete_entity: Delete Entity
+  create_entity: Add Entity
+  create_entity_heading: Add New Entity
+  create_entity_host_label: Host
+  create_entity_host_placeholder: example.com
+  create_entity_id_label: Local ID (optional)
+  create_entity_id_placeholder: user@ or leave blank for domain-only
+  create_entity_metadata_label: Metadata (JSON, optional)
+  query_entity: Query Entity
+  query_entity_help: Query an entity by its UUID, SHA-256 identifier, or entity address to view its relationship group and active blacklist records.
+  query_entity_identifier_label: Entity identifier
+  query_entity_identifier_placeholder: UUID, SHA-256 hash, or user@example.com
+  query_entity_submit: Query Entity
+  query_entity_results_title: Entity Query Results
+  query_entity_related_entities: Related entities
+  query_entity_active_blacklists: Active blacklist records
+  query_entity_no_related: No related entities were found.
+  query_entity_no_blacklists: No active blacklist records were found.
+  query_entity_error: Unable to query the entity. Verify the identifier and try again.
+  modal_edit_title: Edit Entity
+  modal_edit_host_label: Host
+  modal_edit_id_label: Local ID
+  modal_edit_metadata_label: Metadata
+  modal_edit_metadata_key_placeholder: Key
+  modal_edit_metadata_add: Add Entry
+  modal_edit_metadata_no_entries: No metadata entries
+  modal_edit_metadata_type_string: String
+  modal_edit_metadata_type_boolean: Boolean
+  modal_edit_metadata_type_integer: Integer
+  modal_edit_metadata_type_null: 'Null'
+  modal_evidence_title: Submit Evidence
+  modal_evidence_text_label: Text Content
+  modal_evidence_note_label: Note
+  modal_evidence_tag_label: Tag
+  modal_evidence_confidential_label: Mark as Confidential
+  modal_evidence_submit: Submit Evidence
+  modal_blacklist_title: Blacklist Entity
+  modal_blacklist_report_label: Report UUID
+  modal_blacklist_type_label: Incident Type
+  modal_blacklist_expires_label: Expires at (optional)
+  modal_blacklist_expires_help: Leave blank for a permanent blacklist. The selected local time is sent as an exact Unix timestamp.
+  modal_blacklist_expires_placeholder: Select expiration
+  modal_blacklist_expires_clear: Permanent
+  modal_blacklist_expires_apply: Apply expiration
+  modal_blacklist_submit: Blacklist
+  modal_relationship_title: Set Relationship
+  modal_relationship_target_label: 'Target Entity (UUID, Hash, or Address)'
+  modal_relationship_type_label: Relationship Type
+  modal_relationship_set: Set Relationship
+  modal_clear_relationship_title: Clear Relationship
+  modal_clear_relationship_info: This will remove the relationship between this entity and its related entity.
+  modal_clear_relationship_confirm: 'Are you sure you want to clear the relationship for {address}?'
+  modal_clear_relationship_btn: Clear Relationship
+  modal_clear_reputation_title: Clear Reputation
+  modal_clear_reputation_info: This will reset the reputation score of this entity to zero.
+  modal_clear_reputation_btn: Clear Reputation
+  modal_clear_reputation_confirm: 'Are you sure you want to clear the reputation for {address}?'
+  modal_whitelist_title: Toggle Whitelist Status
+  modal_whitelist_info: 'Are you sure you want to toggle the whitelist status for {address}?'
+  modal_whitelist_confirm_remove: Remove from Whitelist
+  modal_whitelist_confirm_add: Add to Whitelist
+  delete_entity_confirm: 'Are you sure you want to delete "{address}"? This action cannot be undone.'
+  modal_delete_info: Deleting this entity will permanently remove it from the federation database.
+  entity_created: Entity created successfully
+  entity_deleted: Entity deleted successfully
+  entity_updated: Entity updated successfully
+  entity_whitelisted: Entity whitelisted successfully
+  entity_unwhitelisted: Entity removed from whitelist successfully
+  evidence_submitted: Evidence submitted successfully
+  entity_blacklisted: Entity blacklisted successfully
+  relationship_set: Relationship set successfully
+  relationship_cleared: Relationship cleared successfully
+  reputation_cleared: Reputation cleared successfully
+  entity_created_failed: Failed to create entity
+  entity_delete_failed: Failed to delete entity
+  entity_updated_failed: Failed to update entity
+  entity_whitelist_failed: Failed to update whitelist status
+  entity_blacklist_failed: Failed to blacklist entity
+  relationship_set_failed: Failed to set relationship
+  relationship_clear_failed: Failed to clear relationship
+  reputation_clear_failed: Failed to clear reputation
+  relationship_target: Relationship Target
+  relationship_target_missing: The related entity record could not be loaded.
+  relationship_none: This entity has no relationship configured.
+  primary_operator: Primary Operator
+  primary_operator_none: No operator has interacted with this entity yet.
+  primary_operator_missing: The operator record could not be loaded.
+  primary_operator_records: Linked Records
+reports:
+  page_title: Reports
+  heading: Reports
+  subtitle: Browse and manage incident reports
+  showing_reports: 'Showing {start} to {end} of {total} reports'
+  back: Back to Reports
+  record_title: Report
+  record_detail: Report Details
+  no_reports: No reports found
+  error_loading: Failed to load reports. Please try again.
+  error_loading_entry: Failed to load report. It may not exist or you may not have permission to view it.
+  filter_opened: Open
+  filter_closed: Closed
+  filter_automated: Automated
+  filter_unassigned: Unassigned
+  filter_assigned: Assigned
+  reporting_entity: Reporting Entity
+  report_updated: Updated
+  detail_heading: Report Details
+  detail_automated: Auto-generated
+  related_evidence: Related Evidence
+  blacklist_records: Blacklist
+  audit_log_records: Audit Log
+  evidence_records: Evidence
+  no_evidence_records: No evidence records linked to this report
+  no_assigned_operator: No operator assigned
+  close_report: Close Report
+  delete_report: Delete Report
+  assign_operator: Assign Operator
+  modal_close_title: Close Report
+  modal_close_info: Closing this report will mark it as resolved. You may optionally provide a classification.
+  modal_close_classification_label: Classification
+  modal_close_classification_none: No Classification
+  modal_close_classification_malicious: Malicious
+  modal_close_classification_suspicious: Suspicious
+  modal_close_classification_normal: Normal
+  modal_close_confirm: Close Report
+  modal_delete_title: Delete Report
+  modal_delete_info: Deleting this report will permanently remove it from the database. This action cannot be undone.
+  modal_assign_title: Assign Operator to Report
+  modal_assign_info: Select an operator to assign this report to.
+  modal_assign_select_label: Operator
+  modal_assign_select_placeholder: Select an operator...
+  modal_assign_confirm: Assign
+  report_closed: Report closed successfully
+  report_deleted: Report deleted successfully
+  report_submitted: Report submitted successfully
+  operator_assigned: Operator assigned successfully
+  report_close_failed: Failed to close report
+  report_delete_failed: Failed to delete report
+  operator_assign_failed: Failed to assign operator
+  failed_audit_log_records: Failed to load audit log records
+  failed_entity_reports: Failed to load related reports
+  mime: MIME Type
+  size: Size
+evidence:
+  page_title: Evidence Records
+  heading: Evidence Records
+  subtitle: Browse and manage evidence records submitted by operators
+  showing_evidence: 'Showing {start} to {end} of {total} evidence'
+  back: Back to Evidence Records
+  record_title: Evidence Record
+  record_detail: Record Details
+  error_loading: Failed to load evidence records. Please try again.
+  error_loading_entry: Failed to load evidence record. It may not exist or you may not have permission to view it.
+  filter_all_categories: All Classifications
+  filter_confidential: Confidential
+  filter_not_confidential: Not Confidential
+  filter_classified: Classified
+  filter_unclassified: Unclassified
+  detail_heading: Evidence Details
+  delete_evidence: Delete Evidence
+  mark_confidential: Mark Confidential
+  remove_confidential: Remove Confidential
+  update_tag: Update Tag
+  add_to_report: Link to Report
+  upload_attachment: Upload Attachment
+  delete_attachment: Delete Attachment
+  no_attachments_desc: No files have been attached to this evidence record.
+  upload_attachment_modal_title: Upload Attachment
+  upload_attachment_modal_desc: Select a file to attach to this evidence record
+  upload_attachment_modal_file_label: File
+  upload_attachment_modal_confirm: Upload
+  delete_attachment_modal_title: Delete Attachment
+  delete_attachment_modal_info: Deleting this attachment will permanently remove the file. This action cannot be undone.
+  delete_attachment_modal_confirm_prefix: Are you sure you want to delete
+  delete_attachment_modal_confirm_suffix: This action cannot be undone.
+  status_summary: Status Summary
+  modal_submit_title: Submit Evidence
+  modal_submit_entity_label: Entity Identifier
+  modal_submit_entity_placeholder: Entity UUID, hash, or address
+  modal_submit_text_label: Text Content
+  modal_submit_note_label: Note (optional)
+  modal_submit_tag_label: Tag (optional)
+  modal_submit_confidential_label: Mark as Confidential
+  modal_submit_confirm: Submit Evidence
+  modal_delete_title: Delete Evidence
+  modal_delete_info: Deleting this evidence record will permanently remove it from the database. This action cannot be undone.
+  modal_tag_title: Update Tag
+  modal_tag_label: Tag
+  modal_tag_placeholder: Enter tag
+  modal_tag_save: Save Tag
+  modal_report_title: Link to Report
+  modal_report_label: Report UUID
+  modal_report_placeholder: Enter report UUID
+  modal_report_confirm: Link Evidence
+  evidence_deleted: Evidence deleted successfully
+  confidential_set: Evidence marked as confidential
+  confidential_unset: Evidence confidentiality removed
+  tag_updated: Tag updated successfully
+  evidence_added_to_report: Evidence linked to report successfully
+  upload_attachment_success: Attachment uploaded successfully
+  delete_attachment_success: Attachment deleted successfully
+  attachment_download_failed: Failed to download attachment
+  evidence_delete_failed: Failed to delete evidence
+  confidential_toggle_failed: Failed to toggle confidential status
+  tag_update_failed: Failed to update tag
+  evidence_add_to_report_failed: Failed to link evidence to report
+  upload_attachment_failed: Failed to upload attachment
+  delete_attachment_failed: Failed to delete attachment
+  blacklist_unavailable: Blacklist details unavailable
+  derived_blacklist: Derived Blacklist
+  error_loading_attachments: Failed to load attachments
+  error_loading_audit_logs: Failed to load audit log records
+  error_loading_entity_blacklist: Failed to load blacklist records
+  error_loading_entity_evidence: Failed to load evidence records
+  error_loading_entity_reports: Failed to load reports
+  mime_type: MIME Type
+  owning_entity: Owning Entity
+  parent_report: Parent Report
+  report_unavailable: Report details unavailable
+blacklist:
+  page_title: Blacklist Records
+  heading: Blacklist Records
+  subtitle: Browse and manage blacklisted entities
+  showing_blacklist: 'Showing {start} to {end} of {total} records'
+  back: Back to Blacklist
+  record_title: Blacklist Record
+  record_detail: Blacklist Record Details
+  confirm_delete: Delete permanently
+  error_loading: Failed to load blacklist records. Please try again.
+  error_loading_entry: Failed to load blacklist record. It may not exist or you may not have permission to view it.
+  filter_active: Active
+  filter_lifted: Lifted
+  filter_expired: Expired
+  filter_permanent: Permanent
+  detail_heading: Blacklist Record Details
+  no_related_data: No related records available
+  lift_blacklist: Lift Blacklist
+  delete_blacklist: Delete Blacklist
+  extend_blacklist: Extend
+  modal_lift_info: Are you sure you want to lift this blacklist record? The entity will no longer be blacklisted.
+  modal_lift_confirm: Lift Blacklist
+  modal_delete_info: Deleting this blacklist record will permanently remove it from the database. This action cannot be undone.
+  modal_extend_title: Extend Blacklist
+  modal_extend_info: Select the new expiration date and time for this blacklist record.
+  modal_extend_label: New expiration
+  modal_extend_help: The selected local time is converted to a Unix timestamp; the server receives only the additional time needed to reach it.
+  modal_extend_placeholder: Select new expiration
+  modal_extend_apply: Apply expiration
+  confirm_extend: Extend
+  blacklist_lifted: Blacklist lifted successfully
+  blacklist_extended: Blacklist extended successfully
+  blacklist_deleted: Blacklist deleted successfully
+  blacklist_lift_failed: Failed to lift blacklist
+  blacklist_extend_failed: Failed to extend blacklist
+  blacklist_delete_failed: Failed to delete blacklist
+  failed_reports: Failed to load reports
+  failed_audit_records: Failed to load audit log records
+  related_evidence: Related Evidence
+  mime: MIME Type
+  size: Size
+  no_linked_report: No report linked to this record
+  report_unavailable: Report details unavailable
+audit_log:
+  page_title: Audit Log
+  heading: Audit Log
+  subtitle: Browse and manage federation audit log entries
+  showing_audit_logs: 'Showing {start} to {end} of {total} entries'
+  back: Back to Audit Log
+  record_title: Audit Log Record
+  error_loading: Failed to load audit log entries. Please try again.
+  error_loading_entry: Failed to load audit log entry. It may not exist or you may not have permission to view it.
+  filter_operator_events: Operator Events
+  filter_attachment_events: Attachment Events
+  filter_evidence_events: Evidence Events
+  filter_report_events: Report Events
+  filter_entity_events: Entity Events
+  filter_blacklist_events: Blacklist Events
+  filter_other: Other
+  detail_heading: Audit Log Details
+  summary_heading: Details
+  detail_file_name: File Name
+  detail_mime: MIME Type
+  detail_size: Size
+  related_unavailable: Related record details are unavailable.
+  related_operator_logs: Operator Activity
+  related_entity_logs: Entity Activity
+search:
+  page_title: Search Results
+  heading: Search Results
+  subtitle: Found {count} result(s) for "{query}"
+  no_results: 'No results found for "{query}"'
+  no_results_desc: Try different keywords or check your spelling.
+  search_help: Search across entities, evidence, reports, blacklist, operators, audit logs, and attachments
+  search_empty: Enter a search query to find records
+  search_empty_desc: Search across all record types in the federation
+  error_loading: Failed to perform search. Please try again.
+  search_button: Search
+  clear_button: Clear
+  page_info: 'Page {page}'
+  error_short_query: Enter at least two characters to search
+  result_entity: Entity
+  result_evidence: Evidence
+  result_report: Report
+  result_blacklist: Blacklist
+  result_operator: Operator
+  result_audit_log: Audit Log
+  result_attachment: Attachment
+  file_name: Name
+  mime_type: MIME
+configuration_error:
+  page_title: Configuration Error
+  error_code: Error
+  error_subtitle: There was a configuration error
+  server_unavailable: The Federation Server is currently unavailable. Check that it is running and try again.
+  missing_configuration: The Federation Server could not be started because configuration parameters are missing. See the logs for more details.
+  unknown_error: An unknown error occurred while trying to start the Web Application. See the logs for more details.
