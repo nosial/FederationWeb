@@ -1,0 +1,123 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\EntitiesView;
+    use WebKernel\Utilities;
+
+    Functions::loadLocalization('entities');
+
+    // The print document renders the same table as the list page, with every record matching the
+    // page's filters and sorting on one page; print.css restyles it and hides interactive controls.
+    $entitiesView = new EntitiesView(true);
+    WebSession::set('entities_view', $entitiesView);
+    $records = $entitiesView->getEntities();
+
+    // Active filters as [label key, value, labels for known values], shown above the table;
+    // the sort value is [field, order label key].
+    $filters = array_filter([
+        ['print_filter_search', $entitiesView->getSearchQuery(), null],
+        ['print_filter_category', $entitiesView->getCategoryFilter(), ['whitelisted' => 'filter_whitelisted', 'not_whitelisted' => 'filter_not_whitelisted', 'with_relationship' => 'filter_with_relationship', 'without_relationship' => 'filter_without_relationship']],
+        ['print_filter_sort', $entitiesView->getSortBy() !== null && $entitiesView->getSortBy() !== '' ? [$entitiesView->getSortBy(), $entitiesView->getApiOrder() === 'DESC' ? 'print_sort_desc' : 'print_sort_asc'] : null, null],
+    ], static fn(array $filter): bool => $filter[1] !== null && $filter[1] !== '');
+?>
+<!DOCTYPE html>
+<html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <?php Functions::insertSection('../sections/head.phtml'); ?>
+        <title><?php Functions::printl('heading'); ?></title>
+        <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="/css/print.css">
+    </head>
+    <body>
+        <div class="fw-print-controls">
+            <a href="javascript:window.print()" class="fw-print-btn"><i class="bi bi-printer"></i> <?php Functions::printl('print_page'); ?></a>
+            <a href="<?php Functions::printRoute('entities', queryParams: $entitiesView->getBaseQuery()); ?>" class="fw-print-btn"><i class="bi bi-arrow-left"></i> <?php Functions::printl('back'); ?></a>
+        </div>
+        <div class="fw-print-page">
+            <header class="fw-print-docheader">
+                <div class="fw-print-brand">
+                    <h1 class="fw-print-title"><?php Functions::printl('app_name'); ?></h1>
+                    <div class="fw-print-subtitle"><?php Functions::printl('print_server_info'); ?></div>
+                </div>
+                <div class="fw-print-meta">
+                    <div><?php Functions::printl('document_generated'); ?></div>
+                    <div class="generated"><?php Functions::print(Utilities::formatDate(time(), 'Y-m-d H:i:s')); ?></div>
+                </div>
+            </header>
+            <div class="fw-print-identity">
+                <div class="fw-print-record-type"><?php Functions::printl('print_record_list'); ?></div>
+                <h2 class="fw-print-record-title"><?php Functions::printl('heading'); ?></h2>
+                <div class="fw-print-record-uuid"><?php Functions::printl('subtitle'); ?></div>
+            </div>
+            <div class="fw-print-section">
+                <h3 class="fw-print-section-title"><?php Functions::printl('print_filters'); ?></h3>
+                <?php
+                    if (empty($filters))
+                    {
+                        ?>
+                        <div class="fw-print-value"><?php Functions::printl('print_filters_none'); ?></div>
+                        <?php
+                    }
+                    else
+                    {
+                        ?>
+                        <div class="fw-print-fields">
+                            <?php
+                                foreach ($filters as [$labelKey, $value, $valueLabels])
+                                {
+                                    ?>
+                                    <div class="fw-print-field">
+                                        <span class="fw-print-label"><?php Functions::printl($labelKey); ?></span>
+                                        <span class="fw-print-value">
+                                            <?php
+                                                if (is_array($value))
+                                                {
+                                                    // Sorting: [field, order label key]
+                                                    Functions::print($value[0]);
+                                                    ?> · <?php
+                                                    Functions::printl($value[1]);
+                                                }
+                                                elseif ($valueLabels !== null && isset($valueLabels[$value]))
+                                                {
+                                                    Functions::printl($valueLabels[$value]);
+                                                }
+                                                else
+                                                {
+                                                    Functions::print($value);
+                                                }
+                                            ?>
+                                        </span>
+                                    </div>
+                                    <?php
+                                }
+                            ?>
+                        </div>
+                        <?php
+                    }
+                ?>
+            </div>
+            <div class="fw-print-view">
+                <div class="fw-card">
+                    <div class="fw-card-header">
+                        <h5><?php
+                            Functions::printl('showing_entities', [
+                                'start' => empty($records) ? 0 : 1,
+                                'end' => count($records ?? []),
+                                'total' => $entitiesView->getTotalEntities(),
+                            ]);
+                        ?></h5>
+                    </div>
+                    <div class="fw-card-body">
+                        <?php Functions::insertSection('table.phtml'); ?>
+                    </div>
+                </div>
+            </div>
+            <footer class="fw-print-docfooter">
+                <span><?php Functions::printl('print_footer_brand'); ?></span>
+                <span><?php Functions::printl('print_footer_subtitle'); ?></span>
+            </footer>
+        </div>
+    </body>
+</html>
