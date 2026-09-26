@@ -1,0 +1,85 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use WebKernel\ViewAuthorization;
+?>
+<?php
+    if (ViewAuthorization::canContribute())
+    {
+        ?>
+        <div class="modal fade" id="modalSubmitEvidence" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-file-earmark-text"></i> <?php Functions::printl('modal_submit_title'); ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="POST" action="<?php Functions::printRoute('evidence'); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                        <input type="hidden" name="action" value="submit_evidence">
+                        <div class="modal-body">
+                            <div class="fw-form-group">
+                                <label class="fw-form-label"><?php Functions::printl('modal_submit_entity_label'); ?></label>
+                                <div class="fw-autocomplete-wrap">
+                                    <input type="text" class="fw-form-control" id="entitySearchInput" placeholder="<?php Functions::printl('modal_submit_entity_placeholder'); ?>" autocomplete="off">
+                                    <input type="hidden" name="entity_identifier" id="entityIdentifier">
+                                    <div class="fw-autocomplete-dropdown" id="entityDropdown"></div>
+                                </div>
+                            </div>
+                            <div class="fw-form-group">
+                                <label class="fw-form-label"><?php Functions::printl('modal_submit_text_label'); ?></label>
+                                <textarea class="fw-form-control" name="evidence_text" rows="4" placeholder="<?php Functions::printl('modal_submit_text_label'); ?>" autocomplete="off"></textarea>
+                            </div>
+                            <div class="fw-form-group">
+                                <label class="fw-form-label"><?php Functions::printl('modal_submit_note_label'); ?></label>
+                                <input type="text" class="fw-form-control" name="evidence_note" placeholder="<?php Functions::printl('modal_submit_note_label'); ?>" autocomplete="off">
+                            </div>
+                            <div class="fw-form-group">
+                                <label class="fw-form-label"><?php Functions::printl('modal_submit_tag_label'); ?></label>
+                                <input type="text" class="fw-form-control" name="evidence_tag" placeholder="<?php Functions::printl('modal_submit_tag_label'); ?>" autocomplete="off">
+                            </div>
+                            <div class="fw-form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" name="evidence_confidential" value="1" id="evidenceConfidential">
+                                    <label class="form-check-label" for="evidenceConfidential"><?php Functions::printl('modal_submit_confidential_label'); ?></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                            <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl('modal_submit_confirm'); ?></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <?php
+    }
+?>
+<?php
+    if (ViewAuthorization::canManageRecords())
+    {
+        ?>
+        <div class="modal fade" id="deleteEvidenceModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> <?php Functions::printl('delete_evidence'); ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="POST" action="<?php Functions::printRoute('evidence'); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                        <input type="hidden" name="action" value="delete_evidence">
+                        <input type="hidden" name="evidence_uuid" id="deleteEvidenceUuid">
+                        <div class="modal-body text-center">
+                            <p><?php Functions::printl('modal_delete_confirm_prefix'); ?> <strong id="deleteEvidenceUuidDisplay"></strong> <?php Functions::printl('modal_delete_confirm_suffix'); ?></p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                            <button type="submit" class="fw-btn fw-btn-danger"><?php Functions::printl('confirm_delete'); ?></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+?>
