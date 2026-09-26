@@ -1,0 +1,5 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use WebKernel\Utilities;
+?>
+<input type="hidden" name="csrf_token" value="<?php Functions::print(Utilities::getCsrfToken()); ?>">
