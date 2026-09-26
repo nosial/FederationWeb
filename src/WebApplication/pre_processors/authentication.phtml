@@ -1,0 +1,127 @@
+<?php
+
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use FederationLib\FederationClient;
+    use FederationLib\Objects\ServerInformation;
+    use WebKernel\Utilities;
+    use WebKernel\ViewAuthorization;
+    use DynamicalWeb\Enums\RequestMethod;
+    use DynamicalWeb\Enums\ResponseCode;
+
+    // The WebSocket bridge terminates at the local TCP proxy. Validating a
+    // cookie session here recalculates its IP-bound fingerprint as 127.0.0.1
+    // and can delete the browser's authenticated session. WebSocket handlers
+    // must not read, create, or modify HTTP cookie sessions.
+    if (WebSession::getRequest()->getMethod() === \DynamicalWeb\Enums\RequestMethod::WEBSOCKET) {
+        return;
+    }
+
+    // Initialize the cookie session if it does not exist
+    if(!WebSession::hasCookieSession('web_session'))
+    {
+        $cookieSession = WebSession::createCookieSession([
+            'authenticated' => false,
+            'api_key' => null,
+        ], 'web_session');
+    }
+    else
+    {
+        $cookieSession = WebSession::getCookieSession('web_session');
+
+        // DynamicalWeb extends a session's lifetime on the server with every request, but the browser
+        // cookie keeps the expiry it was given when the session was created, so an active user was
+        // signed out an hour after signing in. Renewing the cookie makes the timeout an idle timeout;
+        // signing in or out replaces this cookie later in the same response.
+        $sessionManager = WebSession::getCookieSessionManager();
+        if ($cookieSession !== null && $sessionManager !== null)
+        {
+            WebSession::getResponse()->setCookie(
+                'web_session',
+                $cookieSession->getSessionId(),
+                time() + $sessionManager->getSessionTtl(),
+                secure: WebSession::getRequest()->isSecure(),
+                httpOnly: true,
+            );
+        }
+    }
+
+    WebSession::set('cookie_session', $cookieSession);
+
+    // Every state-changing request must echo the session's CSRF token, as the csrf_token form field
+    // (sections/csrf_field.phtml) or the X-CSRF-Token header (added to XHR by sections/head.phtml).
+    // A form is sent back to its page, where an expired session leads to the login page as before.
+    $request = WebSession::getRequest();
+    if (in_array($request->getMethod(), [RequestMethod::POST, RequestMethod::PUT, RequestMethod::DELETE], true))
+    {
+        $headerToken = $request->getHeader('X-CSRF-Token');
+        if (!Utilities::isValidCsrfToken($request->getParameter('csrf_token') ?? $headerToken))
+        {
+            if ($headerToken !== null)
+            {
+                WebSession::getResponse()->setStatusCode(ResponseCode::FORBIDDEN);
+                WebSession::getResponse()->setJson(['error' => 'csrf_failed']);
+            }
+            else
+            {
+                WebSession::getResponse()->setRedirect($request->getPath() . '?' . http_build_query(['error' => 'csrf_failed']));
+            }
+            WebSession::endSession(0);
+            return;
+        }
+    }
+
+    // The login page redirects authenticated sessions to the dashboard. The error
+    // page is deliberately exempt so it remains visible when that dashboard route
+    // cannot reach the configured server.
+    switch(WebSession::getRequest()->getPath())
+    {
+        case '/authenticate':
+            if($cookieSession->get('authenticated', false) && !ViewAuthorization::isAnonymous())
+            {
+                WebSession::getResponse()->setRedirect(Functions::getRouteUrl('dashboard'));
+                WebSession::endSession(0);
+            }
+            return;
+
+        case '/error':
+        case '/logout':
+            return;
+
+        default:
+            /** @var ServerInformation|null $serverInformation */
+            $serverInformation = WebSession::get('server_information');
+            $routeId = WebSession::getCurrentRoute()->getId();
+
+            if (ViewAuthorization::isAnonymous())
+            {
+                if ($serverInformation === null || !ViewAuthorization::canViewRoute($routeId, $serverInformation))
+                {
+                    WebSession::getResponse()->setRedirect(Functions::getRouteUrl('authenticate'));
+                    WebSession::endSession(0);
+                }
+
+                return;
+            }
+
+            if ($serverInformation !== null && !ViewAuthorization::canViewRoute($routeId, $serverInformation))
+            {
+                WebSession::getResponse()->setRedirect(Functions::getRouteUrl('dashboard'));
+                WebSession::endSession(0);
+                return;
+            }
+
+            // Set the API key on the FederationClient so authenticated requests work.
+            $apiKey = $cookieSession->get('api_key');
+            if ($apiKey !== null)
+            {
+                /** @var FederationClient $federationClient */
+                $federationClient = WebSession::get('federation_client');
+                if ($federationClient !== null)
+                {
+                    $federationClient->setAccessToken($apiKey);
+                }
+            }
+            break;
+    }
+
