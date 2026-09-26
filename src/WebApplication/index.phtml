@@ -3,15 +3,16 @@
     use DynamicalWeb\WebSession;
     use WebKernel\DashboardView;
     use WebKernel\Utilities;
+    use WebKernel\ViewAuthorization;
 
     Functions::loadLocalization('dashboard');
 
     $federationClient = WebSession::get('federation_client');
     $serverInformation = $federationClient->getServerInformation();
     WebSession::set('server_information', $serverInformation);
-    $cookieSession = WebSession::getCookieSession('web_session');
-    $operatorUuid = $cookieSession->get('operator_uuid');
-    $operatorName = $cookieSession->get('operator_name');
+    $cookieSession = WebSession::get('cookie_session');
+    $operatorUuid = $cookieSession?->get('operator_uuid');
+    $operatorName = $cookieSession?->get('operator_name');
     $dashboardView = new DashboardView();
     WebSession::set('dashboard_view', $dashboardView);
 ?>
@@ -20,6 +21,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <?php Functions::insertSection('sections/head.phtml'); ?>
         <title><?php Functions::printl('page_title', ['server_name' => $serverInformation->getServerName()]); ?></title>
         <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
         <link rel="stylesheet" href="/css/federation.css">
@@ -43,7 +45,12 @@
                                 {
                                     ?>
                                     <span class="fw-dashboard-session"><i class="bi bi-person-check"></i> <?php Functions::print($operatorName); ?></span>
-                                    <button type="button" class="fw-btn fw-btn-primary fw-btn-sm" data-bs-toggle="modal" data-bs-target="#submitReportModal"><i class="bi bi-file-earmark-plus"></i> <?php Functions::printl('new_report_title'); ?></button>
+                                    <?php
+                                        if (ViewAuthorization::canContribute())
+                                        {
+                                            ?><button type="button" class="fw-btn fw-btn-primary fw-btn-sm" data-bs-toggle="modal" data-bs-target="#submitReportModal"><i class="bi bi-file-earmark-plus"></i> <?php Functions::printl('new_report_title'); ?></button><?php
+                                        }
+                                    ?>
                                     <?php
                                 }
                                 else
