@@ -1,0 +1,278 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use FederationLib\Enums\IncidentType;
+    use WebKernel\EntityDetailView;
+
+    /** @var EntityDetailView $view */
+    $view = WebSession::get('entity_detail_view');
+?>
+                    <!-- Edit Entity Modal -->
+                    <div class="modal fade" id="modalEditEntity" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="POST" action="<?php Functions::printRoute('entity_detail', ['entity_id' => $view->getEntity()->getUuid()]); ?>" id="editEntityForm"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="edit_entity">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"><i class="bi bi-pencil"></i> <?php Functions::printl('modal_edit_title'); ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_edit_host_label'); ?></label>
+                                            <input type="text" class="fw-form-control" name="entity_host" value="<?php Functions::print($view->getEntity()->getHost()); ?>" required autocomplete="off">
+                                        </div>
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_edit_id_label'); ?></label>
+                                            <input type="text" class="fw-form-control" name="entity_id_val" value="<?php Functions::print($view->getEntity()->getId() ?? ''); ?>" autocomplete="off">
+                                        </div>
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_edit_metadata_label'); ?></label>
+                                            <div id="metadataRows">
+                                                <div class="fw-metadata-empty" id="metadataEmpty"><?php Functions::printl('modal_edit_metadata_no_entries'); ?></div>
+                                            </div>
+                                            <button type="button" class="fw-btn fw-btn-secondary fw-btn-sm mt-2" id="addMetadataBtn">
+                                                <i class="bi bi-plus-lg"></i> <?php Functions::printl('modal_edit_metadata_add'); ?>
+                                            </button>
+                                            <input type="hidden" name="entity_metadata" id="entityMetadataHidden">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl('modal_edit_save'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Evidence Modal -->
+                    <div class="modal fade" id="modalSubmitEvidence" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="POST" action="<?php Functions::printRoute('entity_detail', ['entity_id' => $view->getEntity()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="submit_evidence">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"><i class="bi bi-file-earmark-text"></i> <?php Functions::printl('modal_evidence_title'); ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_evidence_text_label'); ?></label>
+                                            <textarea class="fw-form-control" name="evidence_text" rows="3" autocomplete="off"></textarea>
+                                        </div>
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_evidence_note_label'); ?></label>
+                                            <input type="text" class="fw-form-control" name="evidence_note" autocomplete="off">
+                                        </div>
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_evidence_tag_label'); ?></label>
+                                            <input type="text" class="fw-form-control" name="evidence_tag" autocomplete="off">
+                                        </div>
+                                        <div class="fw-form-check">
+                                            <input type="checkbox" name="evidence_confidential" value="1" id="evidenceConfidential">
+                                            <label for="evidenceConfidential"><?php Functions::printl('modal_evidence_confidential_label'); ?></label>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl('modal_evidence_submit'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Blacklist Entity Modal -->
+                    <div class="modal fade" id="modalBlacklistEntity" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="POST" action="<?php Functions::printRoute('entity_detail', ['entity_id' => $view->getEntity()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="blacklist_entity">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"><i class="bi bi-shield-exclamation"></i> <?php Functions::printl('modal_blacklist_title'); ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_blacklist_report_label'); ?></label>
+                                            <input type="text" class="fw-form-control" name="blacklist_report_uuid" id="blacklistReportUuid" required autocomplete="off">
+                                        </div>
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_blacklist_type_label'); ?></label>
+                                            <select class="fw-form-control" name="blacklist_type" required>
+                                                <?php
+                                                    foreach (IncidentType::cases() as $type)
+                                                    {
+                                                        ?>
+                                                <option value="<?php Functions::print($type->value); ?>"><?php Functions::print($type->name); ?></option>
+                                                        <?php
+                                                    }
+                                                ?>
+                                            </select>
+                                        </div>
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_blacklist_expires_label'); ?></label>
+                                            <div class="fw-date-picker" data-fw-date-picker data-min="<?php Functions::print(time()); ?>" data-optional>
+                                                <input type="hidden" name="blacklist_expires" data-fw-date-value>
+                                                <button type="button" class="fw-date-picker-toggle" data-fw-date-toggle aria-expanded="false">
+                                                    <i class="bi bi-calendar3"></i><span data-fw-date-label><?php Functions::printl('modal_blacklist_expires_placeholder'); ?></span><i class="bi bi-chevron-down"></i>
+                                                </button>
+                                                <div class="fw-date-picker-panel" data-fw-date-panel hidden>
+                                                    <div class="fw-date-picker-header"><button type="button" class="fw-date-picker-nav" data-fw-date-previous aria-label="Previous month"><i class="bi bi-chevron-left"></i></button><strong data-fw-date-month></strong><button type="button" class="fw-date-picker-nav" data-fw-date-next aria-label="Next month"><i class="bi bi-chevron-right"></i></button></div>
+                                                    <div class="fw-date-picker-weekdays"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+                                                    <div class="fw-date-picker-days" data-fw-date-days></div>
+                                                    <div class="fw-date-picker-time"><span>Time</span><select class="fw-date-picker-select" data-fw-date-hour></select><span>:</span><select class="fw-date-picker-select" data-fw-date-minute></select></div>
+                                                    <div class="fw-date-picker-actions"><button type="button" class="fw-btn fw-btn-ghost fw-btn-sm" data-fw-date-clear><?php Functions::printl('modal_blacklist_expires_clear'); ?></button><button type="button" class="fw-btn fw-btn-primary fw-btn-sm" data-fw-date-apply><?php Functions::printl('modal_blacklist_expires_apply'); ?></button></div>
+                                                </div>
+                                            </div>
+                                            <div class="fw-form-help"><?php Functions::printl('modal_blacklist_expires_help'); ?></div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-danger"><?php Functions::printl('modal_blacklist_submit'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Set Relationship Modal -->
+                    <div class="modal fade" id="modalSetRelationship" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="POST" action="<?php Functions::printRoute('entity_detail', ['entity_id' => $view->getEntity()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="set_relationship">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"><i class="bi bi-link-45deg"></i> <?php Functions::printl('modal_relationship_title'); ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_relationship_target_label'); ?></label>
+                                            <div class="fw-autocomplete" id="relationshipTargetWrap">
+                                                <input type="text" class="fw-form-control" name="relationship_target_uuid" id="relationshipTarget" required autocomplete="off">
+                                                <div class="fw-autocomplete-results" id="relationshipTargetResults"></div>
+                                            </div>
+                                        </div>
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_relationship_type_label'); ?></label>
+                                            <select class="fw-form-control" name="relationship_type" required>
+                                                <option value="alternative"><?php Functions::printl('relationship_alternative'); ?></option>
+                                                <option value="proxy"><?php Functions::printl('relationship_proxy'); ?></option>
+                                                <option value="child"><?php Functions::printl('relationship_child'); ?></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl('modal_relationship_set'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Clear Relationship Modal -->
+                    <div class="modal fade modal-warning" id="modalClearRelationship" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="POST" action="<?php Functions::printRoute('entity_detail', ['entity_id' => $view->getEntity()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="clear_relationship">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"><i class="bi bi-link-45deg"></i> <?php Functions::printl('modal_clear_relationship_title'); ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="fw-modal-alert fw-modal-alert-warning">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                            <span><?php Functions::printl('modal_clear_relationship_info'); ?></span>
+                                        </div>
+                                        <p class="fw-mb-0"><?php Functions::printl('modal_clear_relationship_confirm', ['address' => '<strong>' . htmlspecialchars($view->getEntity()->getAddress(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</strong>'], false); ?></p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-danger"><?php Functions::printl('modal_clear_relationship_btn'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Clear Reputation Modal -->
+                    <div class="modal fade modal-warning" id="modalClearReputation" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="POST" action="<?php Functions::printRoute('entity_detail', ['entity_id' => $view->getEntity()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="clear_reputation">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"><i class="bi bi-arrow-counterclockwise"></i> <?php Functions::printl('modal_clear_reputation_title'); ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="fw-modal-alert fw-modal-alert-warning">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                            <span><?php Functions::printl('modal_clear_reputation_info'); ?></span>
+                                        </div>
+                                        <p class="fw-mb-0"><?php Functions::printl('modal_clear_reputation_confirm', ['address' => '<strong>' . htmlspecialchars($view->getEntity()->getAddress(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</strong>'], false); ?></p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-danger"><?php Functions::printl('modal_clear_reputation_btn'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Toggle Whitelist Modal -->
+                    <div class="modal fade" id="modalToggleWhitelist" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content">
+                                <form method="POST" action="<?php Functions::printRoute('entity_detail', ['entity_id' => $view->getEntity()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="toggle_whitelist">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"><i class="bi bi-shield-check"></i> <?php Functions::printl('modal_whitelist_title'); ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="fw-modal-alert fw-modal-alert-warning">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                            <span><?php Functions::printl('modal_whitelist_info', ['address' => '<strong>' . htmlspecialchars($view->getEntity()->getAddress(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</strong>'], false); ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl($view->getEntity()->isWhitelisted() ? 'modal_whitelist_confirm_remove' : 'modal_whitelist_confirm_add'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Entity Modal -->
+                    <div class="modal fade modal-danger" id="modalDeleteEntity" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="POST" action="<?php Functions::printRoute('entity_detail', ['entity_id' => $view->getEntity()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="delete_entity">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"><i class="bi bi-trash"></i> <?php Functions::printl('delete_entity'); ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="fw-modal-alert fw-modal-alert-danger">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                            <span><?php Functions::printl('modal_delete_info'); ?></span>
+                                        </div>
+                                        <p class="fw-mb-0"><?php Functions::printl('modal_delete_confirm_prefix'); ?> <strong><?php Functions::print($view->getEntity()->getAddress()); ?></strong>? <?php Functions::printl('modal_delete_confirm_suffix'); ?></p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-danger"><?php Functions::printl('confirm_delete'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
