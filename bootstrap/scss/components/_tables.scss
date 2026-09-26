@@ -1,0 +1,125 @@
+// Tables + Badges
+
+.fw-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+
+  &::-webkit-scrollbar { height: 3px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: var(--fw-text-muted); }
+}
+
+.fw-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: $table-font-size;
+
+  thead {
+    th {
+      padding: $table-cell-padding;
+      text-align: left;
+      font-weight: 600;
+      color: var(--fw-text-muted);
+      font-size: .5625rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      background: var(--fw-surface-alt);
+      border-bottom: 1px solid var(--fw-border-default);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      line-height: 1.2;
+
+      &:first-child { padding-left: 8px; }
+      &:last-child { padding-right: 8px; }
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid var(--fw-border-light);
+
+      &:hover { background: rgba($cerulean, 0.03); }
+
+      &:last-child td { border-bottom: none; }
+    }
+
+    tr:nth-child(even) {
+      background: var(--fw-table-row-alt);
+      &:hover { background: rgba($cerulean, 0.03); }
+    }
+
+    td {
+      padding: $table-cell-padding;
+      color: var(--fw-text-primary);
+      vertical-align: middle;
+      border-bottom: 1px solid var(--fw-border-light);
+      line-height: 1.3;
+
+      .fw-uuid { color: var(--fw-text-secondary); }
+
+      &:first-child { padding-left: 8px; }
+      &:last-child { padding-right: 8px; }
+    }
+  }
+
+  &.fw-table-nowrap {
+    td, th { white-space: nowrap; }
+  }
+
+  &.fw-table-hoverable {
+    tbody tr { cursor: pointer; }
+  }
+
+  .fw-table-actions {
+    display: inline-flex;
+    gap: 1px;
+    align-items: center;
+
+    .fw-btn-icon {
+      width: 18px;
+      height: 18px;
+      i { font-size: 9px; }
+    }
+  }
+
+}
+
+// ============ Badges ============
+.fw-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: $badge-font-size;
+  font-weight: 600;
+  padding: $badge-padding;
+  line-height: 1.2;
+  letter-spacing: .01em;
+
+  i { font-size: 9px; }
+
+  &-blue { background: var(--fw-badge-blue-bg); color: var(--fw-badge-blue-text); }
+  &-emerald,
+  &-green { background: var(--fw-badge-green-bg); color: var(--fw-badge-green-text); }
+  &-amber { background: var(--fw-badge-amber-bg); color: var(--fw-badge-amber-text); }
+  &-red { background: var(--fw-badge-red-bg); color: var(--fw-badge-red-text); }
+  &-purple { background: var(--fw-badge-purple-bg); color: var(--fw-badge-purple-text); }
+  &-cyan { background: var(--fw-badge-cyan-bg); color: var(--fw-badge-cyan-text); }
+  &-gray { background: var(--fw-badge-gray-bg); color: var(--fw-badge-gray-text); }
+  &-navy { background: var(--fw-badge-gray-bg); color: var(--fw-text-heading); }
+
+  &-sm {
+    font-size: .5625rem;
+    padding: .1em .35em;
+  }
+
+  &-xs { font-size: .65rem; }
+  &-muted { opacity: .7; }
+  &-overdue { font-size: .7rem; }
+  &-start { align-self: flex-start; }
+}
+
+// Row link (clickable table rows)
+.fw-row-link { cursor: pointer; &:hover { background: var(--fw-surface-alt); } }
