@@ -1,0 +1,195 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\EvidenceView;
+    use WebKernel\ViewAuthorization;
+
+    /** @var EvidenceView $view */
+    $view = WebSession::get('evidence_view');
+?>
+                                    <table class="fw-table fw-table-hoverable fw-table-nowrap" id="table-evidence">
+                                        <thead>
+                                            <tr>
+                                                <th><?php Functions::printl('uuid'); ?></th>
+                                                <th><?php Functions::printl('entity'); ?></th>
+                                                <th><?php Functions::printl('operator'); ?></th>
+                                                <th><?php Functions::printl('detail_report'); ?></th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('evidence', queryParams: array_merge($view->getBaseQuery(), ['sort_by' => 'classification_flag', 'sort_order' => ($view->getSortBy() === 'classification_flag' && $view->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('classification'); ?>
+                                                        <?php
+                                                            if ($view->getSortBy() === 'classification_flag')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($view->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th><?php Functions::printl('confidential'); ?></th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('evidence', queryParams: array_merge($view->getBaseQuery(), ['sort_by' => 'tag', 'sort_order' => ($view->getSortBy() === 'tag' && $view->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('tag'); ?>
+                                                        <?php
+                                                            if ($view->getSortBy() === 'tag')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($view->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('evidence', queryParams: array_merge($view->getBaseQuery(), ['sort_by' => 'created', 'sort_order' => ($view->getSortBy() === 'created' && $view->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('created'); ?>
+                                                        <?php
+                                                            if ($view->getSortBy() === 'created')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($view->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a href="<?php Functions::printRoute('evidence', queryParams: array_merge($view->getBaseQuery(), ['sort_by' => 'updated', 'sort_order' => ($view->getSortBy() === 'updated' && $view->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
+                                                        <?php Functions::printl('updated'); ?>
+                                                        <?php
+                                                            if ($view->getSortBy() === 'updated')
+                                                            {
+                                                                ?><i class="bi bi-chevron-<?php Functions::print($view->getApiOrder() === 'ASC' ? 'up' : 'down'); ?>"></i><?php
+                                                            }
+                                                        ?>
+                                                    </a>
+                                                </th>
+                                                <th class="fw-col-actions"><?php Functions::printl('actions'); ?></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                                if ($view->getEvidenceRecords() === null)
+                                                {
+                                                    ?>
+                                                    <tr>
+                                                        <td colspan="10">
+                                                            <div class="fw-empty">
+                                                                <i class="bi bi-exclamation-circle"></i>
+                                                                <p><?php Functions::printl('error_loading'); ?></p>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                }
+                                                elseif (empty($view->getEvidenceRecords()))
+                                                {
+                                                    ?>
+                                                    <tr>
+                                                        <td colspan="10">
+                                                            <div class="fw-empty">
+                                                                <i class="bi bi-file-earmark-text"></i>
+                                                                <p><?php Functions::printl('no_evidence'); ?></p>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                }
+                                                else
+                                                {
+                                                    foreach ($view->getEvidenceRecords() as $evidenceRecord)
+                                                    {
+                                                        $entityUuid = $evidenceRecord->getEntityUuid();
+                                                        $operatorUuid = $evidenceRecord->getOperatorUuid();
+                                                        $reportUuid = $evidenceRecord->getReport();
+                                                        $classificationFlag = $evidenceRecord->getClassificationFlag();
+                                                        $updated = $evidenceRecord->getUpdated();
+                                                        ?>
+                                                        <tr class="fw-row-link" data-href="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $evidenceRecord->getUuid()]); ?>">
+                                                            <td><span class="fw-uuid"><?php Functions::print($evidenceRecord->getUuid()); ?></span><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($evidenceRecord->getUuid()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></td>
+                                                            <td>
+                                                                <a href="<?php Functions::printRoute('entity_detail', ['entity_id' => $entityUuid]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($view->getEntityAddresses()[$entityUuid] ?? $entityUuid); ?></a>
+                                                                <button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($entityUuid); ?>" title="Copy"><i class="bi bi-clipboard"></i></button>
+                                                            </td>
+                                                            <td>
+                                                                <a href="<?php Functions::printRoute('operator_detail', ['operator_id' => $operatorUuid]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($view->getOperatorNames()[$operatorUuid] ?? $operatorUuid); ?></a>
+                                                                <button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($operatorUuid); ?>" title="Copy"><i class="bi bi-clipboard"></i></button>
+                                                            </td>
+                                                            <td>
+                                                                <?php
+                                                                    if ($reportUuid !== null && $reportUuid !== '')
+                                                                    {
+                                                                        ?>
+                                                                        <a href="<?php Functions::printRoute('report_detail', ['report_uuid' => $reportUuid]); ?>" class="fw-detail-link fw-fw-semibold"><span class="fw-uuid"><?php Functions::print(substr($reportUuid, 0, 8)); ?>…</span></a>
+                                                                        <button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($reportUuid); ?>" title="Copy"><i class="bi bi-clipboard"></i></button>
+                                                                        <?php
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        ?><span class="fw-uuid">—</span><?php
+                                                                    }
+                                                                ?>
+                                                            </td>
+                                                            <td>
+                                                                <?php
+                                                                    if ($classificationFlag !== null)
+                                                                    {
+                                                                        ?><span class="fw-badge <?php Functions::print($view->getClassificationBadge($classificationFlag)); ?>"><?php Functions::print($classificationFlag->name); ?></span><?php
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        ?><span class="fw-uuid">—</span><?php
+                                                                    }
+                                                                ?>
+                                                            </td>
+                                                            <td>
+                                                                <?php
+                                                                    if ($evidenceRecord->isConfidential())
+                                                                    {
+                                                                        ?><span class="fw-dot amber"></span> <?php Functions::printl('yes'); ?><?php
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        ?><span class="fw-dot green"></span> <?php Functions::printl('no'); ?><?php
+                                                                    }
+                                                                ?>
+                                                            </td>
+                                                            <td>
+                                                                <?php
+                                                                    if ($evidenceRecord->getTag() !== null)
+                                                                    {
+                                                                        ?><span class="fw-badge fw-badge-navy"><?php Functions::print($evidenceRecord->getTag()); ?></span><?php
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        ?><span class="fw-uuid">—</span><?php
+                                                                    }
+                                                                ?>
+                                                            </td>
+                                                            <td><span class="fw-uuid"><?php Functions::print($view->formatDate($evidenceRecord->getCreated())); ?></span></td>
+                                                            <td>
+                                                                <?php
+                                                                    if ($updated !== null)
+                                                                    {
+                                                                        ?><span class="fw-uuid"><?php Functions::print($view->formatDate($updated)); ?></span><?php
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        ?><span class="fw-uuid">—</span><?php
+                                                                    }
+                                                                ?>
+                                                            </td>
+                                                            <td>
+                                                                <div class="fw-table-actions">
+                                                                    <a href="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $evidenceRecord->getUuid()]); ?>" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('view'); ?>"><i class="bi bi-box-arrow-up-right"></i></a>
+                                                                    <a href="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $evidenceRecord->getUuid()]); ?>" target="_blank" rel="noopener" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('open_in_new_tab'); ?>"><i class="bi bi-box-arrow-in-up-right"></i></a>
+                                                                    <?php
+                                                                        if (ViewAuthorization::canManageRecords())
+                                                                        {
+                                                                            ?><button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('delete_evidence'); ?>" data-bs-toggle="modal" data-bs-target="#deleteEvidenceModal" data-uuid="<?php Functions::print($evidenceRecord->getUuid()); ?>"><i class="bi bi-trash"></i></button><?php
+                                                                        }
+                                                                    ?>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <?php
+                                                    }
+                                                }
+                                            ?>
+                                        </tbody>
+                                    </table>
