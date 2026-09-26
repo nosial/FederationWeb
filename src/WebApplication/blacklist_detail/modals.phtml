@@ -1,0 +1,78 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use WebKernel\BlacklistDetailView;
+    use WebKernel\ViewAuthorization;
+
+    /** @var BlacklistDetailView $view */
+    $view = WebSession::get('blacklist_detail_view');
+    $record = $view->getRecord();
+?>
+<?php
+    if (ViewAuthorization::canManageRecords())
+    {
+        ?>
+                    <div class="modal fade" id="modalExtendBlacklist" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"><i class="bi bi-clock"></i> <?php Functions::printl('modal_extend_title'); ?></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form method="POST" action="<?php Functions::printRoute('blacklist_detail', ['blacklist_uuid' => $record->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="extend_blacklist">
+                                    <div class="modal-body">
+                                        <p><?php Functions::printl('modal_extend_info'); ?></p>
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_extend_label'); ?></label>
+                                            <div class="fw-date-picker" data-fw-date-picker data-min="<?php Functions::print(max(time() + 60, ($record->getExpires() ?? time()) + 60)); ?>">
+                                                <input type="hidden" name="extend_expires" data-fw-date-value>
+                                                <button type="button" class="fw-date-picker-toggle" data-fw-date-toggle aria-expanded="false">
+                                                    <i class="bi bi-calendar3"></i><span data-fw-date-label><?php Functions::printl('modal_extend_placeholder'); ?></span><i class="bi bi-chevron-down"></i>
+                                                </button>
+                                                <div class="fw-date-picker-panel" data-fw-date-panel hidden>
+                                                    <div class="fw-date-picker-header"><button type="button" class="fw-date-picker-nav" data-fw-date-previous aria-label="Previous month"><i class="bi bi-chevron-left"></i></button><strong data-fw-date-month></strong><button type="button" class="fw-date-picker-nav" data-fw-date-next aria-label="Next month"><i class="bi bi-chevron-right"></i></button></div>
+                                                    <div class="fw-date-picker-weekdays"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+                                                    <div class="fw-date-picker-days" data-fw-date-days></div>
+                                                    <div class="fw-date-picker-time"><span>Time</span><select class="fw-date-picker-select" data-fw-date-hour></select><span>:</span><select class="fw-date-picker-select" data-fw-date-minute></select></div>
+                                                    <div class="fw-date-picker-actions"><button type="button" class="fw-btn fw-btn-primary fw-btn-sm" data-fw-date-apply><?php Functions::printl('modal_extend_apply'); ?></button></div>
+                                                </div>
+                                            </div>
+                                            <div class="fw-form-help"><?php Functions::printl('modal_extend_help'); ?></div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl('confirm_extend'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade modal-danger" id="modalDeleteBlacklist" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"><i class="bi bi-trash"></i> <?php Functions::printl('delete_blacklist'); ?></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form method="POST" action="<?php Functions::printRoute('blacklist_detail', ['blacklist_uuid' => $record->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="delete_blacklist">
+                                    <div class="modal-body">
+                                        <div class="fw-modal-alert fw-modal-alert-danger">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                            <span><?php Functions::printl('modal_delete_info'); ?></span>
+                                        </div>
+                                        <p class="fw-mb-0"><?php Functions::printl('modal_delete_confirm_prefix'); ?> <strong><?php Functions::print(substr($record->getUuid(), 0, 8)); ?>…</strong>? <?php Functions::printl('modal_delete_confirm_suffix'); ?></p>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-danger"><?php Functions::printl('confirm_delete'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+        <?php
+    }
+?>
