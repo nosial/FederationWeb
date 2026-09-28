@@ -92,19 +92,18 @@
         }
 
         /**
-         * Returns whether the operator may close the given report: an open report assigned to them,
-         * and management permissions. The server refuses a close from anyone but the assignee.
+         * Returns whether the operator may close the given report: an open report and management
+         * permissions. The server refuses a close from anyone but the assignee, so the web application
+         * assigns the requesting operator to the report before closing it when they are not already assigned.
          *
          * @param mixed $report The report record.
          */
         public static function canCloseReport(mixed $report): bool
         {
-            $operatorUuid = self::currentOperatorUuid();
             return self::canManageRecords()
                 && $report !== null
                 && $report->isOpened()
-                && !empty($operatorUuid)
-                && $report->getAssignedOperator() === $operatorUuid;
+                && !empty(self::currentOperatorUuid());
         }
 
         /**
