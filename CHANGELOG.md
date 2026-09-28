@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.1] - 2026-09-28
 
-This is an ongoing update
+This update introduces minor fixes
 
 ### Changed
  - Renamed `zh.yml` to `cn.yml`
