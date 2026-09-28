@@ -289,6 +289,60 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+// Below the sm breakpoint the pixel area no longer fits beside the form, so it becomes a banner above it.
+@include media-breakpoint-down(sm) {
+  .fw-login-page {
+    min-height: 100dvh;
+    padding: 12px;
+  }
+
+  .fw-login-card { flex-direction: column; }
+
+  .fw-login-pixel {
+    width: auto;
+    min-height: 0;
+    height: 112px;
+  }
+
+  .fw-login-logo img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .fw-login-panel { padding: 20px 16px 16px; }
+
+  .fw-login-title { font-size: 1rem; }
+  .fw-login-subtitle { font-size: $fw-font-size-base; }
+
+  .fw-login-input-wrap {
+    i { left: 12px; font-size: 15px; }
+
+    input {
+      min-height: 42px;
+      padding-left: 36px;
+      font-size: $fw-touch-input-font-size;
+    }
+  }
+
+  .fw-login-submit {
+    min-height: 42px;
+    font-size: $fw-font-size-lg;
+  }
+
+  .fw-login-footer {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .fw-login-theme-toggle {
+    width: 36px;
+    height: 36px;
+    font-size: 15px;
+  }
 }
 
 // === Status list (for server info, public flags) ===
@@ -702,6 +756,10 @@
     color: var(--fw-text-muted);
     margin-top: 5px;
   }
+
+  @include media-breakpoint-down(sm) {
+    .fw-search-input-wrap .fw-search-input { font-size: $fw-touch-input-font-size; }
+  }
 }
 
 .fw-search-meta {
@@ -842,7 +900,8 @@
 }
 
 @media (max-width: 520px) {
-  .fw-error-card { padding: 32px 24px 28px; }
+  .fw-error-page { min-height: 100dvh; padding: 12px; }
+  .fw-error-card { padding: 32px 20px 28px; }
   .fw-error-actions .fw-btn { flex: 1 1 100%; }
 }
 
@@ -1022,6 +1081,34 @@
 
 .fw-spec-section-body--flush { padding: 0; }
 
+// Long endpoint paths and summaries wrap onto their own lines instead of widening the page.
+@include media-breakpoint-down(sm) {
+  .fw-spec-tag-group .fw-spec-tag-summary {
+    flex-wrap: wrap;
+    padding: 8px 10px;
+  }
+
+  .fw-spec-endpoint {
+    .fw-spec-endpoint-summary {
+      flex-wrap: wrap;
+      padding: 7px 10px 7px 16px;
+
+      .fw-spec-path {
+        flex-shrink: 1;
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .fw-spec-summary {
+        flex-basis: 100%;
+        white-space: normal;
+      }
+    }
+
+    .fw-spec-endpoint-body { padding: 0 10px 10px 16px; }
+  }
+}
+
 // Subsection
 .fw-spec-subsection {
   padding: 8px 0;
@@ -1109,6 +1196,11 @@
     padding: 0 16px 8px 32px;
     background: var(--fw-surface-alt);
     border-top: 1px solid var(--fw-border-light);
+  }
+
+  @include media-breakpoint-down(sm) {
+    .fw-spec-schema-summary { padding: 6px 10px; }
+    .fw-spec-schema-body { padding: 0 10px 8px 16px; }
   }
 }
 

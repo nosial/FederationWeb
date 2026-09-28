@@ -24,6 +24,8 @@
     display: flex;
     min-width: 0;
     overflow: hidden;
+
+    > div { min-width: 0; }
   }
 
   .fw-topbar-right {
@@ -252,11 +254,20 @@
     gap: 5px;
     font-size: $fw-font-size-xs;
     color: var(--fw-text-muted);
+    white-space: nowrap;
+    min-width: 0;
 
     a {
       color: var(--fw-text-muted);
       text-decoration: none;
       &:hover { color: var(--fw-link); }
+    }
+
+    // The record UUID on detail pages is the long part; it is cut with an ellipsis.
+    > span:last-child {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .sep { color: var(--fw-border-default); }
@@ -297,8 +308,8 @@
         width: auto;
         max-width: none;
         z-index: 1060;
-        height: 34px;
-        font-size: $fw-font-size-base;
+        height: 38px;
+        font-size: $fw-touch-input-font-size;
         padding: 6px 10px 6px 32px;
         border-color: var(--fw-primary);
 

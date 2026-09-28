@@ -30,6 +30,12 @@
       gap: 4px;
       align-items: center;
     }
+
+    @include media-breakpoint-down(sm) {
+      flex-wrap: wrap;
+
+      .fw-card-actions { flex-wrap: wrap; }
+    }
   }
 
   .fw-card-body {

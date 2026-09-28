@@ -114,6 +114,15 @@
     font-weight: 600;
     padding: .1em .35em;
   }
+
+  @include media-breakpoint-down(sm) {
+    flex-wrap: wrap;
+
+    .fw-metadata-value {
+      flex-basis: 100%;
+      text-align: left;
+    }
+  }
 }
 
 // ============ Permission toggles ============

@@ -111,6 +111,28 @@
       }
     }
   }
+
+  // The page links drop below the "showing x–y of z" text and grow to finger-sized targets.
+  @include media-breakpoint-down(sm) {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+
+    .fw-pagination-info {
+      width: 100%;
+      text-align: center;
+    }
+
+    .fw-pagination-pages {
+      flex-wrap: wrap;
+      justify-content: center;
+
+      a, span {
+        min-width: 34px;
+        height: 34px;
+      }
+    }
+  }
 }
 
 // ============ Detail rows ============
@@ -273,6 +295,10 @@
 
   &::placeholder { color: var(--fw-text-muted); }
   &:focus { border-color: var(--fw-primary); }
+
+  @include media-breakpoint-down(sm) {
+    font-size: $fw-touch-input-font-size;
+  }
 }
 
 .fw-date-picker {
@@ -377,6 +403,10 @@
   background: var(--fw-surface-bg);
   color: var(--fw-text-primary);
   font: inherit;
+
+  @include media-breakpoint-down(sm) {
+    font-size: $fw-touch-input-font-size;
+  }
 }
 
 .fw-date-picker-actions {
@@ -393,6 +423,10 @@
     font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', ui-monospace, monospace;
     font-size: .65rem;
     line-height: 1.45;
+
+    @include media-breakpoint-down(sm) {
+      font-size: $fw-touch-input-font-size;
+    }
   }
 }
 

@@ -70,6 +70,35 @@
 
 }
 
+// The search box takes its own row and the category selects share the one below it.
+@include media-breakpoint-down(sm) {
+  .fw-filter-bar { padding: 8px; }
+
+  .fw-filter-search {
+    flex-basis: 100%;
+
+    .fw-filter-input {
+      min-height: 36px;
+      font-size: $fw-touch-input-font-size;
+
+      &::placeholder { font-size: $fw-font-size-base; }
+    }
+  }
+
+  .fw-filter-quick {
+    flex: 1 1 0;
+    min-width: 0;
+
+    .fw-filter-select {
+      flex: 1 1 0;
+      min-width: 0;
+      max-width: none;
+      min-height: 36px;
+      font-size: $fw-touch-input-font-size;
+    }
+  }
+}
+
 .fw-filter-badges {
   display: flex;
   gap: 4px;
@@ -104,6 +133,10 @@
   max-width: 480px;
 
   &.open { display: flex; }
+
+  @include media-breakpoint-down(sm) {
+    max-width: none;
+  }
 
   label {
     display: inline-flex;
