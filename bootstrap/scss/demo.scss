@@ -85,8 +85,10 @@
     }
   }
 
+  // Selects and action buttons share a row when they fit; otherwise the actions wrap below
+  // rather than squeezing the selects down to nothing.
   .fw-filter-quick {
-    flex: 1 1 0;
+    flex: 1 1 180px;
     min-width: 0;
 
     .fw-filter-select {
@@ -95,6 +97,22 @@
       max-width: none;
       min-height: 36px;
       font-size: $fw-touch-input-font-size;
+    }
+  }
+
+  .fw-filter-actions {
+    flex: 1 1 auto;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+
+    .fw-btn {
+      min-height: 36px;
+      font-size: $fw-font-size-sm;
+    }
+
+    .fw-btn-icon {
+      width: 36px;
+      i { font-size: 14px; }
     }
   }
 }
@@ -136,6 +154,17 @@
 
   @include media-breakpoint-down(sm) {
     max-width: none;
+
+    label {
+      min-height: 32px;
+      padding: 4px 8px;
+      font-size: $fw-font-size-sm;
+
+      input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+      }
+    }
   }
 
   label {

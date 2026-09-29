@@ -8,6 +8,19 @@
   &::-webkit-scrollbar { height: 3px; }
   &::-webkit-scrollbar-track { background: transparent; }
   &::-webkit-scrollbar-thumb { background: var(--fw-text-muted); }
+
+  // On small screens the wrap becomes a bounded scroll box that fits below the sticky topbar +
+  // topnav, with room left for the pagination footer and page margin under it (otherwise the
+  // page scrolls far enough to tuck the wrap's top, and its headers, under the bars). Scrolling
+  // inside it keeps the sticky column headers in view, which they can't be while the wrap only
+  // scrolls sideways and the page does the vertical scrolling.
+  @include media-breakpoint-down(md) {
+    max-height: calc(100vh - #{$topbar-height + $topnav-height} - 9.5rem);
+    max-height: calc(100dvh - #{$topbar-height + $topnav-height} - 9.5rem);
+    overflow: auto;
+
+    &::-webkit-scrollbar { width: 3px; height: 3px; }
+  }
 }
 
 .fw-table {
@@ -25,7 +38,8 @@
       font-size: .5625rem;
       text-transform: uppercase;
       letter-spacing: .04em;
-      background: var(--fw-surface-alt);
+      // Layered over the opaque surface so rows never show through the sticky header (surface-alt is translucent in dark mode).
+      background: linear-gradient(var(--fw-surface-alt), var(--fw-surface-alt)), var(--fw-surface-bg);
       border-bottom: 1px solid var(--fw-border-default);
       position: sticky;
       top: 0;
@@ -85,6 +99,38 @@
     }
   }
 
+  // Bigger text and finger-sized rows/actions on small screens.
+  @include media-breakpoint-down(md) {
+    font-size: $fw-font-size-sm;
+
+    thead th {
+      font-size: $fw-font-size-xs;
+      padding-top: 7px;
+      padding-bottom: 7px;
+    }
+
+    tbody td {
+      padding-top: 7px;
+      padding-bottom: 7px;
+    }
+
+    .fw-sortable {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      min-height: 24px;
+    }
+
+    .fw-table-actions {
+      gap: 4px;
+
+      .fw-btn-icon {
+        width: 30px;
+        height: 30px;
+        i { font-size: 13px; }
+      }
+    }
+  }
 }
 
 // ============ Badges ============

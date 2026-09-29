@@ -366,15 +366,6 @@
   }
 }
 
-// === Responsive tables on small screens ===
-@include media-breakpoint-down(md) {
-  .fw-table-wrap {
-    .fw-table {
-      font-size: $fw-font-size-xs;
-    }
-  }
-}
-
 // === Record detail page identity wrappers ===
 .fw-page--report { --fw-page-accent: #{$accent-blue}; --fw-page-accent-bg: #{$fw-blue-50}; }
 .fw-page--entity { --fw-page-accent: #{$accent-amber}; --fw-page-accent-bg: #{$fw-amber-50}; }
