@@ -2,6 +2,7 @@
     use DynamicalWeb\Html\Functions;
     use DynamicalWeb\WebSession;
     use WebKernel\OperatorDetailView;
+    use WebKernel\ViewAuthorization;
 
     /** @var OperatorDetailView $view */
     $view = WebSession::get('operator_detail_view');
@@ -114,11 +115,15 @@
                                                         ?>
                                                     </span>
                                                 </div>
+                                                <?php
+                                                    if (ViewAuthorization::canManageOperators())
+                                                    {
+                                                        ?>
                                                 <div class="fw-detail-row">
                                                     <span class="fw-detail-label"><?php Functions::printl('access_token'); ?></span>
                                                     <span class="fw-detail-value">
                                                         <?php
-                                                            if ($view->getOperator()->getAccessToken() !== null)
+                                                            if (!empty($view->getOperator()->getAccessToken()))
                                                             {
                                                                 ?>
                                                                 <span class="fw-dot green"></span> <?php Functions::printl('present'); ?>
@@ -132,6 +137,9 @@
                                                         ?>
                                                     </span>
                                                 </div>
+                                                        <?php
+                                                    }
+                                                ?>
                                                 <div class="fw-detail-row">
                                                     <span class="fw-detail-label"><?php Functions::printl('created'); ?></span>
                                                     <span class="fw-detail-value fw-mono"><?php Functions::print($view->formatDate($view->getOperator()->getCreated())); ?></span>
@@ -162,6 +170,10 @@
                                                 <div class="fw-profile-role"><?php Functions::printl('profile_active_since', ['date' => $view->formatDate($view->getOperator()->getCreated(), 'Y-m-d')]); ?></div>
                                             </div>
                                         </div>
+                                        <?php
+                                            if (ViewAuthorization::canManageOperators())
+                                            {
+                                                ?>
                                         <div class="fw-card fw-sidebar-card">
                                             <div class="fw-card-header">
                                                 <h5><i class="bi bi-lightning fw-icon-amber"></i> <?php Functions::printl('actions'); ?></h5>
@@ -177,6 +189,9 @@
                                                 </div>
                                             </div>
                                         </div>
+                                                <?php
+                                            }
+                                        ?>
                                         <div class="fw-card fw-sidebar-card">
                                             <div class="fw-card-header">
                                                 <h5><i class="bi bi-link-45deg fw-icon-blue"></i> <?php Functions::printl('related_summary'); ?></h5>
