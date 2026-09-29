@@ -114,19 +114,17 @@
       display: flex;
       flex: 1 1 auto;
       justify-content: flex-start;
-      gap: 8px;
+      gap: 7px;
       width: auto;
       height: 100%;
       margin: 0;
       padding: 0 $content-padding;
-      color: $white;
       -webkit-tap-highlight-color: transparent;
 
-      > .bi-list { font-size: 18px; }
-
       .fw-topnav-current {
-        font-size: $fw-font-size-base;
-        font-weight: 600;
+        font-size: $fw-font-size-sm;
+        font-weight: 500;
+        color: $topnav-active-text;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -135,7 +133,7 @@
 
       .fw-topnav-caret {
         margin-left: auto;
-        font-size: 12px;
+        font-size: 11px;
         color: $fw-gray-400;
         transition: transform .15s ease;
       }
@@ -157,10 +155,9 @@
       background: $ink-black;
       flex-direction: column;
       align-items: stretch;
-      padding: 4px 6px 8px;
+      padding: 4px 6px;
       gap: 2px;
       border-bottom: 1px solid $fw-gray-700;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, .35);
       z-index: 1028;
       transform: translateY(-8px);
       opacity: 0;
@@ -182,24 +179,15 @@
     }
 
     .fw-topnav-item {
-      min-height: 44px;
-      padding: 0 12px;
-      gap: 10px;
+      padding: 7px 10px;
+      gap: 7px;
       height: auto;
-      font-size: $fw-font-size-lg;
       -webkit-tap-highlight-color: transparent;
 
-      i { font-size: 16px; width: 18px; }
-      .fw-topnav-badge {
-        margin-left: auto;
-        font-size: $fw-font-size-xs;
-        padding: 1px 6px;
-      }
+      i { font-size: 15px; width: 17px; }
+      .fw-topnav-badge { margin-left: auto; }
       &.active::after { display: none; }
-      &.active {
-        background: $topnav-active-bg;
-        box-shadow: inset 3px 0 0 $fresh-sky;
-      }
+      &.active { background: $topnav-active-bg; }
     }
   }
 }
