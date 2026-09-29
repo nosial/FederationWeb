@@ -11,7 +11,9 @@
   background: var(--fw-topbar-bg);
   border-bottom: 1px solid var(--fw-topbar-border);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(200px, 420px) minmax(0, 1fr);
+  // The right column never shrinks below its buttons (min max-content); otherwise their labels
+  // wrapped onto a second line and spilled over the search box at in-between widths.
+  grid-template-columns: minmax(0, 1fr) minmax(200px, 420px) minmax(max-content, 1fr);
   align-items: center;
   padding: 0 $content-padding;
   gap: 10px;
@@ -59,8 +61,18 @@
     font-weight: 500;
     color: var(--fw-text-heading);
     height: 28px;
+    white-space: nowrap;
 
     &:hover { background: var(--fw-surface-alt); }
+
+    // Long operator names are cut rather than widening the column.
+    .fw-topbar-label {
+      display: inline-block;
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      vertical-align: middle;
+    }
   }
 
   .fw-topbar-profile-icon {
@@ -306,24 +318,22 @@
       .fw-topbar-search-inner:has(> .fw-topbar-search-input.open) > i {
         display: block;
         position: fixed;
-        top: 5px + 19px;
-        left: 8px + 12px;
+        top: 10px + 14px;
+        left: 8px + 10px;
         z-index: 1061;
-        font-size: 15px;
       }
 
       .fw-topbar-search-inner .fw-topbar-search-input {
         display: none;
         position: fixed;
-        top: 5px;
+        top: 10px;
         left: 8px;
         right: 8px;
         width: auto;
         max-width: none;
         z-index: 1060;
-        height: 38px;
-        font-size: $fw-touch-input-font-size;
-        padding: 6px 40px 6px 36px;
+        height: 28px;
+        padding: 0 28px 0 28px;
         border-color: var(--fw-primary);
 
         &.open { display: block; }
@@ -334,15 +344,15 @@
         align-items: center;
         justify-content: center;
         position: fixed;
-        top: 5px;
+        top: 10px;
         right: 8px;
-        width: 38px;
-        height: 38px;
+        width: 28px;
+        height: 28px;
         z-index: 1061;
         border: none;
         background: none;
         color: var(--fw-text-muted);
-        font-size: 15px;
+        font-size: 13px;
         cursor: pointer;
         -webkit-tap-highlight-color: transparent;
 
@@ -365,7 +375,7 @@
 
       .fw-topbar-search-inner .fw-topbar-search-results {
         position: fixed;
-        top: 46px;
+        top: 41px;
         left: 8px;
         right: 8px;
         max-height: 50vh;
