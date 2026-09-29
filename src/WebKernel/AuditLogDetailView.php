@@ -282,6 +282,26 @@
         public function getErrorDetail(): ?string { return $this->errorMessage; }
 
         /**
+         * Returns the summary of the audit log record shown in search results and link previews: the
+         * logged message, which describes the event.
+         *
+         * @return string|null The summary, or null when the record could not be loaded.
+         */
+        public function getPageDescription(): ?string
+        {
+            if ($this->record === null)
+            {
+                return null;
+            }
+
+            return Utilities::localize('meta_description_record', [
+                'message' => $this->record->getMessage(),
+                'server_name' => PageMetadata::getSiteName(),
+                'created' => Utilities::formatDate($this->record->getTimestamp(), 'Y-m-d'),
+            ]);
+        }
+
+        /**
          * Removes the current record from a related audit log listing and resolves its display labels.
          *
          * @param array $auditLogs The audit logs returned by the API.

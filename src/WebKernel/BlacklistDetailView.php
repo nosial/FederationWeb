@@ -314,6 +314,40 @@
         public function getErrorDetail(): ?string { return $this->errorDetail; }
 
         /**
+         * Returns the summary of the blacklist record shown in search results and link previews.
+         *
+         * @return string|null The summary, or null when the record could not be loaded.
+         */
+        public function getPageDescription(): ?string
+        {
+            if ($this->record === null)
+            {
+                return null;
+            }
+
+            if ($this->record->isLifted())
+            {
+                $status = 'status_lifted';
+            }
+            elseif ($this->record->getExpires() !== null && $this->record->getExpires() <= time())
+            {
+                $status = 'expired';
+            }
+            else
+            {
+                $status = 'status_active';
+            }
+
+            return Utilities::localize('meta_description_record', [
+                'entity' => $this->entityRecord?->getAddress() ?? $this->record->getEntityUuid(),
+                'server_name' => PageMetadata::getSiteName(),
+                'incident_type' => Utilities::localize('incident_' . strtolower($this->record->getType()->value)),
+                'created' => Utilities::formatDate($this->record->getCreated(), 'Y-m-d'),
+                'status' => Utilities::localize($status),
+            ]);
+        }
+
+        /**
          * Processes the submitted blacklist action and redirects to its result.
          */
         public function handlePostRequest(): void

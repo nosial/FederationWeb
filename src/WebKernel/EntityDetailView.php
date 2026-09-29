@@ -182,6 +182,25 @@
          * @return string|null The error detail, if present.
          */
         public function getErrorDetail(): ?string { return $this->errorMessage; }
+
+        /**
+         * Returns the summary of the entity shown in search results and link previews.
+         *
+         * @return string|null The summary, or null when the entity could not be loaded.
+         */
+        public function getPageDescription(): ?string
+        {
+            if ($this->entity === null)
+            {
+                return null;
+            }
+
+            return Utilities::localize('meta_description_record', [
+                'address' => $this->entity->getAddress(),
+                'server_name' => PageMetadata::getSiteName(),
+                'created' => Utilities::formatDate($this->entity->getCreated(), 'Y-m-d'),
+            ]);
+        }
         /** Returns the entity related through the configured relationship.
          * @return mixed The related entity record.
          */

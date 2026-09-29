@@ -240,6 +240,26 @@
          */
         public function getErrorDetail(): ?string { return $this->errorDetail; }
 
+        /**
+         * Returns the summary of the evidence shown in search results and link previews. The evidence's
+         * content and note are left out, as confidential evidence must not be shown outside the record.
+         *
+         * @return string|null The summary, or null when the evidence could not be loaded.
+         */
+        public function getPageDescription(): ?string
+        {
+            if ($this->evidence === null)
+            {
+                return null;
+            }
+
+            return Utilities::localize('meta_description_record', [
+                'entity' => $this->entityRecord?->getAddress() ?? $this->evidence->getEntityUuid(),
+                'server_name' => PageMetadata::getSiteName(),
+                'created' => Utilities::formatDate($this->evidence->getCreated(), 'Y-m-d'),
+            ]);
+        }
+
 
 
         /**

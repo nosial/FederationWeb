@@ -296,6 +296,34 @@
          */
         public function getErrorDetail(): ?string { return $this->errorMessage; }
 
+        /**
+         * Returns the summary of the report shown in search results and link previews. The report's
+         * message is left out, as it can hold details the submitter did not mean to be shown out of context.
+         *
+         * @return string|null The summary, or null when the report could not be loaded.
+         */
+        public function getPageDescription(): ?string
+        {
+            if ($this->report === null)
+            {
+                return null;
+            }
+
+            $parameters = [
+                'incident_type' => Utilities::localize('incident_' . strtolower($this->report->getIncidentType()->value)),
+                'server_name' => PageMetadata::getSiteName(),
+                'created' => Utilities::formatDate($this->report->getCreated(), 'Y-m-d'),
+                'status' => Utilities::localize($this->report->isOpened() ? 'open' : 'closed'),
+            ];
+
+            if ($this->reportingEntity === null)
+            {
+                return Utilities::localize('meta_description_record', $parameters);
+            }
+
+            return Utilities::localize('meta_description_record_entity', $parameters + ['entity' => $this->reportingEntity->getAddress()]);
+        }
+
 
         /**
          * Processes the submitted report action and redirects to its result.

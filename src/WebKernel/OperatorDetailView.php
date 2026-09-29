@@ -176,6 +176,25 @@
          * @return string|null The error detail, if present.
          */
         public function getErrorDetail(): ?string { return $this->errorMessage; }
+
+        /**
+         * Returns the summary of the operator shown in search results and link previews.
+         *
+         * @return string|null The summary, or null when the operator could not be loaded.
+         */
+        public function getPageDescription(): ?string
+        {
+            if ($this->operator === null)
+            {
+                return null;
+            }
+
+            return Utilities::localize('meta_description_record', [
+                'name' => $this->operator->getName(),
+                'server_name' => PageMetadata::getSiteName(),
+                'created' => Utilities::formatDate($this->operator->getCreated(), 'Y-m-d'),
+            ]);
+        }
         /**
          * Determines the badge colour for an audit log type.
          *
