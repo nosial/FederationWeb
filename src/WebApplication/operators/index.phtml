@@ -3,6 +3,7 @@
     use DynamicalWeb\Html\Functions;
     use DynamicalWeb\WebSession;
     use WebKernel\OperatorsView;
+    use WebKernel\ViewAuthorization;
 
     Functions::loadLocalization('operators');
 
@@ -79,7 +80,14 @@
                                     </select>
                                 </div>
                                 <div class="fw-filter-actions">
-                                    <button type="button" class="fw-btn fw-btn-primary fw-btn-sm" data-bs-toggle="modal" data-bs-target="#modalNewOperator"><i class="bi bi-plus-lg"></i> <?php Functions::printl('create_operator'); ?></button>
+                                    <?php
+                                        if (ViewAuthorization::canManageOperators())
+                                        {
+                                            ?>
+                                            <button type="button" class="fw-btn fw-btn-primary fw-btn-sm" data-bs-toggle="modal" data-bs-target="#modalNewOperator"><i class="bi bi-plus-lg"></i> <?php Functions::printl('create_operator'); ?></button>
+                                            <?php
+                                        }
+                                    ?>
                                     <button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon fw-col-toggle" title="<?php Functions::printl('columns'); ?>" data-table="operators"><i class="bi bi-layout-three-columns"></i></button>
                                     <a href="<?php Functions::printRoute('operators'); ?>" class="fw-btn fw-btn-ghost fw-btn-sm"><i class="bi bi-x-circle"></i> <?php Functions::printl('filter_reset'); ?></a>
                                 </div>
