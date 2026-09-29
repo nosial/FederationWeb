@@ -19,7 +19,7 @@
 <html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>" data-fw-theme="<?php Functions::print($reportDetailView->isDarkMode() ? 'dark' : ''); ?>">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
         <?php Functions::insertSection('../sections/head.phtml'); ?>
         <title><?php Functions::printl('record_title'); ?> — <?php Functions::print($reportDetailView->getReport() ? substr($reportDetailView->getReport()->getUuid(), 0, 8) . '…' : 'Error'); ?></title>
         <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
