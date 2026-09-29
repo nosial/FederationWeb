@@ -108,6 +108,9 @@
                 placeholder="<?php Functions::printl('search_placeholder'); ?>"
                 title="<?php Functions::printl('search_help'); ?>"
                 autocomplete="off" minlength="2">
+            <button class="fw-topbar-search-close" id="globalSearchClose" type="button" title="<?php Functions::printl('search_close'); ?>" aria-label="<?php Functions::printl('search_close'); ?>">
+                <i class="bi bi-x-lg"></i>
+            </button>
             <div class="fw-topbar-search-results" id="globalSearchResults"></div>
         </div>
         <button class="fw-topbar-search-toggle" id="globalSearchToggle" type="button" title="<?php Functions::printl('search_placeholder'); ?>">
@@ -127,7 +130,7 @@
                 {
                     ?> active<?php
                 }
-            ?>">
+            ?>" title="<?php Functions::printl('api_specification'); ?>">
                 <i class="bi bi-code-slash"></i>
                 <span class="fw-topbar-label"><?php Functions::printl('api_specification'); ?></span>
             </a>
@@ -194,7 +197,7 @@
             {
                 ?>
         <form method="POST" action="<?php Functions::printRoute('logout'); ?>" class="d-flex mb-0"><?php Functions::insertSection('csrf_field.phtml'); ?>
-            <button type="submit" class="fw-topbar-btn fw-topbar-profile">
+            <button type="submit" class="fw-topbar-btn fw-topbar-profile" title="<?php Functions::printl('back_to_login'); ?>">
                 <i class="bi bi-box-arrow-right"></i>
                 <span class="fw-topbar-label"><?php Functions::printl('back_to_login'); ?></span>
             </button>

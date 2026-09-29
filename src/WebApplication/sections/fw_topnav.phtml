@@ -30,10 +30,12 @@
     $activeNav = $navMap[$currentRouteId] ?? null;
 ?>
 <nav class="fw-topnav">
-    <button class="fw-topnav-toggle" type="button" aria-label="Toggle navigation">
+    <button class="fw-topnav-toggle" type="button" aria-label="Toggle navigation" aria-controls="fw-topnav-menu" aria-expanded="false">
         <i class="bi bi-list"></i>
+        <span class="fw-topnav-current"></span>
+        <i class="bi bi-chevron-down fw-topnav-caret"></i>
     </button>
-    <div class="fw-topnav-inner">
+    <div class="fw-topnav-inner" id="fw-topnav-menu">
         <a href="<?php Functions::printRoute('dashboard'); ?>" class="fw-topnav-item<?php
             if ($activeNav === 'dashboard')
             {
