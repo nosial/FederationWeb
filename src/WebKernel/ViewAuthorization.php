@@ -4,6 +4,7 @@
 
     use DynamicalWeb\WebSession;
     use FederationLib\Enums\HttpResponseCode;
+    use FederationLib\Enums\RecordType;
     use FederationLib\Exceptions\RequestException;
     use FederationLib\FederationClient;
     use FederationLib\Objects\ServerInformation;
@@ -55,11 +56,12 @@
         }
 
         /**
-         * Returns whether the operator directory may be read.
+         * Returns whether the operator directory may be read. Operator records are public
+         * information under the OFD specification, so this holds for every requester.
          */
         public static function canReadOperatorRecords(): bool
         {
-            return self::canManageOperators();
+            return true;
         }
 
         /**
@@ -166,16 +168,13 @@
 
             if (!self::isAnonymous())
             {
-                return match ($routeId)
-                {
-                    'operators', 'operator_detail', 'operators_list_print', 'operator_detail_print' => self::canManageOperators(),
-                    default => true,
-                };
+                return true;
             }
 
             return match ($routeId)
             {
                 'dashboard', 'fw_toggle_dark_mode' => true,
+                'operators', 'operators_list_print', 'operator_detail', 'operator_detail_print' => self::canReadOperatorRecords(),
                 'audit_log', 'audit_log_list_print', 'audit_log_detail', 'audit_log_detail_print' => $serverInformation->isPublicAuditLogs(),
                 'evidence', 'evidence_list_print', 'evidence_detail', 'evidence_detail_print' => $serverInformation->isPublicEvidence(),
                 'blacklist', 'blacklist_list_print', 'blacklist_detail', 'blacklist_detail_print' => $serverInformation->isPublicBlacklist(),
@@ -185,7 +184,8 @@
                     || $serverInformation->isPublicEvidence()
                     || $serverInformation->isPublicBlacklist()
                     || $serverInformation->isPublicEntities()
-                    || $serverInformation->isPublicReports(),
+                    || $serverInformation->isPublicReports()
+                    || in_array(RecordType::OPERATOR, $serverInformation->getPublicSearchTypes(), true),
                 default => false,
             };
 
