@@ -315,33 +315,9 @@
 
   .fw-login-panel { padding: 20px 16px 16px; }
 
-  .fw-login-title { font-size: 1rem; }
-  .fw-login-subtitle { font-size: $fw-font-size-base; }
-
-  .fw-login-input-wrap {
-    i { left: 12px; font-size: 15px; }
-
-    input {
-      min-height: 42px;
-      padding-left: 36px;
-      font-size: $fw-touch-input-font-size;
-    }
-  }
-
-  .fw-login-submit {
-    min-height: 42px;
-    font-size: $fw-font-size-lg;
-  }
-
   .fw-login-footer {
     flex-wrap: wrap;
     gap: 10px;
-  }
-
-  .fw-login-theme-toggle {
-    width: 36px;
-    height: 36px;
-    font-size: 15px;
   }
 }
 
@@ -747,10 +723,6 @@
     color: var(--fw-text-muted);
     margin-top: 5px;
   }
-
-  @include media-breakpoint-down(sm) {
-    .fw-search-input-wrap .fw-search-input { font-size: $fw-touch-input-font-size; }
-  }
 }
 
 .fw-search-meta {
@@ -826,8 +798,16 @@
 .fw-error {
   width: 100%;
   max-width: 640px;
+  margin: 0 auto;
   position: relative;
   text-align: center;
+}
+
+// Record pages show the error card in place of the record; centre it in the content area below the navigation.
+.fw-content:has(> .fw-error) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .fw-error-card {
