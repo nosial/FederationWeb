@@ -2,9 +2,13 @@
     use DynamicalWeb\Html\Functions;
     use DynamicalWeb\WebSession;
     use WebKernel\OperatorDetailView;
+    use WebKernel\ViewAuthorization;
 
     /** @var OperatorDetailView $view */
     $view = WebSession::get('operator_detail_view');
+
+    if (ViewAuthorization::canManageOperators())
+    {
 ?>
                     <!-- Edit Operator Modal -->
                     <div class="modal fade" id="modalEditOperator" tabindex="-1" aria-hidden="true">
@@ -250,3 +254,6 @@
                             </div>
                         </div>
                     </div>
+<?php
+    }
+?>
