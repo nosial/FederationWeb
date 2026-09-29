@@ -99,37 +99,8 @@
     }
   }
 
-  // Bigger text and finger-sized rows/actions on small screens.
   @include media-breakpoint-down(md) {
-    font-size: $fw-font-size-sm;
-
-    thead th {
-      font-size: $fw-font-size-xs;
-      padding-top: 7px;
-      padding-bottom: 7px;
-    }
-
-    tbody td {
-      padding-top: 7px;
-      padding-bottom: 7px;
-    }
-
-    .fw-sortable {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      min-height: 24px;
-    }
-
-    .fw-table-actions {
-      gap: 4px;
-
-      .fw-btn-icon {
-        width: 30px;
-        height: 30px;
-        i { font-size: 13px; }
-      }
-    }
+    font-size: $fw-font-size-xs;
   }
 }
 
