@@ -1,4 +1,5 @@
 global:
+  meta_description_site: '{server_name} is a Federated Database server sharing operator, entity, report, evidence, blacklist and audit log records.'
   nav_dashboard: Dashboard
   operators: Operators
   entities: Entities
@@ -214,7 +215,8 @@ fw_topbar:
   dark_mode_light: Light Mode
   dark_mode_dark: Dark Mode
 dashboard:
-  page_title: '{server_name} - Dashboard'
+  meta_description: 'Overview of {server_name}: server status, record counts, recent audit activity, top threats and recent evidence.'
+  api_meta_description: 'The API specification of {server_name}, listing every endpoint with its parameters, request body and responses.'
   back: Back to Dashboard
   server_status: Server Status
   server_name_label: Server Name
@@ -277,7 +279,7 @@ dashboard:
   error_code: Internal Server Error
   error_description: An unexpected error occurred while processing the request
 authenticate:
-  page_title: '{server_name} - Authenticate'
+  meta_description: 'Sign in to {server_name} with an operator access token to browse and manage its records.'
   form_title: Authenticate
   form_subtitle: Connect to your Federation server
   server_host_label: Server Host
@@ -296,6 +298,8 @@ authenticate:
   server_name_fallback: Federation Server
   error_anonymous_disabled: Anonymous access is not allowed. Please provide an access token.
 operators:
+  meta_description: 'The operators registered on {server_name}, who submit and manage its records.'
+  meta_description_record: 'Operator {name} on {server_name}, registered {created}.'
   page_title: Operators
   heading: Operators
   subtitle: Manage federation operators and their permissions
@@ -389,6 +393,8 @@ operators:
   failed_evidence: Failed to load evidence records for this operator.
   failed_blacklist: Failed to load blacklist records for this operator.
 entities:
+  meta_description: 'The entities known to {server_name}, with their reputation, relationships and related records.'
+  meta_description_record: 'Entity {address} on {server_name}, known since {created}, with its reports, evidence and blacklist records.'
   page_title: Entities
   heading: Known Entities
   subtitle: Browse and manage known federation entities
@@ -515,6 +521,9 @@ entities:
   primary_operator_missing: The operator record could not be loaded.
   primary_operator_records: Linked Records
 reports:
+  meta_description: 'Incident reports submitted to {server_name} by its operators.'
+  meta_description_record: '{incident_type} report submitted to {server_name} on {created}. Status: {status}.'
+  meta_description_record_entity: '{incident_type} report on {entity} submitted to {server_name} on {created}. Status: {status}.'
   page_title: Reports
   heading: Reports
   subtitle: Browse and manage incident reports
@@ -570,6 +579,8 @@ reports:
   mime: MIME Type
   size: Size
 evidence:
+  meta_description: 'Evidence records submitted to {server_name} by its operators.'
+  meta_description_record: 'Evidence on {entity} submitted to {server_name} on {created}.'
   page_title: Evidence Records
   heading: Evidence Records
   subtitle: Browse and manage evidence records submitted by operators
@@ -646,6 +657,8 @@ evidence:
   parent_report: Parent Report
   report_unavailable: Report details unavailable
 blacklist:
+  meta_description: 'The entities blacklisted on {server_name}, with the incident type and expiry of each record.'
+  meta_description_record: '{entity} blacklisted on {server_name} for {incident_type} on {created}. Status: {status}.'
   page_title: Blacklist Records
   heading: Blacklist Records
   subtitle: Browse and manage blacklisted entities
@@ -689,6 +702,8 @@ blacklist:
   no_linked_report: No report linked to this record
   report_unavailable: Report details unavailable
 audit_log:
+  meta_description: 'The audit log of {server_name}, recording the changes made to its operators, entities and records.'
+  meta_description_record: '{created} on {server_name}: {message}'
   page_title: Audit Log
   heading: Audit Log
   subtitle: Browse and manage federation audit log entries
@@ -713,6 +728,7 @@ audit_log:
   related_operator_logs: Operator Activity
   related_entity_logs: Entity Activity
 search:
+  meta_description: 'Search results for "{query}" on {server_name}.'
   page_title: Search Results
   heading: Search Results
   subtitle: Found {count} result(s) for "{query}"

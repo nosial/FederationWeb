@@ -1,4 +1,5 @@
 global:
+  meta_description_site: '{server_name} — сервер Federated Database с записями операторов, сущностей, отчётов, доказательств, чёрного списка и журнала аудита.'
   nav_dashboard: Панель управления
   operators: Операторы
   entities: Сущности
@@ -214,7 +215,8 @@ fw_topbar:
   dark_mode_light: Светлая тема
   dark_mode_dark: Тёмная тема
 dashboard:
-  page_title: '{server_name} - Панель управления'
+  meta_description: 'Обзор {server_name}: состояние сервера, количество записей, последние события аудита, основные угрозы и новые доказательства.'
+  api_meta_description: 'Спецификация API {server_name}: все конечные точки с параметрами, телом запроса и ответами.'
   back: Назад в панель управления
   server_status: Статус сервера
   server_name_label: Имя сервера
@@ -277,7 +279,7 @@ dashboard:
   error_code: Внутренняя ошибка сервера
   error_description: Произошла непредвиденная ошибка при обработке запроса
 authenticate:
-  page_title: '{server_name} - Авторизация'
+  meta_description: 'Войдите на {server_name} с токеном доступа оператора, чтобы просматривать записи и управлять ими.'
   form_title: Авторизация
   form_subtitle: Подключитесь к вашему серверу федерации
   server_host_label: Хост сервера
@@ -296,6 +298,8 @@ authenticate:
   server_name_fallback: Сервер федерации
   error_anonymous_disabled: Анонимный доступ запрещён. Пожалуйста, укажите токен доступа.
 operators:
+  meta_description: 'Операторы, зарегистрированные на {server_name}, которые отправляют записи и управляют ими.'
+  meta_description_record: 'Оператор {name} на {server_name}, зарегистрирован {created}.'
   page_title: Операторы
   heading: Операторы
   subtitle: Управление операторами федерации и их правами доступа
@@ -389,6 +393,8 @@ operators:
   failed_evidence: Не удалось загрузить записи доказательств для этого оператора.
   failed_blacklist: Не удалось загрузить записи чёрного списка для этого оператора.
 entities:
+  meta_description: 'Сущности, известные {server_name}, с их репутацией, связями и связанными записями.'
+  meta_description_record: 'Сущность {address} на {server_name}, известна с {created}, с её отчётами, доказательствами и записями чёрного списка.'
   page_title: Сущности
   heading: Известные сущности
   subtitle: Просмотр и управление известными сущностями федерации
@@ -515,6 +521,9 @@ entities:
   primary_operator_missing: Не удалось загрузить запись оператора.
   primary_operator_records: Связанные записи
 reports:
+  meta_description: 'Отчёты об инцидентах, отправленные операторами на {server_name}.'
+  meta_description_record: 'Отчёт ({incident_type}), отправленный на {server_name} {created}. Статус: {status}.'
+  meta_description_record_entity: 'Отчёт ({incident_type}) о {entity}, отправленный на {server_name} {created}. Статус: {status}.'
   page_title: Отчёты
   heading: Отчёты
   subtitle: Просмотр и управление отчётами об инцидентах
@@ -570,6 +579,8 @@ reports:
   mime: MIME-тип
   size: Размер
 evidence:
+  meta_description: 'Записи доказательств, отправленные операторами на {server_name}.'
+  meta_description_record: 'Доказательство по {entity}, отправленное на {server_name} {created}.'
   page_title: Записи доказательств
   heading: Записи доказательств
   subtitle: Просмотр и управление записями доказательств, отправленными операторами
@@ -646,6 +657,8 @@ evidence:
   parent_report: Родительский отчёт
   report_unavailable: Данные отчёта недоступны
 blacklist:
+  meta_description: 'Сущности в чёрном списке {server_name}, с типом инцидента и сроком действия каждой записи.'
+  meta_description_record: '{entity} в чёрном списке {server_name} ({incident_type}) с {created}. Статус: {status}.'
   page_title: Записи чёрного списка
   heading: Записи чёрного списка
   subtitle: Просмотр и управление сущностями в чёрном списке
@@ -689,6 +702,8 @@ blacklist:
   no_linked_report: К этой записи не привязан отчёт
   report_unavailable: Данные отчёта недоступны
 audit_log:
+  meta_description: 'Журнал аудита {server_name} с изменениями операторов, сущностей и записей.'
+  meta_description_record: '{created}, {server_name}: {message}'
   page_title: Журнал аудита
   heading: Журнал аудита
   subtitle: Просмотр и управление записями журнала аудита федерации
@@ -713,6 +728,7 @@ audit_log:
   related_operator_logs: Активность оператора
   related_entity_logs: Активность сущности
 search:
+  meta_description: 'Результаты поиска «{query}» на {server_name}.'
   page_title: Результаты поиска
   heading: Результаты поиска
   subtitle: Найдено {count} результат(ов) по запросу "{query}"

@@ -1,4 +1,5 @@
 global:
+  meta_description_site: '{server_name} 是一个联邦数据库服务器，共享操作员、实体、报告、证据、黑名单和审计日志记录。'
   nav_dashboard: 仪表板
   operators: 操作员
   entities: 实体
@@ -214,7 +215,8 @@ fw_topbar:
   dark_mode_light: 浅色模式
   dark_mode_dark: 深色模式
 dashboard:
-  page_title: '{server_name} - 仪表板'
+  meta_description: '{server_name} 概览：服务器状态、记录数量、近期审计活动、主要威胁和最新证据。'
+  api_meta_description: '{server_name} 的 API 规范，列出每个端点及其参数、请求体和响应。'
   back: 返回仪表板
   server_status: 服务器状态
   server_name_label: 服务器名称
@@ -277,7 +279,7 @@ dashboard:
   error_code: 服务器内部错误
   error_description: 处理请求时发生意外错误
 authenticate:
-  page_title: '{server_name} - 身份验证'
+  meta_description: '使用操作员访问令牌登录 {server_name}，浏览并管理其记录。'
   form_title: 身份验证
   form_subtitle: 连接到您的联邦服务器
   server_host_label: 服务器主机
@@ -296,6 +298,8 @@ authenticate:
   server_name_fallback: 联邦服务器
   error_anonymous_disabled: 不允许匿名访问，请提供访问令牌。
 operators:
+  meta_description: '在 {server_name} 上注册的操作员，负责提交和管理记录。'
+  meta_description_record: '{server_name} 上的操作员 {name}，注册于 {created}。'
   page_title: 操作员
   heading: 操作员
   subtitle: 管理联邦操作员及其权限
@@ -389,6 +393,8 @@ operators:
   failed_evidence: 加载该操作员的证据记录失败。
   failed_blacklist: 加载该操作员的黑名单记录失败。
 entities:
+  meta_description: '{server_name} 已知的实体，包括其信誉、关系和相关记录。'
+  meta_description_record: '{server_name} 上的实体 {address}，自 {created} 起已知，包括其报告、证据和黑名单记录。'
   page_title: 实体
   heading: 已知实体
   subtitle: 浏览并管理已知联邦实体
@@ -515,6 +521,9 @@ entities:
   primary_operator_missing: 无法加载操作员记录。
   primary_operator_records: 关联记录
 reports:
+  meta_description: '操作员提交到 {server_name} 的事件报告。'
+  meta_description_record: '于 {created} 提交到 {server_name} 的{incident_type}报告。状态：{status}。'
+  meta_description_record_entity: '于 {created} 提交到 {server_name} 的关于 {entity} 的{incident_type}报告。状态：{status}。'
   page_title: 报告
   heading: 报告
   subtitle: 浏览并管理事件报告
@@ -570,6 +579,8 @@ reports:
   mime: MIME 类型
   size: 大小
 evidence:
+  meta_description: '操作员提交到 {server_name} 的证据记录。'
+  meta_description_record: '于 {created} 提交到 {server_name} 的关于 {entity} 的证据。'
   page_title: 证据记录
   heading: 证据记录
   subtitle: 浏览并管理操作员提交的证据记录
@@ -646,6 +657,8 @@ evidence:
   parent_report: 主报告
   report_unavailable: 报告详情不可用
 blacklist:
+  meta_description: '{server_name} 黑名单中的实体，包括每条记录的事件类型和到期时间。'
+  meta_description_record: '{entity} 于 {created} 因{incident_type}被列入 {server_name} 黑名单。状态：{status}。'
   page_title: 黑名单记录
   heading: 黑名单记录
   subtitle: 浏览并管理被列入黑名单的实体
@@ -689,6 +702,8 @@ blacklist:
   no_linked_report: 无链接到此记录的报告
   report_unavailable: 报告详情不可用
 audit_log:
+  meta_description: '{server_name} 的审计日志，记录对操作员、实体和记录所做的更改。'
+  meta_description_record: '{created}，{server_name}：{message}'
   page_title: 审计日志
   heading: 审计日志
   subtitle: 浏览并管理联邦审计日志条目
@@ -713,6 +728,7 @@ audit_log:
   related_operator_logs: 操作员活动
   related_entity_logs: 实体活动
 search:
+  meta_description: '在 {server_name} 上搜索“{query}”的结果。'
   page_title: 搜索结果
   heading: 搜索结果
   subtitle: 找到关于“{query}”的 {count} 条结果

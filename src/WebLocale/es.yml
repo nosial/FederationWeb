@@ -1,4 +1,5 @@
 global:
+  meta_description_site: '{server_name} es un servidor Federated Database que comparte registros de operadores, entidades, informes, evidencias, listas negras y auditoría.'
   nav_dashboard: Panel principal
   operators: Operadores
   entities: Entidades
@@ -214,7 +215,8 @@ fw_topbar:
   dark_mode_light: Modo claro
   dark_mode_dark: Modo oscuro
 dashboard:
-  page_title: '{server_name} - Panel principal'
+  meta_description: 'Resumen de {server_name}: estado del servidor, recuento de registros, actividad de auditoría reciente, principales amenazas y evidencias recientes.'
+  api_meta_description: 'La especificación de la API de {server_name}, con cada endpoint, sus parámetros, cuerpo de solicitud y respuestas.'
   back: Volver al panel principal
   server_status: Estado del servidor
   server_name_label: Nombre del servidor
@@ -277,7 +279,7 @@ dashboard:
   error_code: Error interno del servidor
   error_description: Ocurrió un error inesperado al procesar la solicitud
 authenticate:
-  page_title: '{server_name} - Autenticación'
+  meta_description: 'Inicie sesión en {server_name} con un token de acceso de operador para explorar y gestionar sus registros.'
   form_title: Autenticación
   form_subtitle: Conectar a su servidor de federación
   server_host_label: Host del servidor
@@ -296,6 +298,8 @@ authenticate:
   server_name_fallback: Servidor de la federación
   error_anonymous_disabled: No se permite el acceso anónimo. Proporcione un token de acceso.
 operators:
+  meta_description: 'Los operadores registrados en {server_name}, que envían y gestionan sus registros.'
+  meta_description_record: 'Operador {name} en {server_name}, registrado el {created}.'
   page_title: Operadores
   heading: Operadores
   subtitle: Gestionar operadores de la federación y sus permisos
@@ -389,6 +393,8 @@ operators:
   failed_evidence: Error al cargar registros de evidencia para este operador.
   failed_blacklist: Error al cargar registros de lista negra para este operador.
 entities:
+  meta_description: 'Las entidades conocidas por {server_name}, con su reputación, relaciones y registros relacionados.'
+  meta_description_record: 'Entidad {address} en {server_name}, conocida desde el {created}, con sus informes, evidencias y registros de lista negra.'
   page_title: Entidades
   heading: Entidades conocidas
   subtitle: Explorar y gestionar entidades conocidas de la federación
@@ -515,6 +521,9 @@ entities:
   primary_operator_missing: No se pudo cargar el registro del operador.
   primary_operator_records: Registros vinculados
 reports:
+  meta_description: 'Informes de incidentes enviados a {server_name} por sus operadores.'
+  meta_description_record: 'Informe de {incident_type} enviado a {server_name} el {created}. Estado: {status}.'
+  meta_description_record_entity: 'Informe de {incident_type} sobre {entity} enviado a {server_name} el {created}. Estado: {status}.'
   page_title: Informes
   heading: Informes
   subtitle: Explorar y gestionar informes de incidentes
@@ -570,6 +579,8 @@ reports:
   mime: Tipo MIME
   size: Tamaño
 evidence:
+  meta_description: 'Registros de evidencia enviados a {server_name} por sus operadores.'
+  meta_description_record: 'Evidencia sobre {entity} enviada a {server_name} el {created}.'
   page_title: Registros de evidencia
   heading: Registros de evidencia
   subtitle: Explorar y gestionar registros de evidencia enviados por operadores
@@ -646,6 +657,8 @@ evidence:
   parent_report: Informe principal
   report_unavailable: Detalles del informe no disponibles
 blacklist:
+  meta_description: 'Las entidades en la lista negra de {server_name}, con el tipo de incidente y la expiración de cada registro.'
+  meta_description_record: '{entity} incluido en la lista negra de {server_name} por {incident_type} el {created}. Estado: {status}.'
   page_title: Registros de lista negra
   heading: Registros de lista negra
   subtitle: Explorar y gestionar entidades en la lista negra
@@ -689,6 +702,8 @@ blacklist:
   no_linked_report: No hay informe vinculado a este registro
   report_unavailable: Detalles del informe no disponibles
 audit_log:
+  meta_description: 'El registro de auditoría de {server_name}, con los cambios realizados en sus operadores, entidades y registros.'
+  meta_description_record: '{created} en {server_name}: {message}'
   page_title: Registro de auditoría
   heading: Registro de auditoría
   subtitle: Explorar y gestionar las entradas del registro de auditoría de la federación
@@ -713,6 +728,7 @@ audit_log:
   related_operator_logs: Actividad del operador
   related_entity_logs: Actividad de la entidad
 search:
+  meta_description: 'Resultados de búsqueda de "{query}" en {server_name}.'
   page_title: Resultados de búsqueda
   heading: Resultados de búsqueda
   subtitle: Se encontraron {count} resultado(s) para "{query}"
