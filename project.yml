@@ -4,7 +4,7 @@ web_entry_point: web_entry
 assembly:
   name: FederationWeb
   package: net.nosial.federationweb
-  version: 1.0.2
+  version: 1.0.3
 dependencies:
   net.nosial.loglib2: nosial/loglib2@github
   net.nosial.dynamicalweb: nosial/dynamicalweb@github
