@@ -208,6 +208,7 @@ fw_topbar:
   page_search: Search
   sign_out: Sign Out
   search_help: Press Enter to search all records
+  search_close: Close search
   search_no_results: No results found
   search_view_all: View all results
   dark_mode_light: Light Mode

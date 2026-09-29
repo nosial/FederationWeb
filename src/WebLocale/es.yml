@@ -208,6 +208,7 @@ fw_topbar:
   page_search: Búsqueda
   sign_out: Cerrar sesión
   search_help: Presione Entrar para buscar en todos los registros
+  search_close: Cerrar búsqueda
   search_no_results: No se encontraron resultados
   search_view_all: Ver todos los resultados
   dark_mode_light: Modo claro

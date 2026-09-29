@@ -208,6 +208,7 @@ fw_topbar:
   page_search: 搜索
   sign_out: 退出登录
   search_help: 按回车键搜索所有记录
+  search_close: 关闭搜索
   search_no_results: 未找到结果
   search_view_all: 查看所有结果
   dark_mode_light: 浅色模式

@@ -208,6 +208,7 @@ fw_topbar:
   page_search: Поиск
   sign_out: Выйти
   search_help: Нажмите Enter для поиска по всем записям
+  search_close: Закрыть поиск
   search_no_results: Результаты не найдены
   search_view_all: Посмотреть все результаты
   dark_mode_light: Светлая тема
