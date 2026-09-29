@@ -2,9 +2,16 @@
     use DynamicalWeb\Html\Functions;
     use DynamicalWeb\WebSession;
     use WebKernel\Utilities;
+    use WebKernel\PageMetadata;
 
     Functions::loadLocalization('404');
     $darkMode = Utilities::getDarkMode();
+
+    PageMetadata::set(
+        WebSession::getLocale()?->getString('404', 'page_title') ?? '404',
+        WebSession::getLocale()?->getString('404', 'error_description'),
+        indexable: false,
+    );
 ?>
 <!DOCTYPE html>
 <html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>" data-fw-theme="<?php Functions::print($darkMode ? 'dark' : ''); ?>">
@@ -12,7 +19,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
         <?php Functions::insertSection('sections/head.phtml'); ?>
-        <title><?php Functions::printl('page_title') ?></title>
         <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
         <link rel="stylesheet" href="/css/federation.css">
     </head>

@@ -4,6 +4,7 @@
     use WebKernel\Utilities;
     use DynamicalWeb\WebSession;
     use WebKernel\AuthenticateView;
+    use WebKernel\PageMetadata;
 
     Functions::loadLocalization('authenticate');
 
@@ -17,6 +18,8 @@
     }
 
     WebSession::set('authenticate_view', $authenticateView);
+
+    PageMetadata::set(Utilities::localize('form_title'), Utilities::localize('meta_description', ['server_name' => PageMetadata::getSiteName()]));
 ?>
 <!DOCTYPE html>
 <html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>" data-fw-theme="<?php Functions::print($authenticateView->getDarkMode() ? 'dark' : ''); ?>">
@@ -24,7 +27,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
         <?php Functions::insertSection('../sections/head.phtml'); ?>
-        <title><?php Functions::printl('page_title', ['server_name' => $serverName]); ?></title>
         <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
         <link rel="stylesheet" href="/vendor/flag-icons/css/flag-icons.min.css">
         <link rel="stylesheet" href="/css/federation.css">

@@ -4,6 +4,8 @@
     use DynamicalWeb\WebSession;
     use FederationLib\Enums\RecordType;
     use WebKernel\SearchView;
+    use WebKernel\PageMetadata;
+    use WebKernel\Utilities;
 
     Functions::loadLocalization('search');
 
@@ -24,6 +26,12 @@
     $reportResults = $groupedResults[RecordType::REPORT->value] ?? [];
     $auditLogResults = $groupedResults[RecordType::AUDIT_LOG->value] ?? [];
     $attachmentResults = $groupedResults[RecordType::ATTACHMENT->value] ?? [];
+
+    PageMetadata::set(
+        Utilities::localize('page_title'),
+        $searchView->getQuery() !== '' ? Utilities::localize('meta_description', ['query' => $searchView->getQuery(), 'server_name' => PageMetadata::getSiteName()]) : null,
+        indexable: false,
+    );
 ?>
 <!DOCTYPE html>
 <html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>" data-fw-theme="<?php Functions::print($searchView->isDarkMode() ? 'dark' : ''); ?>">
@@ -31,7 +39,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
         <?php Functions::insertSection('../sections/head.phtml'); ?>
-        <title><?php Functions::printl('page_title'); ?></title>
         <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
         <link rel="stylesheet" href="/css/federation.css">
     </head>

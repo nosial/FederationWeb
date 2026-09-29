@@ -4,6 +4,8 @@
     use DynamicalWeb\WebSession;
     use WebKernel\BlacklistView;
     use WebKernel\ViewAuthorization;
+    use WebKernel\PageMetadata;
+    use WebKernel\Utilities;
 
     Functions::loadLocalization('blacklist');
 
@@ -14,6 +16,8 @@
     {
         $view->handlePostRequest();
     }
+
+    PageMetadata::set(Utilities::localize('page_title'), Utilities::localize('meta_description', ['server_name' => PageMetadata::getSiteName()]));
 ?>
 <!DOCTYPE html>
 <html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>" data-fw-theme="<?php Functions::print($view->isDarkMode() ? 'dark' : ''); ?>">
@@ -21,7 +25,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
         <?php Functions::insertSection('../sections/head.phtml'); ?>
-        <title><?php Functions::printl('page_title'); ?></title>
         <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
         <link rel="stylesheet" href="/css/federation.css">
     </head>

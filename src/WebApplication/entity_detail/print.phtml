@@ -3,6 +3,7 @@
     use DynamicalWeb\WebSession;
     use WebKernel\EntityDetailView;
     use WebKernel\Utilities;
+    use WebKernel\PageMetadata;
 
     Functions::loadLocalization('entities');
 
@@ -11,6 +12,12 @@
     $view = new EntityDetailView();
     WebSession::set('entity_detail_view', $view);
     $hasRecord = !$view->hasError() && $view->getEntity();
+
+    PageMetadata::set(
+        Utilities::localize('record_title') . ' — ' . ($view->getEntity() ? $view->getEntity()->getAddress() : Utilities::localize('error_label')),
+        $view->getPageDescription(),
+        indexable: false,
+    );
 ?>
 <!DOCTYPE html>
 <html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>">
@@ -18,16 +25,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <?php Functions::insertSection('../sections/head.phtml'); ?>
-        <title><?php Functions::printl('record_title'); ?> — <?php
-            if ($hasRecord)
-            {
-                Functions::print($view->getEntity()->getAddress());
-            }
-            else
-            {
-                Functions::printl('error_label');
-            }
-        ?></title>
         <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
         <link rel="stylesheet" href="/css/print.css">
     </head>

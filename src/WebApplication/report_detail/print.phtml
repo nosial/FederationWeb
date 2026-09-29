@@ -3,6 +3,7 @@
     use DynamicalWeb\WebSession;
     use WebKernel\ReportDetailView;
     use WebKernel\Utilities;
+    use WebKernel\PageMetadata;
 
     Functions::loadLocalization('reports');
 
@@ -11,6 +12,12 @@
     $reportDetailView = new ReportDetailView();
     WebSession::set('report_detail_view', $reportDetailView);
     $hasRecord = !$reportDetailView->hasError() && $reportDetailView->getReport();
+
+    PageMetadata::set(
+        Utilities::localize('record_title') . ' — ' . ($reportDetailView->getReport() ? substr($reportDetailView->getReport()->getUuid(), 0, 8) . '…' : Utilities::localize('error_label')),
+        $reportDetailView->getPageDescription(),
+        indexable: false,
+    );
 ?>
 <!DOCTYPE html>
 <html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>">
@@ -18,16 +25,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <?php Functions::insertSection('../sections/head.phtml'); ?>
-        <title><?php Functions::printl('record_title'); ?> — <?php
-            if ($hasRecord)
-            {
-                Functions::print(substr($reportDetailView->getReport()->getUuid(), 0, 8) . '…');
-            }
-            else
-            {
-                Functions::printl('error_label');
-            }
-        ?></title>
         <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
         <link rel="stylesheet" href="/css/print.css">
     </head>

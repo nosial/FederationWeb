@@ -3,6 +3,7 @@
     use DynamicalWeb\WebSession;
     use WebKernel\OperatorsView;
     use WebKernel\Utilities;
+    use WebKernel\PageMetadata;
 
     Functions::loadLocalization('operators');
 
@@ -20,6 +21,8 @@
         ['print_filter_permissions', $operatorsView->getPermissionsFilter(), ['client' => 'perm_client', 'management' => 'perm_blacklist', 'operator' => 'perm_operators']],
         ['print_filter_sort', $operatorsView->getSortBy() !== null && $operatorsView->getSortBy() !== '' ? [$operatorsView->getSortBy(), $operatorsView->getApiOrder() === 'DESC' ? 'print_sort_desc' : 'print_sort_asc'] : null, null],
     ], static fn(array $filter): bool => $filter[1] !== null && $filter[1] !== '');
+
+    PageMetadata::set(Utilities::localize('heading'), Utilities::localize('meta_description', ['server_name' => PageMetadata::getSiteName()]), indexable: false);
 ?>
 <!DOCTYPE html>
 <html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>">
@@ -27,7 +30,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <?php Functions::insertSection('../sections/head.phtml'); ?>
-        <title><?php Functions::printl('heading'); ?></title>
         <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
         <link rel="stylesheet" href="/css/print.css">
     </head>

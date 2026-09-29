@@ -3,6 +3,7 @@
     use DynamicalWeb\WebSession;
     use WebKernel\EntitiesView;
     use WebKernel\Utilities;
+    use WebKernel\PageMetadata;
 
     Functions::loadLocalization('entities');
 
@@ -19,6 +20,8 @@
         ['print_filter_category', $entitiesView->getCategoryFilter(), ['whitelisted' => 'filter_whitelisted', 'not_whitelisted' => 'filter_not_whitelisted', 'with_relationship' => 'filter_with_relationship', 'without_relationship' => 'filter_without_relationship']],
         ['print_filter_sort', $entitiesView->getSortBy() !== null && $entitiesView->getSortBy() !== '' ? [$entitiesView->getSortBy(), $entitiesView->getApiOrder() === 'DESC' ? 'print_sort_desc' : 'print_sort_asc'] : null, null],
     ], static fn(array $filter): bool => $filter[1] !== null && $filter[1] !== '');
+
+    PageMetadata::set(Utilities::localize('heading'), Utilities::localize('meta_description', ['server_name' => PageMetadata::getSiteName()]), indexable: false);
 ?>
 <!DOCTYPE html>
 <html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>">
@@ -26,7 +29,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <?php Functions::insertSection('../sections/head.phtml'); ?>
-        <title><?php Functions::printl('heading'); ?></title>
         <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
         <link rel="stylesheet" href="/css/print.css">
     </head>

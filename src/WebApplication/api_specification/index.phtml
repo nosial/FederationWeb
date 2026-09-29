@@ -2,6 +2,8 @@
     use DynamicalWeb\Html\Functions;
     use DynamicalWeb\WebSession;
     use WebKernel\ApiSpecificationView;
+    use WebKernel\PageMetadata;
+    use WebKernel\Utilities;
 
     Functions::loadLocalization('dashboard');
 
@@ -9,6 +11,8 @@
     WebSession::set('api_specification_view', $apiSpecificationView);
 
     $hasSpecification = $apiSpecificationView->getError() === null && !empty($apiSpecificationView->getSpec());
+
+    PageMetadata::set(Utilities::localize('api_specification'), Utilities::localize('api_meta_description', ['server_name' => PageMetadata::getSiteName()]));
 ?>
 <!DOCTYPE html>
 <html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>" data-fw-theme="<?php Functions::print($apiSpecificationView->getDarkMode() ? 'dark' : ''); ?>">
@@ -16,7 +20,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
         <?php Functions::insertSection('../sections/head.phtml'); ?>
-        <title><?php Functions::printl('api_specification'); ?></title>
         <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
         <link rel="stylesheet" href="/css/federation.css">
     </head>

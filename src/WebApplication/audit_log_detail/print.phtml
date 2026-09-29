@@ -3,6 +3,7 @@
     use DynamicalWeb\WebSession;
     use WebKernel\AuditLogDetailView;
     use WebKernel\Utilities;
+    use WebKernel\PageMetadata;
 
     Functions::loadLocalization('audit_log');
 
@@ -11,6 +12,12 @@
     $view = new AuditLogDetailView();
     WebSession::set('audit_log_detail_view', $view);
     $hasRecord = !$view->hasError() && $view->getRecord();
+
+    PageMetadata::set(
+        Utilities::localize('record_title') . ' — ' . ($view->getRecord() ? substr($view->getRecord()->getUuid(), 0, 8) . '…' : Utilities::localize('error_label')),
+        $view->getPageDescription(),
+        indexable: false,
+    );
 ?>
 <!DOCTYPE html>
 <html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>">
@@ -18,16 +25,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <?php Functions::insertSection('../sections/head.phtml'); ?>
-        <title><?php Functions::printl('record_title'); ?> — <?php
-            if ($hasRecord)
-            {
-                Functions::print(substr($view->getRecord()->getUuid(), 0, 8) . '…');
-            }
-            else
-            {
-                Functions::printl('error_label');
-            }
-        ?></title>
         <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
         <link rel="stylesheet" href="/css/print.css">
     </head>

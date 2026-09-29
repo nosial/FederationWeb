@@ -3,6 +3,7 @@
     use DynamicalWeb\WebSession;
     use WebKernel\BlacklistView;
     use WebKernel\Utilities;
+    use WebKernel\PageMetadata;
 
     Functions::loadLocalization('blacklist');
 
@@ -21,6 +22,8 @@
         ['print_filter_entity', $view->getEntityId(), null],
         ['print_filter_sort', $view->getSortBy() !== null && $view->getSortBy() !== '' ? [$view->getSortBy(), $view->getApiOrder() === 'DESC' ? 'print_sort_desc' : 'print_sort_asc'] : null, null],
     ], static fn(array $filter): bool => $filter[1] !== null && $filter[1] !== '');
+
+    PageMetadata::set(Utilities::localize('heading'), Utilities::localize('meta_description', ['server_name' => PageMetadata::getSiteName()]), indexable: false);
 ?>
 <!DOCTYPE html>
 <html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>">
@@ -28,7 +31,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <?php Functions::insertSection('../sections/head.phtml'); ?>
-        <title><?php Functions::printl('heading'); ?></title>
         <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
         <link rel="stylesheet" href="/css/print.css">
     </head>

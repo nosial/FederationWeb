@@ -4,6 +4,8 @@
     use DynamicalWeb\WebSession;
     use WebKernel\EntityDetailView;
     use WebKernel\ViewAuthorization;
+    use WebKernel\PageMetadata;
+    use WebKernel\Utilities;
 
     Functions::loadLocalization('entities');
 
@@ -14,6 +16,14 @@
     {
         $view->handlePostRequest();
     }
+
+    PageMetadata::set(
+        Utilities::localize('record_title') . ' — ' . ($view->getEntity() ? $view->getEntity()->getAddress() : Utilities::localize('error_label')),
+        $view->getPageDescription(),
+        indexable: $view->getEntity() !== null,
+        // An entity opened by its address or through the query route is canonical at its UUID's address
+        canonicalUrl: $view->getEntity() !== null ? Functions::getRouteUrl('entity_detail', ['entity_id' => $view->getEntity()->getUuid()]) : null,
+    );
 ?>
 <!DOCTYPE html>
 <html lang="<?php Functions::print(WebSession::getLocale()?->getLocaleCode() ?? 'en'); ?>" data-fw-theme="<?php Functions::print($view->isDarkMode() ? 'dark' : ''); ?>">
@@ -21,7 +31,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
         <?php Functions::insertSection('../sections/head.phtml'); ?>
-        <title><?php Functions::printl('record_title'); ?> - <?php Functions::print($view->getEntity() ? $view->getEntity()->getAddress() : 'Error'); ?></title>
         <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
         <link rel="stylesheet" href="/css/federation.css">
     </head>
