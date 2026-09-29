@@ -62,15 +62,14 @@
                 return;
             }
 
-            try
-            {
-                $this->recentAuditLogs = $this->federationClient->listOperatorAuditLogs($this->operator->getUuid());
-                $this->recentReports = $this->federationClient->listOperatorReports($this->operator->getUuid());
-                $this->assignedReports = $this->federationClient->listAssignedOperatorReports($this->operator->getUuid());
-                $this->evidenceRecords = $this->federationClient->listOperatorEvidence($this->operator->getUuid());
-                $this->blacklistRecords = $this->federationClient->listOperatorBlacklist($this->operator->getUuid());
-            }
-            catch(\Exception $exception) { Logger::getLogger()->warning('Unable to load operator details', $exception); }
+            // The operator record is public, but each related collection follows the visibility of its
+            // own domain, so each is loaded separately and a private domain does not hide the others.
+            $uuid = $this->operator->getUuid();
+            $this->recentAuditLogs = $this->loadRelated(ViewAuthorization::canReadAuditLogs(), fn() => $this->federationClient->listOperatorAuditLogs($uuid));
+            $this->recentReports = $this->loadRelated(ViewAuthorization::canReadReports(), fn() => $this->federationClient->listOperatorReports($uuid));
+            $this->assignedReports = $this->loadRelated(ViewAuthorization::canReadReports(), fn() => $this->federationClient->listAssignedOperatorReports($uuid));
+            $this->evidenceRecords = $this->loadRelated(ViewAuthorization::canReadEvidence(), fn() => $this->federationClient->listOperatorEvidence($uuid));
+            $this->blacklistRecords = $this->loadRelated(ViewAuthorization::canReadBlacklist(), fn() => $this->federationClient->listOperatorBlacklist($uuid));
 
             [$this->operatorNames, $this->entityAddresses] = $this->loadLabels(
                 array_merge($this->recentReports ?? [], $this->assignedReports ?? []), $this->evidenceRecords ?? [], $this->blacklistRecords ?? [], $this->recentAuditLogs ?? []
@@ -302,6 +301,28 @@
             }
 
             Utilities::redirect('operator_detail', ['operator_id' => $this->operator->getUuid()], $redirect);
+        }
+
+        /**
+         * Loads a collection related to the operator.
+         *
+         * @param bool $readable Whether the requester may read the collection.
+         * @param callable $load Fetches the collection.
+         * @return array|null The collection, or null when it is not readable or cannot be loaded.
+         */
+        private function loadRelated(bool $readable, callable $load): ?array
+        {
+            if(!$readable) return null;
+
+            try
+            {
+                return $load();
+            }
+            catch(\Exception $exception)
+            {
+                Logger::getLogger()->warning('Unable to load operator details', $exception);
+                return null;
+            }
         }
 
         /**
