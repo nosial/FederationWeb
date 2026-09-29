@@ -74,16 +74,7 @@
 @include media-breakpoint-down(sm) {
   .fw-filter-bar { padding: 8px; }
 
-  .fw-filter-search {
-    flex-basis: 100%;
-
-    .fw-filter-input {
-      min-height: 36px;
-      font-size: $fw-touch-input-font-size;
-
-      &::placeholder { font-size: $fw-font-size-base; }
-    }
-  }
+  .fw-filter-search { flex-basis: 100%; }
 
   // Selects and action buttons share a row when they fit; otherwise the actions wrap below
   // rather than squeezing the selects down to nothing.
@@ -95,8 +86,6 @@
       flex: 1 1 0;
       min-width: 0;
       max-width: none;
-      min-height: 36px;
-      font-size: $fw-touch-input-font-size;
     }
   }
 
@@ -104,16 +93,6 @@
     flex: 1 1 auto;
     justify-content: flex-end;
     flex-wrap: wrap;
-
-    .fw-btn {
-      min-height: 36px;
-      font-size: $fw-font-size-sm;
-    }
-
-    .fw-btn-icon {
-      width: 36px;
-      i { font-size: 14px; }
-    }
   }
 }
 
@@ -154,17 +133,6 @@
 
   @include media-breakpoint-down(sm) {
     max-width: none;
-
-    label {
-      min-height: 32px;
-      padding: 4px 8px;
-      font-size: $fw-font-size-sm;
-
-      input[type="checkbox"] {
-        width: 16px;
-        height: 16px;
-      }
-    }
   }
 
   label {
