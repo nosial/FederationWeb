@@ -234,12 +234,17 @@ function escapeHtml(str) {
         updateFileList();
     });
 })();
-
-// Global search functionality
+</script>
+<?php
+    }
+?>
+<script>
+// Global search functionality (the topbar shows the search box to anonymous sessions too when search is public)
 (function() {
     var searchWrap = document.getElementById('globalSearch');
     var searchInput = document.getElementById('globalSearchInput');
     var searchToggle = document.getElementById('globalSearchToggle');
+    var searchClose = document.getElementById('globalSearchClose');
     var searchResults = document.getElementById('globalSearchResults');
     if (!searchInput || !searchResults) return;
 
@@ -407,9 +412,34 @@ function escapeHtml(str) {
         }
     });
 
+    // Dismisses the full-width field used on small screens (the class has no effect on wider ones).
+    function closeMobileSearch() {
+        searchInput.classList.remove('open');
+        searchInput.blur();
+        closeDropdown();
+    }
+
     document.addEventListener('click', function(e) {
         if (!e.target.closest('#globalSearch')) closeDropdown();
     });
+
+    // A tap outside the open full-width field only dismisses it; swallowing the tap (capture phase)
+    // keeps it from also opening whatever link or table row was underneath.
+    document.addEventListener('click', function(e) {
+        if (searchInput.classList.contains('open') && !e.target.closest('#globalSearch')) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeMobileSearch();
+        }
+    }, true);
+
+    if (searchClose) {
+        searchClose.addEventListener('click', function(e) {
+            e.stopPropagation();
+            searchInput.value = '';
+            closeMobileSearch();
+        });
+    }
 
     // Mobile toggle
     if (searchToggle) {
@@ -425,13 +455,8 @@ function escapeHtml(str) {
     // Close mobile search on Escape
     searchInput.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && searchInput.classList.contains('open')) {
-            searchInput.classList.remove('open');
-            searchInput.blur();
-            closeDropdown();
+            closeMobileSearch();
         }
     });
 })();
 </script>
-<?php
-    }
-?>
