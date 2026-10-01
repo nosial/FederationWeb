@@ -237,6 +237,7 @@ dashboard:
   public_entity_metadata: 实体元数据
   public_scan_content: 内容扫描
   public_query_entity: 实体查询
+  allow_illegal_content: 非法内容报告
   search_capabilities: 搜索
   search_enabled: 已启用搜索
   public_search: 公开搜索
@@ -570,6 +571,8 @@ reports:
   report_closed: 报告已成功关闭
   report_deleted: 报告已成功删除
   report_submitted: 报告提交成功
+  report_submit_failed: 提交报告失败
+  report_illegal_content_not_allowed: 此服务器不接受非法内容报告
   operator_assigned: 操作员指派成功
   report_close_failed: 关闭报告失败
   report_delete_failed: 删除报告失败

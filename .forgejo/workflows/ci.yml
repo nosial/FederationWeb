@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Build project
         run: |
@@ -24,7 +24,7 @@ jobs:
           ncc build --config debug --log-level debug
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: debug
           path: target/debug/net.nosial.federationweb.ncc
@@ -36,7 +36,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Build project
         run: |
@@ -44,7 +44,7 @@ jobs:
           ncc build --config release --log-level debug
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release
           path: target/release/net.nosial.federationweb.ncc
@@ -56,7 +56,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Build project
         run: |
@@ -64,7 +64,7 @@ jobs:
           ncc build --config web_release --log-level debug
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: web_release
           path: target/web_release/net.nosial.federationweb.ncc
@@ -76,7 +76,7 @@ jobs:
       phpunit-exists: ${{ steps.check.outputs.phpunit-exists }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Check for phpunit.xml
         id: check
         run: |
@@ -93,7 +93,7 @@ jobs:
       phpdoc-exists: ${{ steps.check.outputs.phpdoc-exists }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Check for phpdoc.dist.xml
         id: check
         run: |
@@ -116,16 +116,16 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Download debug artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: debug
           path: debug
 
       - name: Upload debug artifact to release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
             files: |
                 debug/*
@@ -133,13 +133,13 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download release artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: release
           path: release
 
       - name: Upload release artifact to release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
             files: |
                 release/*
@@ -147,13 +147,13 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download web_release artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: web_release
           path: web_release
 
       - name: Upload web_release artifact to release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
             files: |
                 web_release/*

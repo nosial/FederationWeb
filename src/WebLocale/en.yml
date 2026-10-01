@@ -237,6 +237,7 @@ dashboard:
   public_entity_metadata: Entity Metadata
   public_scan_content: Content Scanning
   public_query_entity: Entity Querying
+  allow_illegal_content: Illegal Content Reports
   search_capabilities: Search
   search_enabled: Search Enabled
   public_search: Public Search
@@ -570,6 +571,8 @@ reports:
   report_closed: Report closed successfully
   report_deleted: Report deleted successfully
   report_submitted: Report submitted successfully
+  report_submit_failed: Failed to submit report
+  report_illegal_content_not_allowed: This server does not accept reports of illegal content
   operator_assigned: Operator assigned successfully
   report_close_failed: Failed to close report
   report_delete_failed: Failed to delete report

@@ -237,6 +237,7 @@ dashboard:
   public_entity_metadata: Метаданные сущности
   public_scan_content: Сканирование содержимого
   public_query_entity: Запрос сущности
+  allow_illegal_content: Отчёты о незаконном контенте
   search_capabilities: Поиск
   search_enabled: Поиск включен
   public_search: Публичный поиск
@@ -570,6 +571,8 @@ reports:
   report_closed: Отчёт успешно закрыт
   report_deleted: Отчёт успешно удалён
   report_submitted: Отчёт успешно отправлен
+  report_submit_failed: Не удалось отправить отчёт
+  report_illegal_content_not_allowed: Этот сервер не принимает отчёты о незаконном контенте
   operator_assigned: Оператор успешно назначен
   report_close_failed: Не удалось закрыть отчёт
   report_delete_failed: Не удалось удалить отчёт

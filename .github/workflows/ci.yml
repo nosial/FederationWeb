@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # The build compiles the stylesheets, scripts and vendor assets with npm (see project.yml)
       - name: Install Node.js
@@ -29,7 +29,7 @@ jobs:
           ncc build --config debug --log-level debug
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: debug
           path: target/debug/net.nosial.federationweb.ncc
@@ -41,7 +41,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # The build compiles the stylesheets, scripts and vendor assets with npm (see project.yml)
       - name: Install Node.js
@@ -54,7 +54,7 @@ jobs:
           ncc build --config release --log-level debug
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release
           path: target/release/net.nosial.federationweb.ncc
@@ -66,7 +66,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # The build compiles the stylesheets, scripts and vendor assets with npm (see project.yml)
       - name: Install Node.js
@@ -79,7 +79,7 @@ jobs:
           ncc build --config web_release --log-level debug
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: web_release
           path: target/web_release/net.nosial.federationweb.ncc
@@ -91,7 +91,7 @@ jobs:
       phpunit-exists: ${{ steps.check.outputs.phpunit-exists }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Check for phpunit.xml
         id: check
         run: |
@@ -108,7 +108,7 @@ jobs:
       phpdoc-exists: ${{ steps.check.outputs.phpdoc-exists }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Check for phpdoc.dist.xml
         id: check
         run: |
@@ -133,33 +133,48 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Download debug artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: debug
           path: debug
 
+      - name: Check for an existing release
+        id: existing
+        run: |
+          status=$(curl -s -o /dev/null -w '%{http_code}' \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases/tags/${GITHUB_REF_NAME}")
+          if [ "$status" = "200" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Upload debug artifact to release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
-            name: Release ${{ github.ref_name }}
+            name: ${{ steps.existing.outputs.exists != 'true' && format('Release {0}', github.ref_name) || '' }}
             prerelease: ${{ contains(github.ref_name, '-') }}
-            generate_release_notes: true
+            generate_release_notes: ${{ steps.existing.outputs.exists != 'true' }}
             files: |
                 debug/*
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download release artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: release
           path: release
 
       - name: Upload release artifact to release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
             files: |
                 release/*
@@ -167,13 +182,13 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download web_release artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: web_release
           path: web_release
 
       - name: Upload web_release artifact to release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
             files: |
                 web_release/*
