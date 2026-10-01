@@ -4,6 +4,10 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  // Content wider than the screen would widen the mobile layout viewport, leaving fixed
+  // elements (modals, backdrops) anchored outside the visible area. `clip` hides that
+  // overflow without creating a scroll container, so sticky positioning keeps working.
+  overflow-x: clip;
 }
 
 .fw-topbar {

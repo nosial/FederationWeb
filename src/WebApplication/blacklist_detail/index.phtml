@@ -96,12 +96,18 @@
                             <?php
                             Functions::insertSection('detail.phtml');
                             Functions::insertSection('related.phtml');
-                            Functions::insertSection('modals.phtml');
                         }
                     ?>
                 </div>
             </div>
         </div>
+        <?php
+            // Modals live outside .fw-wrapper so they and their backdrop are positioned against the viewport
+            if (!$view->hasError() && $view->getRecord() !== null)
+            {
+                Functions::insertSection('modals.phtml');
+            }
+        ?>
         <script src="/vendor/bootstrap/bootstrap.bundle.min.js"></script>
         <script src="/js/app.js"></script>
         <script src="/js/nav.js"></script>
