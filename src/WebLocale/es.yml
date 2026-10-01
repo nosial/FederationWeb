@@ -237,6 +237,7 @@ dashboard:
   public_entity_metadata: Metadatos de la entidad
   public_scan_content: Escaneo de contenido
   public_query_entity: Consulta de entidad
+  allow_illegal_content: Informes de contenido ilegal
   search_capabilities: Búsqueda
   search_enabled: Búsqueda habilitada
   public_search: Búsqueda pública
@@ -570,6 +571,8 @@ reports:
   report_closed: Informe cerrado con éxito
   report_deleted: Informe eliminado con éxito
   report_submitted: Informe enviado con éxito
+  report_submit_failed: Error al enviar el informe
+  report_illegal_content_not_allowed: Este servidor no acepta informes de contenido ilegal
   operator_assigned: Operador asignado con éxito
   report_close_failed: Error al cerrar el informe
   report_delete_failed: Error al eliminar el informe
