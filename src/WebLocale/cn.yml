@@ -602,6 +602,8 @@ evidence:
   delete_evidence: 删除证据
   mark_confidential: 标记为机密
   remove_confidential: 取消机密标记
+  modal_confidential_mark_info: "将此证据标记为机密后，没有记录管理权限的操作员和匿名访问者将无法查看其内容。"
+  modal_confidential_remove_info: "取消机密标记后，任何可以查看记录的人都能看到此证据，包括被允许访问的匿名访问者。"
   update_tag: 更新标签
   add_to_report: 关联到报告
   upload_attachment: 上传附件

@@ -602,6 +602,8 @@ evidence:
   delete_evidence: Delete Evidence
   mark_confidential: Mark Confidential
   remove_confidential: Remove Confidential
+  modal_confidential_mark_info: "Marking this evidence confidential hides its content from operators without record management permissions and from anonymous viewers."
+  modal_confidential_remove_info: "Removing the confidential mark makes this evidence visible to anyone who can view records, including anonymous viewers if they are allowed."
   update_tag: Update Tag
   add_to_report: Link to Report
   upload_attachment: Upload Attachment

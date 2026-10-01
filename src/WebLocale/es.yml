@@ -602,6 +602,8 @@ evidence:
   delete_evidence: Eliminar evidencia
   mark_confidential: Marcar como confidencial
   remove_confidential: Quitar confidencialidad
+  modal_confidential_mark_info: "Marcar esta evidencia como confidencial oculta su contenido a los operadores sin permisos de gestión de registros y a los visitantes anónimos."
+  modal_confidential_remove_info: "Quitar la marca de confidencial hace visible esta evidencia para cualquiera que pueda ver registros, incluidos los visitantes anónimos si están permitidos."
   update_tag: Actualizar etiqueta
   add_to_report: Vincular a informe
   upload_attachment: Cargar adjunto
