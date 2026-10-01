@@ -386,6 +386,21 @@
                                 ?>
                             </span>
                         </div>
+                        <div class="fw-status-item">
+                            <span class="fw-status-label"><?php Functions::printl('allow_illegal_content'); ?></span>
+                            <span class="fw-status-value">
+                                <?php
+                                    if ($serverInformation->isAllowIllegalContent())
+                                    {
+                                        ?><span class="fw-dot green"></span> <?php Functions::printl('enabled'); ?><?php
+                                    }
+                                    else
+                                    {
+                                        ?><span class="fw-dot red"></span> <?php Functions::printl('disabled'); ?><?php
+                                    }
+                                ?>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>

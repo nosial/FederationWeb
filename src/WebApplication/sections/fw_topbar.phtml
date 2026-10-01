@@ -70,7 +70,8 @@
         catch (Exception $e) {}
     }
 
-    $incidentTypes = IncidentType::cases();
+    // A server that declines illegal content rejects ILLEGAL_CONTENT reports, so it is not offered
+    $incidentTypes = array_filter(IncidentType::cases(), fn(IncidentType $type): bool => $type !== IncidentType::ILLEGAL_CONTENT || $serverInformation === null || $serverInformation->isAllowIllegalContent());
     WebSession::set('fw_topbar_operator_uuid', $operatorUuid);
 ?>
 <link rel="stylesheet" href="/vendor/flag-icons/css/flag-icons.min.css">
