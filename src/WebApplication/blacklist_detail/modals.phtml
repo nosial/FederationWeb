@@ -12,6 +12,26 @@
     if (ViewAuthorization::canManageRecords())
     {
         ?>
+                    <div class="modal fade" id="modalLiftBlacklist" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"><i class="bi bi-check-circle"></i> <?php Functions::printl('lift_blacklist'); ?></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form method="POST" action="<?php Functions::printRoute('blacklist_detail', ['blacklist_uuid' => $record->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="lift_blacklist">
+                                    <div class="modal-body text-center">
+                                        <p><?php Functions::printl('modal_lift_info'); ?></p>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl('modal_lift_confirm'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                     <div class="modal fade" id="modalExtendBlacklist" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-sm">
                             <div class="modal-content">

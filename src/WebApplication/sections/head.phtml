@@ -36,9 +36,6 @@
         <link rel="manifest" href="/favicon/site.webmanifest">
         <meta name="csrf-token" content="<?php Functions::print(Utilities::getCsrfToken()); ?>">
         <script>
-            // State-changing requests must carry the session's CSRF token (checked in
-            // pre_processors/authentication.phtml). Forms include it as a hidden field; XHR POSTs to
-            // this site get it as a header here, so every script is covered without changes.
             (function ()
             {
                 var meta = document.querySelector('meta[name="csrf-token"]');

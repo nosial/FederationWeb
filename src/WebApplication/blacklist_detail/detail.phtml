@@ -268,10 +268,7 @@
                                                             if (!$view->getRecord()->isLifted())
                                                             {
                                                                 ?>
-                                                    <form method="POST" action="<?php Functions::printRoute('blacklist_detail', ['blacklist_uuid' => $view->getRecord()->getUuid()]); ?>" class="d-inline w-100"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
-                                                        <input type="hidden" name="action" value="lift_blacklist">
-                                                        <button type="submit" class="fw-btn fw-btn-secondary fw-btn-sm w-100"><i class="bi bi-check-circle"></i> <?php Functions::printl('lift_blacklist'); ?></button>
-                                                    </form>
+                                                    <button type="button" class="fw-btn fw-btn-secondary fw-btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalLiftBlacklist"><i class="bi bi-check-circle"></i> <?php Functions::printl('lift_blacklist'); ?></button>
                                                                 <?php
                                                                 if ($view->getExpires() !== null)
                                                                 {

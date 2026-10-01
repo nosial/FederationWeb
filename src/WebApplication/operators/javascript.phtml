@@ -6,6 +6,26 @@ use DynamicalWeb\Html\Functions;
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        ['enableOperatorModal', 'disableOperatorModal'].forEach(function (id) {
+            var modal = document.getElementById(id);
+
+            if (!modal) {
+                return;
+            }
+
+            modal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+
+                if (!button) {
+                    return;
+                }
+
+                modal.querySelector('[data-fw-operator-uuid]').value = button.getAttribute('data-uuid');
+                // textContent keeps the operator-supplied name from being parsed as markup.
+                modal.querySelector('[data-fw-operator-name]').textContent = button.getAttribute('data-name') || '';
+            });
+        });
+
         var deleteModal = document.getElementById('deleteOperatorModal');
         var deleteText = document.getElementById('deleteOperatorText');
         var deleteTemplate = deleteText ? deleteText.innerHTML : '';

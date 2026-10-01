@@ -153,21 +153,13 @@
                                                                         if ($operator->isDisabled())
                                                                         {
                                                                             ?>
-                                                                            <form method="POST" action="<?php Functions::printRoute('operators'); ?>" class="d-inline mb-0"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
-                                                                                <input type="hidden" name="action" value="enable_operator">
-                                                                                <input type="hidden" name="operator_uuid" value="<?php Functions::print($operator->getUuid()); ?>">
-                                                                                <button type="submit" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('enable_operator'); ?>"><i class="bi bi-check-circle"></i></button>
-                                                                            </form>
+                                                                            <button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('enable_operator'); ?>" data-bs-toggle="modal" data-bs-target="#enableOperatorModal" data-uuid="<?php Functions::print($operator->getUuid()); ?>" data-name="<?php Functions::print($operator->getName()); ?>"><i class="bi bi-check-circle"></i></button>
                                                                             <?php
                                                                         }
                                                                         else
                                                                         {
                                                                             ?>
-                                                                            <form method="POST" action="<?php Functions::printRoute('operators'); ?>" class="d-inline mb-0"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
-                                                                                <input type="hidden" name="action" value="disable_operator">
-                                                                                <input type="hidden" name="operator_uuid" value="<?php Functions::print($operator->getUuid()); ?>">
-                                                                                <button type="submit" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('disable_operator'); ?>"><i class="bi bi-pause-circle"></i></button>
-                                                                            </form>
+                                                                            <button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('disable_operator'); ?>" data-bs-toggle="modal" data-bs-target="#disableOperatorModal" data-uuid="<?php Functions::print($operator->getUuid()); ?>" data-name="<?php Functions::print($operator->getName()); ?>"><i class="bi bi-pause-circle"></i></button>
                                                                             <?php
                                                                         }
                                                                     ?>

@@ -8,6 +8,38 @@
     $view = WebSession::get('evidence_detail_view');
 ?>
 <?php
+    if (ViewAuthorization::canManageRecords())
+    {
+        $isConfidential = $view->getEvidence()->isConfidential();
+        ?>
+                    <!-- Toggle Confidential Modal -->
+                    <div class="modal fade modal-warning" id="modalToggleConfidential" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"><i class="bi bi-shield-<?php Functions::print($isConfidential ? 'exclamation' : 'check'); ?>"></i> <?php Functions::printl($isConfidential ? 'remove_confidential' : 'mark_confidential'); ?></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form method="POST" action="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $view->getEvidence()->getUuid()]); ?>"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
+                                    <input type="hidden" name="action" value="toggle_confidential">
+                                    <div class="modal-body">
+                                        <div class="fw-modal-alert fw-modal-alert-warning">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                            <span><?php Functions::printl($isConfidential ? 'modal_confidential_remove_info' : 'modal_confidential_mark_info'); ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                                        <button type="submit" class="fw-btn fw-btn-primary"><?php Functions::printl($isConfidential ? 'remove_confidential' : 'mark_confidential'); ?></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+        <?php
+    }
+?>
+<?php
     if (ViewAuthorization::canManageEntityRelationships())
     {
         ?>

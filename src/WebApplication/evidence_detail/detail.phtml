@@ -399,10 +399,7 @@
                                                         if (ViewAuthorization::canManageRecords())
                                                         {
                                                             ?>
-                                                    <form method="POST" action="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $view->getEvidence()->getUuid()]); ?>" class="d-inline w-100"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
-                                                        <input type="hidden" name="action" value="toggle_confidential">
-                                                        <button type="submit" class="fw-btn fw-btn-secondary fw-btn-sm w-100"><i class="bi bi-shield-<?php Functions::print($view->getEvidence()->isConfidential() ? 'exclamation' : 'check'); ?>"></i> <?php Functions::printl($view->getEvidence()->isConfidential() ? 'remove_confidential' : 'mark_confidential'); ?></button>
-                                                    </form>
+                                                    <button type="button" class="fw-btn fw-btn-secondary fw-btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalToggleConfidential"><i class="bi bi-shield-<?php Functions::print($view->getEvidence()->isConfidential() ? 'exclamation' : 'check'); ?>"></i> <?php Functions::printl($view->getEvidence()->isConfidential() ? 'remove_confidential' : 'mark_confidential'); ?></button>
                                                             <?php
                                                         }
                                                         if (ViewAuthorization::canManageEntityRelationships())
