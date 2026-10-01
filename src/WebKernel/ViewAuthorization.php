@@ -73,9 +73,18 @@
         }
 
         /**
-         * Returns whether the operator can manage entity relationships and evidence tags.
+         * Returns whether the operator can set and clear entity relationships. The OFD specification
+         * grants this to client permissions, which management permissions inherit.
          */
         public static function canManageEntityRelationships(): bool
+        {
+            return self::canContribute();
+        }
+
+        /**
+         * Returns whether the operator can update evidence tags, which requires operator permissions.
+         */
+        public static function canUpdateEvidenceTags(): bool
         {
             return self::canManageOperators();
         }

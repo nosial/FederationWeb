@@ -402,7 +402,7 @@
                                                     <button type="button" class="fw-btn fw-btn-secondary fw-btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalToggleConfidential"><i class="bi bi-shield-<?php Functions::print($view->getEvidence()->isConfidential() ? 'exclamation' : 'check'); ?>"></i> <?php Functions::printl($view->getEvidence()->isConfidential() ? 'remove_confidential' : 'mark_confidential'); ?></button>
                                                             <?php
                                                         }
-                                                        if (ViewAuthorization::canManageEntityRelationships())
+                                                        if (ViewAuthorization::canUpdateEvidenceTags())
                                                         {
                                                             ?><button type="button" class="fw-btn fw-btn-secondary fw-btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalUpdateTag"><i class="bi bi-tag"></i> <?php Functions::printl('update_tag'); ?></button><?php
                                                         }
