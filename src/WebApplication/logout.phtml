@@ -1,6 +1,5 @@
 <?php
 
-    use DynamicalWeb\Html\Functions;
     use DynamicalWeb\Enums\RequestMethod;
     use DynamicalWeb\WebSession;
 
@@ -8,11 +7,8 @@
     // cross-site request to /logout only returns to the dashboard.
     if (WebSession::getRequest()->getMethod() !== RequestMethod::POST)
     {
-        WebSession::getResponse()->setRedirect(Functions::getRouteUrl('dashboard'));
-        WebSession::endSession(0);
-        return;
+        WebSession::redirectToRoute('dashboard');
     }
 
     WebSession::destroyCookieSession('web_session');
-    WebSession::getResponse()->setRedirect(Functions::getRouteUrl('authenticate'));
-    WebSession::endSession(0);
+    WebSession::redirectToRoute('authenticate');

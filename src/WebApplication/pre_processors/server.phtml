@@ -1,7 +1,6 @@
 <?php
 
     use DynamicalWeb\Classes\Logger;
-    use DynamicalWeb\Html\Functions;
     use DynamicalWeb\WebSession;
     use FederationLib\Exceptions\RequestException;
     use FederationLib\FederationClient;
@@ -13,54 +12,35 @@
         class_alias('DynamicalWeb\Html\Functions', 'Functions');
     }
 
-    // Pages must not be framed by other sites (clickjacking), responses are used as the declared
-    // type, and page addresses (which carry record UUIDs) are not sent to other sites.
-    WebSession::getResponse()
-        ->setHeader('X-Frame-Options', 'DENY')
-        ->setHeader('Content-Security-Policy', "frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'")
-        ->setHeader('X-Content-Type-Options', 'nosniff')
-        ->setHeader('Referrer-Policy', 'same-origin');
+    // The security headers are set for every response by the "headers" option of the web configuration
+    // (project.yml). This script is skipped for the configuration_error, authenticate and logout routes there:
+    // the error page must remain renderable while the server is unavailable, the login flow reports its own
+    // connection failures, and signing out must work even when the server it signs out of is unreachable.
 
-    switch(WebSession::getRequest()->getPath())
+    $serverEndpoint = getenv('FEDERATION_SERVER_ENDPOINT');
+    if(WebSession::hasCookieSession('web_session'))
     {
-        case '/error':
-        case '/authenticate':
-        case '/logout':
-            // The error page must remain renderable while the server is unavailable,
-            // the login flow reports its own connection failures, and signing out
-            // must work even when the server it signs out of is unreachable.
-            return;
+        $cookieSession = WebSession::getCookieSession('web_session');
+        $customServerEndpoint = $cookieSession->get('server_host');
+        if($cookieSession->get('authenticated', false) && !empty($customServerEndpoint))
+        {
+            $serverEndpoint = $customServerEndpoint;
+        }
+    }
 
-        default:
-            $serverEndpoint = getenv('FEDERATION_SERVER_ENDPOINT');
-            if(WebSession::hasCookieSession('web_session'))
-            {
-                $cookieSession = WebSession::getCookieSession('web_session');
-                $customServerEndpoint = $cookieSession->get('server_host');
-                if($cookieSession->get('authenticated', false) && !empty($customServerEndpoint))
-                {
-                    $serverEndpoint = $customServerEndpoint;
-                }
-            }
+    $parsedUrl = parse_url($serverEndpoint);
+    if(empty($serverEndpoint) || !isset($parsedUrl['scheme']) || !isset($parsedUrl['host']))
+    {
+        if(!empty($serverEndpoint))
+        {
+            Logger::getLogger()->error('Invalid environment variable: FEDERATION_SERVER_ENDPOINT - Value: ' . $serverEndpoint);
+        }
+        else
+        {
+            Logger::getLogger()->error('Missing environment variable: FEDERATION_SERVER_ENDPOINT');
+        }
 
-            $parsedUrl = parse_url($serverEndpoint);
-            if(empty($serverEndpoint) || !isset($parsedUrl['scheme']) || !isset($parsedUrl['host']))
-            {
-                if(!empty($serverEndpoint))
-                {
-                    Logger::getLogger()->error('Invalid environment variable: FEDERATION_SERVER_ENDPOINT - Value: ' . $serverEndpoint);
-                }
-                else
-                {
-                    Logger::getLogger()->error('Missing environment variable: FEDERATION_SERVER_ENDPOINT');
-                }
-
-                WebSession::getResponse()->setRedirect(Functions::getRouteUrl('configuration_error', queryParams:['error' => 'missing_configuration']));
-                WebSession::endSession(0);
-                return;
-            }
-
-            break;
+        WebSession::redirectToRoute('configuration_error', queryParams: ['error' => 'missing_configuration']);
     }
 
     // Initialize the federation client and get the server information. Pages (GET requests) reuse the
@@ -77,15 +57,10 @@
     {
         // A configured host can become unavailable after an operator has logged in.
         // Preserve the attempted route so the error page can retry it as a new request.
-        WebSession::getResponse()->setRedirect(Functions::getRouteUrl(
-            'configuration_error',
-            queryParams: [
-                'error' => 'server_unavailable',
-                'retry' => WebSession::getRequest()->getPath(),
-            ],
-        ));
-        WebSession::endSession(0);
-        return;
+        WebSession::redirectToRoute('configuration_error', queryParams: [
+            'error' => 'server_unavailable',
+            'retry' => WebSession::getRequest()->getPath(),
+        ]);
     }
 
     // Store the federation client and server information in the request session for later use

@@ -41,7 +41,7 @@
 
             $queryParameters = WebSession::getRequest()->getQueryParameters();
             $query = trim($queryParameters['q'] ?? '');
-            $page = max(1, (int)($queryParameters['page'] ?? 1));
+            $page = WebSession::getRequest()->getIntParameter('page', 1, min: 1);
             $error = null;
             $results = [];
             $totalCount = 0;

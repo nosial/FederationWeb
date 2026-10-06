@@ -34,29 +34,4 @@
         <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
         <meta name="apple-mobile-web-app-title" content="Federation">
         <link rel="manifest" href="/favicon/site.webmanifest">
-        <meta name="csrf-token" content="<?php Functions::print(Utilities::getCsrfToken()); ?>">
-        <script>
-            (function ()
-            {
-                var meta = document.querySelector('meta[name="csrf-token"]');
-                var token = meta ? meta.getAttribute('content') : '';
-                var open = XMLHttpRequest.prototype.open;
-                var send = XMLHttpRequest.prototype.send;
-
-                XMLHttpRequest.prototype.open = function (method, url)
-                {
-                    this.fwCsrf = String(method).toUpperCase() !== 'GET'
-                        && new URL(url, window.location.href).origin === window.location.origin;
-                    return open.apply(this, arguments);
-                };
-
-                XMLHttpRequest.prototype.send = function ()
-                {
-                    if (this.fwCsrf && token)
-                    {
-                        this.setRequestHeader('X-CSRF-Token', token);
-                    }
-                    return send.apply(this, arguments);
-                };
-            })();
-        </script>
+        <?php Functions::csrfMeta(true); ?>

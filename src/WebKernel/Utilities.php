@@ -3,6 +3,7 @@
     namespace WebKernel;
 
     use DynamicalWeb\Classes\Logger;
+    use DynamicalWeb\Classes\RequestCache;
     use DynamicalWeb\Html\Functions;
     use DynamicalWeb\WebSession;
     use FederationLib\FederationClient;
@@ -14,6 +15,13 @@
      */
     class Utilities
     {
+        /**
+         * Query parameters that carry a status message to the page a redirect leads to. {@see Utilities::redirect()}
+         * moves them into the cookie session instead, so they never appear in an address that can be shared or
+         * crafted; error_message in particular carries unlocalized text.
+         */
+        private const array STATUS_PARAMETERS = ['success', 'error', 'error_message'];
+
         /**
          * Determine whether the current session uses dark mode.
          *
@@ -33,15 +41,38 @@
          */
         public static function getStatusMessages(): StatusMessages
         {
-            $queryParameters = WebSession::getRequest()->getQueryParameters();
-
-            // Message keys come from the query string, so only keys the locale defines are shown;
+            // Message keys can still come from the query string, so only keys the locale defines are shown;
             // anything else would make the page fail to render.
             return new StatusMessages(
-                successMessageKey: self::localeKeyOrNull($queryParameters['success'] ?? null),
-                errorMessageKey: self::localeKeyOrNull($queryParameters['error'] ?? null),
-                errorDetail: $queryParameters['error_message'] ?? null,
+                successMessageKey: self::localeKeyOrNull(self::getRedirectStatus('success')),
+                errorMessageKey: self::localeKeyOrNull(self::getRedirectStatus('error')),
+                errorDetail: self::getRedirectStatus('error_message'),
             );
+        }
+
+        /**
+         * Returns a status value passed on by {@see Utilities::redirect()}: the one flashed into the cookie session,
+         * or for success and error, the query parameter of the same name (links such as the login page's errors).
+         *
+         * <p>A flashed value is removed when it is read, so the result is kept for the rest of the request.
+         *
+         * @param string $key One of success, error or error_message.
+         * @return string|null The value, or null when none was passed on.
+         */
+        public static function getRedirectStatus(string $key): ?string
+        {
+            return RequestCache::remember('fw_redirect_status:' . $key, static function() use ($key): ?string
+            {
+                $value = WebSession::getFlash($key);
+
+                // Without cookie sessions nothing could be flashed, so redirect() left the value in the query string
+                if($value === null && ($key !== 'error_message' || WebSession::getCookieSessionManager() === null))
+                {
+                    $value = WebSession::getRequest()->getQueryParameters()[$key] ?? null;
+                }
+
+                return is_string($value) && $value !== '' ? $value : null;
+            });
         }
 
         /**
@@ -76,45 +107,6 @@
         }
 
         /**
-         * Returns the session's CSRF token, creating it on first use.
-         *
-         * <p>Every state-changing request must echo this token, either as the csrf_token form field
-         * or the X-CSRF-Token header; see pre_processors/authentication.phtml.
-         *
-         * @return string The token, or an empty string when there is no session.
-         */
-        public static function getCsrfToken(): string
-        {
-            $cookieSession = WebSession::get('cookie_session');
-            if($cookieSession === null)
-            {
-                return '';
-            }
-
-            $token = $cookieSession->get('csrf_token');
-            if(!is_string($token) || $token === '')
-            {
-                $token = bin2hex(random_bytes(32));
-                $cookieSession->set('csrf_token', $token);
-                WebSession::saveCookieSession($cookieSession);
-            }
-
-            return $token;
-        }
-
-        /**
-         * Returns whether a submitted value matches the session's CSRF token.
-         *
-         * @param string|null $token The submitted token.
-         * @return bool True when the token is present and matches.
-         */
-        public static function isValidCsrfToken(?string $token): bool
-        {
-            $expected = WebSession::get('cookie_session')?->get('csrf_token');
-            return is_string($expected) && $expected !== '' && is_string($token) && hash_equals($expected, $token);
-        }
-
-        /**
          * Format a Unix timestamp for display.
          *
          * @param int $timestamp Unix timestamp to format.
@@ -131,27 +123,32 @@
          *
          * @param array $data Response payload to encode as JSON.
          */
-        public static function respondWithJson(array $data): void
+        public static function respondWithJson(array $data): never
         {
-            WebSession::getResponse()->setJson($data);
-            WebSession::endSession(0);
+            WebSession::respondJson($data);
         }
 
         /**
          * Redirect to a named route and end the web session.
          *
+         * <p>The success, error and error_message parameters are flashed into the cookie session instead of
+         * being added to the address, see {@see Utilities::getRedirectStatus()}.
+         *
          * @param string $route Name of the route to redirect to.
          * @param array $pathVariables Values for the route path variables.
          * @param array $queryParameters Query parameters to append to the route.
          */
-        public static function redirect(string $route, array $pathVariables=[], array $queryParameters=[]): void
+        public static function redirect(string $route, array $pathVariables=[], array $queryParameters=[]): never
         {
-            WebSession::getResponse()->setRedirect(Functions::getRouteUrl(
-                $route,
-                pathVariables: $pathVariables,
-                queryParams: $queryParameters
-            ));
-            WebSession::endSession(0);
+            foreach(self::STATUS_PARAMETERS as $key)
+            {
+                if(isset($queryParameters[$key]) && WebSession::flash($key, (string)$queryParameters[$key]))
+                {
+                    unset($queryParameters[$key]);
+                }
+            }
+
+            WebSession::redirectToRoute($route, $pathVariables, $queryParameters);
         }
 
         /**

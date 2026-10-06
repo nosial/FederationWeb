@@ -53,7 +53,7 @@
             $this->limit = 1;
 
             $queryParameters = WebSession::getRequest()->getQueryParameters();
-            $page = max(1, (int)($queryParameters['page'] ?? 1));
+            $page = WebSession::getRequest()->getIntParameter('page', 1, min: 1);
             $searchQuery = $queryParameters['search_query'] ?? null;
             $categoryFilter = $queryParameters['category_filter'] ?? null;
             $sortBy = $queryParameters['sort_by'] ?? null;

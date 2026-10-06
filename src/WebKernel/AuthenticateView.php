@@ -105,13 +105,13 @@ class AuthenticateView
     }
 
     /**
-     * Returns the authentication error reported in the request.
+     * Returns the authentication error passed on by the redirect to this page.
      *
      * @return string|null The error code, if present.
      */
     public function getError(): ?string
     {
-        return WebSession::getRequest()->getParameter('error');
+        return Utilities::getRedirectStatus('error');
     }
 
     /**

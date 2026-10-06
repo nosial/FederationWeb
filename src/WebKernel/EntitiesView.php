@@ -47,7 +47,7 @@
             $this->serverInformation = WebSession::get('server_information');
             $this->limit = 1;
             $query = WebSession::getRequest()->getQueryParameters();
-            $this->page = max(1, (int)($query['page'] ?? 1));
+            $this->page = WebSession::getRequest()->getIntParameter('page', 1, min: 1);
             $this->searchQuery = $query['search_query'] ?? null;
             $this->categoryFilter = $query['category_filter'] ?? null;
             $this->sortBy = $query['sort_by'] ?? null;

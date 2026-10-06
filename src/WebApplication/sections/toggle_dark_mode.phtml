@@ -14,7 +14,6 @@
     $cookieSession->set('dark_mode', !$current);
     WebSession::saveCookieSession($cookieSession);
 
-    WebSession::getResponse()->setJson([
+    WebSession::respondJson([
         'dark_mode' => !$current,
     ]);
-    WebSession::endSession(0);
