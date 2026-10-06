@@ -67,9 +67,16 @@ build_configurations:
           report_errors: false
           xss_level: 0
           debug_panel: false
+          headers:
+            X-Frame-Options: "DENY"
+            Content-Security-Policy: "frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'"
+            X-Content-Type-Options: "nosniff"
+            Referrer-Policy: "same-origin"
           pre_request:
-            - "pre_processors/server.phtml"
-            - "pre_processors/authentication.phtml"
+            - module: "pre_processors/server.phtml"
+              except: [ configuration_error, authenticate, logout ]
+            - module: "pre_processors/authentication.phtml"
+              websocket: false
         locales:
           en: FederationWeb/WebLocale/en.yml
           cn: FederationWeb/WebLocale/cn.yml
