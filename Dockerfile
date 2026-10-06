@@ -18,6 +18,8 @@ LABEL org.opencontainers.image.title="FederationWeb" \
 COPY --from=builder /app/target/web_release/net.nosial.federationweb.ncc /tmp/package.ncc
 RUN ncc package install --package=/tmp/package.ncc -y && rm /tmp/package.ncc
 
+ENV MEMCACHED_SESSION_SLIDING=1
+
 RUN mkdir -p /var/www/html
 COPY --from=builder /app/web_entry /var/www/html/index.php
 
