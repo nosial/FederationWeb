@@ -182,13 +182,15 @@ on the Federated Database server itself (For FederationLib, see its `server.publ
 Sessions are handled by DynamicalWeb and stored in memcached, the DynamicalWeb docker image runs memcached within the
 container and enables sessions by default.
 
-| Environment Variable       | Type   | Default Value                         | Required | Description                                                                                                                    |
-|----------------------------|--------|---------------------------------------|----------|--------------------------------------------------------------------------------------------------------------------------------|
-| `MEMCACHED_ENABLED`        | bool   | `1` (Docker image)                    | Yes      | Whether sessions are enabled (`1`, `true`, `yes` or `on`), signing in requires sessions                                        |
-| `MEMCACHED_HOST`           | string | `127.0.0.1`                           | No       | The memcached server host                                                                                                      |
-| `MEMCACHED_PORT`           | int    | `11211`                               | No       | The memcached server port                                                                                                      |
-| `MEMCACHED_SESSION_TTL`    | int    | `3600` (1 hour)                       | No       | How long a session stays valid without activity in seconds, active users stay signed in                                        |
-| `MEMCACHED_SESSION_SECRET` | string | `dynamicalweb_default_session_secret` | No       | The secret used to bind sessions to the client's IP address and user agent, should be set to a long random value in production |
+| Environment Variable        | Type   | Default Value                         | Required | Description                                                                                                                                       |
+|-----------------------------|--------|---------------------------------------|----------|---------------------------------------------------------------------------------------------------------------------------------------------------|
+| `MEMCACHED_ENABLED`         | bool   | `1` (Docker image)                    | Yes      | Whether sessions are enabled (`1`, `true`, `yes` or `on`), signing in requires sessions                                                           |
+| `MEMCACHED_HOST`            | string | `127.0.0.1`                           | No       | The memcached server host                                                                                                                         |
+| `MEMCACHED_PORT`            | int    | `11211`                               | No       | The memcached server port                                                                                                                         |
+| `MEMCACHED_SESSION_TTL`     | int    | `3600` (1 hour)                       | No       | How long a session stays valid without activity in seconds, active users stay signed in                                                           |
+| `MEMCACHED_SESSION_SECRET`  | string | `dynamicalweb_default_session_secret` | No       | The secret used to bind sessions to the client's IP address and user agent, should be set to a long random value in production                    |
+| `MEMCACHED_SESSION_SLIDING` | bool   | `1` (Docker image)                    | No       | Renews the session cookie on every request, so `MEMCACHED_SESSION_TTL` is an idle timeout; with `0` users are signed out one TTL after signing in |
+| `MEMCACHED_SESSION_BIND_IP` | bool   | `1`                                   | No       | Set to `0` to keep sessions when a user's IP address changes, for example a phone switching networks; the user agent is still checked             |
 
 
 ## Access & Permissions
