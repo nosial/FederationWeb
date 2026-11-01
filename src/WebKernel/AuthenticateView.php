@@ -144,7 +144,12 @@ class AuthenticateView
             $serverInfo = $federationClient->getServerInformation();
         } catch (\Exception $exception) {
             Logger::getLogger()->warning('Unable to retrieve server information', $exception);
-            Utilities::redirect('authenticate', queryParameters: ['error' => 'server_unreachable']);
+            Utilities::redirect('authenticate', queryParameters: ['error' => Utilities::isRateLimited($exception) ? 'rate_limited' : 'server_unreachable']);
+        }
+
+        // Implementations of different major versions of the OFD interface do not interoperate
+        if (!Utilities::isSupportedApiVersion($serverInfo)) {
+            Utilities::redirect('authenticate', queryParameters: ['error' => 'unsupported_version']);
         }
 
         if (empty($apiKey)) {
@@ -159,7 +164,9 @@ class AuthenticateView
             $self = $federationClient->getSelf();
         } catch (\Exception $exception) {
             Logger::getLogger()->warning('Unable to authenticate operator', $exception);
-            Utilities::redirect('authenticate', queryParameters: ['error' => 'invalid_key']);
+            // A server may limit the requests that present an access token (OFD 2.2 "Rate Limiting"), which says
+            // nothing about whether the token is valid
+            Utilities::redirect('authenticate', queryParameters: ['error' => Utilities::isRateLimited($exception) ? 'rate_limited' : 'invalid_key']);
         }
 
         if ($self->isDisabled()) {
