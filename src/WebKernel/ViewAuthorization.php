@@ -7,6 +7,8 @@
     use FederationLib\Enums\RecordType;
     use FederationLib\Exceptions\RequestException;
     use FederationLib\FederationClient;
+    use FederationLib\Objects\EvidenceRecord;
+    use FederationLib\Objects\OperatorRecord;
     use FederationLib\Objects\ServerInformation;
 
     /**
@@ -118,11 +120,48 @@
         }
 
         /**
-         *
+         * Returns whether entity metadata is shown. The server returns it to every authenticated operator, and to
+         * anonymous requests only when it publishes public_entity_metadata (OFD "Visibility Rules").
          */
         public static function canReadEntityMetadata(): bool
         {
-            return self::canManageRecords() || self::canManageOperators();
+            return !self::isAnonymous() || self::getServerInformation()?->isPublicEntityMetadata() === true;
+        }
+
+        /**
+         * Returns whether an operator is the root or system operator, which the server never lets anyone modify.
+         * Their names are reserved, case-insensitively, so no other operator can carry them.
+         *
+         * @param OperatorRecord $operator The operator record.
+         */
+        public static function isReservedOperator(OperatorRecord $operator): bool
+        {
+            return in_array(strtolower($operator->getName()), ['root', 'system'], true);
+        }
+
+        /**
+         * Returns whether the operator may change the configuration of the given operator: operators may change
+         * their own configuration, and operators with operator permissions that of any other operator.
+         *
+         * @param OperatorRecord $operator The operator whose configuration would be changed.
+         */
+        public static function canUpdateOperatorConfiguration(OperatorRecord $operator): bool
+        {
+            return !self::isReservedOperator($operator)
+                && $operator->getConfiguration() !== null
+                && (self::canManageOperators() || ($operator->getUuid() === self::currentOperatorUuid()));
+        }
+
+        /**
+         * Returns whether the operator may upload attachments to the given evidence: the server attaches files only
+         * to evidence the operator submitted, unless it holds management permissions.
+         *
+         * @param EvidenceRecord $evidence The evidence record.
+         */
+        public static function canUploadAttachment(EvidenceRecord $evidence): bool
+        {
+            return self::canManageRecords()
+                || (self::canActAsClient() && $evidence->getOperatorUuid() === self::currentOperatorUuid());
         }
 
         /**
