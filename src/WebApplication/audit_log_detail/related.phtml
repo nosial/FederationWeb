@@ -25,7 +25,7 @@
                                 {
                                     ?>
                             <div class="col-xl-4 col-lg-6">
-                                <div class="fw-card fw-card-accent accent-blue h-100">
+                                <div class="fw-card h-100">
                                     <div class="fw-card-header">
                                         <h5><i class="bi bi-person-badge fw-icon-blue"></i> <?php Functions::printl('detail_operator'); ?></h5>
                                         <?php
@@ -75,14 +75,8 @@
                                             <span class="fw-detail-label"><?php Functions::printl('auto_assign'); ?></span>
                                             <span class="fw-detail-value">
                                                 <?php
-                                                    if ($view->getOperatorRecord()->isAutoAssigned())
-                                                    {
-                                                        ?><span class="fw-dot green"></span> <?php Functions::printl('yes'); ?><?php
-                                                    }
-                                                    else
-                                                    {
-                                                        ?><span class="fw-dot gray"></span> <?php Functions::printl('no'); ?><?php
-                                                    }
+                                                    WebSession::set('fw_operator_auto_assign', $view->getOperatorRecord());
+                                                    Functions::insertSection('../sections/operator_auto_assign.phtml');
                                                 ?>
                                             </span>
                                         </div>
@@ -106,7 +100,7 @@
                                 {
                                     ?>
                             <div class="col-xl-4 col-lg-6">
-                                <div class="fw-card fw-card-accent accent-cyan h-100">
+                                <div class="fw-card h-100">
                                     <div class="fw-card-header">
                                         <h5><i class="bi bi-person fw-icon-blue"></i> <?php Functions::printl('detail_entity'); ?></h5>
                                         <?php
@@ -180,7 +174,7 @@
                                 {
                                     ?>
                             <div class="col-xl-4 col-lg-6">
-                                <div class="fw-card fw-card-accent accent-red h-100">
+                                <div class="fw-card h-100">
                                     <div class="fw-card-header">
                                         <h5><i class="bi bi-shield-exclamation fw-icon-red"></i> <?php Functions::printl('detail_blacklist'); ?></h5>
                                         <?php
@@ -269,7 +263,7 @@
                                 {
                                     ?>
                             <div class="col-xl-4 col-lg-6">
-                                <div class="fw-card fw-card-accent accent-amber h-100">
+                                <div class="fw-card h-100">
                                     <div class="fw-card-header">
                                         <h5><i class="bi bi-file-earmark-text fw-icon-cyan"></i> <?php Functions::printl('detail_evidence'); ?></h5>
                                         <?php
@@ -362,11 +356,11 @@
                                 {
                                     ?>
                             <div class="col-xl-4 col-lg-6">
-                                <div class="fw-card fw-card-accent accent-purple h-100">
+                                <div class="fw-card h-100">
                                     <div class="fw-card-header">
                                         <h5><i class="bi bi-paperclip fw-icon-purple"></i> <?php Functions::printl('detail_file_attachment'); ?></h5>
                                         <?php
-                                            if ($attachment !== null)
+                                            if ($attachment !== null && $attachment->getEvidenceUuid() !== null)
                                             {
                                                 ?>
                                         <div class="fw-card-actions">
@@ -407,7 +401,18 @@
                                         </div>
                                         <div class="fw-detail-row">
                                             <span class="fw-detail-label"><?php Functions::printl('detail_evidence'); ?></span>
-                                            <span class="fw-detail-value"><a href="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $attachment->getEvidenceUuid()]); ?>" class="fw-detail-link"><span class="fw-uuid"><?php Functions::print(substr($attachment->getEvidenceUuid(), 0, 8)); ?></span></a></span>
+                                            <span class="fw-detail-value">
+                                                <?php
+                                                    if ($attachment->getEvidenceUuid() !== null)
+                                                    {
+                                                        ?><a href="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $attachment->getEvidenceUuid()]); ?>" class="fw-detail-link"><span class="fw-uuid"><?php Functions::print(substr($attachment->getEvidenceUuid(), 0, 8)); ?></span></a><?php
+                                                    }
+                                                    else
+                                                    {
+                                                        ?><span class="fw-uuid">—</span><?php
+                                                    }
+                                                ?>
+                                            </span>
                                         </div>
                                         <div class="fw-detail-row">
                                             <span class="fw-detail-label"><?php Functions::printl('created'); ?></span>
