@@ -18,6 +18,7 @@
     $filters = array_filter([
         ['print_filter_search', $view->getSearchQuery(), null],
         ['print_filter_category', $view->getCategoryFilter(), ['ACTIVE' => 'filter_active', 'LIFTED' => 'filter_lifted', 'EXPIRED' => 'filter_expired', 'PERMANENT' => 'filter_permanent']],
+        ['print_filter_type', $view->getTypeFilter()?->value, $view->getTypeFilter() === null ? null : [$view->getTypeFilter()->value => 'incident_' . strtolower($view->getTypeFilter()->value)]],
         ['print_filter_operator', $view->getOperatorId(), null],
         ['print_filter_entity', $view->getEntityId(), null],
         ['print_filter_sort', $view->getSortBy() !== null && $view->getSortBy() !== '' ? [$view->getSortBy(), $view->getApiOrder() === 'DESC' ? 'print_sort_desc' : 'print_sort_asc'] : null, null],
