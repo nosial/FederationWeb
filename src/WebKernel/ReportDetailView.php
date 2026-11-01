@@ -203,6 +203,7 @@
                 IncidentType::MALWARE, IncidentType::ILLEGAL_CONTENT => 'fw-badge-red',
                 IncidentType::PHISHING, IncidentType::SCAM => 'fw-badge-amber',
                 IncidentType::SERVICE_ABUSE => 'fw-badge-purple',
+                IncidentType::ADVERTISING, IncidentType::TRACKING => 'fw-badge-cyan',
                 IncidentType::SPAM => 'fw-badge-gray',
                 default => 'fw-badge-blue',
             };
