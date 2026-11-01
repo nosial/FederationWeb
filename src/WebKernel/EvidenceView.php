@@ -70,6 +70,8 @@
                 'not_confidential' => 'NOT_CONFIDENTIAL',
                 'classified' => 'CLASSIFIED',
                 'unclassified' => 'UNCLASSIFIED',
+                'automated' => 'AUTOMATED',
+                'not_automated' => 'NOT_AUTOMATED',
                 default => null,
             };
             $apiOrder = match (strtoupper($sortOrder ?? ''))
@@ -332,7 +334,11 @@
                         {
                             $tag = null;
                         }
-                        $this->federationClient->submitEvidence($entityIdentifier, $textContent, $note, $tag, $request->getParameter('evidence_confidential') === '1');
+
+                        [$contentType, $context] = Utilities::readContentInput($request->getParameter('evidence_content_type'), $_POST['evidence_context'] ?? null);
+                        // Evidence about a telephone number is likely to hold private messages (OFD "Telephone Entities")
+                        $confidential = $request->getParameter('evidence_confidential') === '1' || Utilities::isTelephoneEntity($this->federationClient, $entityIdentifier);
+                        $this->federationClient->submitEvidence($entityIdentifier, $textContent, $note, $tag, $confidential, contentType: $contentType, context: $context);
                         $redirectParameters['success'] = 'evidence_submitted';
                         break;
 
@@ -386,6 +392,20 @@
             else
             {
                 return $this->fetchAllPages(fn(int $page): array => $this->federationClient->listEvidence(page: $page, includeConfidential: ViewAuthorization::canManageRecords(), category: $apiCategory, by: $sortBy, order: $apiOrder));
+            }
+
+            if($apiCategory !== null)
+            {
+                $evidence = array_filter($evidence, static fn($evidenceRecord): bool => match($apiCategory)
+                {
+                    'CONFIDENTIAL' => $evidenceRecord->isConfidential(),
+                    'NOT_CONFIDENTIAL' => !$evidenceRecord->isConfidential(),
+                    'CLASSIFIED' => $evidenceRecord->getClassificationFlag() !== null,
+                    'UNCLASSIFIED' => $evidenceRecord->getClassificationFlag() === null,
+                    'AUTOMATED' => $evidenceRecord->isAutomated(),
+                    'NOT_AUTOMATED' => !$evidenceRecord->isAutomated(),
+                    default => true,
+                });
             }
 
             if($hasSearch && strlen($searchQuery) >= 2)
