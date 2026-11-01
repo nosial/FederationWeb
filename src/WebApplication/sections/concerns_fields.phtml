@@ -1,0 +1,39 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use FederationLib\Enums\IncidentType;
+    use FederationLib\Objects\ServerInformation;
+
+    /** @var ServerInformation|null $serverInformation */
+    $serverInformation = WebSession::get('server_information');
+    $availableConcerns = $serverInformation?->getConcerns();
+    if (empty($availableConcerns))
+    {
+        return;
+    }
+
+    /** @var IncidentType[] $selectedConcerns */
+    $selectedConcerns = WebSession::get('fw_concerns') ?? $serverInformation->getDefaultConcerns();
+?>
+                                <div class="fw-form-group">
+                                    <label class="fw-form-label"><?php Functions::printl('concerns_label'); ?></label>
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <?php
+                                            foreach ($availableConcerns as $concern)
+                                            {
+                                                ?>
+                                        <label class="fw-form-check">
+                                            <input type="checkbox" name="concerns[]" value="<?php Functions::print($concern->value); ?>"<?php
+                                                if (in_array($concern, $selectedConcerns, true))
+                                                {
+                                                    ?> checked<?php
+                                                }
+                                            ?>>
+                                            <span><?php Functions::printl('incident_' . strtolower($concern->value)); ?></span>
+                                        </label>
+                                                <?php
+                                            }
+                                        ?>
+                                    </div>
+                                    <div class="fw-form-help"><?php Functions::printl('concerns_help'); ?></div>
+                                </div>
