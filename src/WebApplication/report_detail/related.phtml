@@ -14,7 +14,7 @@
                     <section class="mt-3">
                         <div class="row g-4">
                             <div class="col-12 col-md-4">
-                                <div class="fw-card fw-card-accent accent-blue h-100">
+                                <div class="fw-card h-100">
                                     <div class="fw-card-header">
                                         <h5><i class="bi bi-person-badge fw-icon-blue"></i> <?php Functions::printl('submitting_operator'); ?></h5>
                                         <?php
@@ -59,14 +59,8 @@
                                                     <span class="fw-detail-label"><?php Functions::printl('auto_assign'); ?></span>
                                                     <span class="fw-detail-value">
                                                         <?php
-                                                            if ($reportDetailView->getSubmittingOperator()->isAutoAssigned())
-                                                            {
-                                                                ?><span class="fw-dot green"></span> <?php Functions::printl('yes'); ?><?php
-                                                            }
-                                                            else
-                                                            {
-                                                                ?><span class="fw-dot gray"></span> <?php Functions::printl('no'); ?><?php
-                                                            }
+                                                            WebSession::set('fw_operator_auto_assign', $reportDetailView->getSubmittingOperator());
+                                                            Functions::insertSection('../sections/operator_auto_assign.phtml');
                                                         ?>
                                                     </span>
                                                 </div>
@@ -121,7 +115,7 @@
                                 </div>
                             </div>
                             <div class="col-12 col-md-4">
-                                <div class="fw-card fw-card-accent accent-amber h-100">
+                                <div class="fw-card h-100">
                                     <div class="fw-card-header">
                                         <h5><i class="bi bi-person fw-icon-amber"></i> <?php Functions::printl('reporting_entity'); ?></h5>
                                         <?php
@@ -217,7 +211,7 @@
                                 </div>
                             </div>
                             <div class="col-12 col-md-4">
-                                <div class="fw-card fw-card-accent accent-purple h-100">
+                                <div class="fw-card h-100">
                                     <div class="fw-card-header">
                                         <h5><i class="bi bi-person-badge fw-icon-purple"></i> <?php Functions::printl('assigned_operator'); ?></h5>
                                         <?php
@@ -266,14 +260,8 @@
                                                     <span class="fw-detail-label"><?php Functions::printl('auto_assign'); ?></span>
                                                     <span class="fw-detail-value">
                                                         <?php
-                                                            if ($reportDetailView->getAssignedOperator()->isAutoAssigned())
-                                                            {
-                                                                ?><span class="fw-dot green"></span> <?php Functions::printl('yes'); ?><?php
-                                                            }
-                                                            else
-                                                            {
-                                                                ?><span class="fw-dot gray"></span> <?php Functions::printl('no'); ?><?php
-                                                            }
+                                                            WebSession::set('fw_operator_auto_assign', $reportDetailView->getAssignedOperator());
+                                                            Functions::insertSection('../sections/operator_auto_assign.phtml');
                                                         ?>
                                                     </span>
                                                 </div>
@@ -739,7 +727,7 @@
                                             {
                                                 $attachments = $reportDetailView->getEvidenceAttachments()[$evidence->getUuid()] ?? [];
                                                 ?>
-                                                <div class="fw-card fw-card-accent accent-cyan fw-record-detail-card">
+                                                <div class="fw-card fw-record-detail-card">
                                                     <div class="fw-card-header">
                                                         <h5>
                                                             <a href="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $evidence->getUuid()]); ?>" class="fw-detail-link"><i class="bi bi-file-earmark-text fw-icon-cyan"></i> <span class="fw-uuid"><?php Functions::print(substr($evidence->getUuid(), 0, 8)); ?></span></a>
@@ -980,7 +968,7 @@
                                             foreach ($reportDetailView->getEntityBlacklist() as $blacklist)
                                             {
                                                 ?>
-                                                <div class="fw-card fw-card-accent accent-red fw-record-detail-card">
+                                                <div class="fw-card fw-record-detail-card">
                                                     <div class="fw-card-header">
                                                         <h5>
                                                             <a href="<?php Functions::printRoute('blacklist_detail', ['blacklist_uuid' => $blacklist->getUuid()]); ?>" class="fw-detail-link"><i class="bi bi-shield-exclamation fw-icon-red"></i> <span class="fw-uuid"><?php Functions::print(substr($blacklist->getUuid(), 0, 8)); ?></span></a>
