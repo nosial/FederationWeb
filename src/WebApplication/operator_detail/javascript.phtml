@@ -22,6 +22,20 @@ function copyOperatorToken() {
 </script>
 <script>
 (function() {
+    // Management permissions inherit client permissions, so client permissions stay granted with them
+    var management = document.getElementById('permManagement');
+    var client = document.getElementById('permClient');
+    if (!management || !client) return;
+    function sync() {
+        if (management.checked) client.checked = true;
+        client.disabled = management.checked;
+    }
+    management.addEventListener('change', sync);
+    sync();
+})();
+</script>
+<script>
+(function() {
     var viewAll = document.getElementById('opRelatedViewAll');
     var tabs = document.getElementById('operatorRelatedTabs');
     if (!viewAll || !tabs) return;
