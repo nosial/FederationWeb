@@ -83,11 +83,18 @@ class ReportSubmissionView
             Utilities::redirect('reports', queryParameters: ['error' => 'report_illegal_content_not_allowed']);
         }
 
-        $evidence = array_map(static fn(array $evidenceInput): ContentInput => new ContentInput(
-            textContent: (string)$evidenceInput['content'],
-            tag: !empty($evidenceInput['tag']) ? (string)$evidenceInput['tag'] : null,
-            confidential: $incidentType === IncidentType::ILLEGAL_CONTENT
-        ), $evidenceRecords);
+        $confidential = $incidentType === IncidentType::ILLEGAL_CONTENT || Utilities::isTelephoneEntity($this->federationClient, $entityIdentifier);
+        $evidence = array_map(static function(array $evidenceInput) use ($confidential): ContentInput
+        {
+            [$contentType, $context] = Utilities::readContentInput($evidenceInput['content_type'] ?? null, $evidenceInput['context'] ?? null);
+            return new ContentInput(
+                textContent: (string)$evidenceInput['content'],
+                tag: !empty($evidenceInput['tag']) ? (string)$evidenceInput['tag'] : null,
+                confidential: $confidential,
+                contentType: $contentType,
+                context: $context
+            );
+        }, $evidenceRecords);
 
         try
         {
