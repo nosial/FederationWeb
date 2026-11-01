@@ -10,13 +10,16 @@
     $darkMode = Utilities::getDarkMode();
     $error = WebSession::getRequest()->getParameter('error');
     $retryPath = WebSession::getRequest()->getParameter('retry');
-    $canRetry = $error === 'server_unavailable'
+    $canRetry = in_array($error, ['server_unavailable', 'rate_limited'], true)
         && (bool)$cookieSession?->get('authenticated', false)
         && is_string($retryPath)
         && str_starts_with($retryPath, '/')
         && !str_starts_with($retryPath, '//')
         && !str_contains($retryPath, '\\')
         && $retryPath !== '/error';
+    // A session signed in to a server of an unsupported version is sent here from every page, so it can only
+    // leave by signing out
+    $canSignOut = $error === 'unsupported_version' && (bool)$cookieSession?->get('authenticated', false);
 
     PageMetadata::set(Utilities::localize('page_title'), Utilities::localize('error_subtitle'), indexable: false);
 ?>
@@ -45,8 +48,16 @@
                                 Functions::printl('server_unavailable');
                                 break;
 
+                            case 'rate_limited':
+                                Functions::printl('rate_limited');
+                                break;
+
                             case 'missing_configuration':
                                 Functions::printl('missing_configuration');
+                                break;
+
+                            case 'unsupported_version':
+                                Functions::printl('unsupported_version', ['version' => Utilities::SUPPORTED_API_MAJOR_VERSION]);
                                 break;
 
                             default:
@@ -65,6 +76,16 @@
                 </a>
                 <form method="POST" action="<?php Functions::printRoute('logout'); ?>" class="d-inline mb-0"><?php Functions::insertSection('sections/csrf_field.phtml'); ?>
                     <button type="submit" class="fw-btn fw-btn-secondary">
+                        <i class="bi bi-box-arrow-right"></i> <?php Functions::printl('back_to_login'); ?>
+                    </button>
+                </form>
+                <?php
+                    }
+                    elseif($canSignOut)
+                    {
+                        ?>
+                <form method="POST" action="<?php Functions::printRoute('logout'); ?>" class="d-inline mb-0"><?php Functions::insertSection('sections/csrf_field.phtml'); ?>
+                    <button type="submit" class="fw-btn fw-btn-primary">
                         <i class="bi bi-box-arrow-right"></i> <?php Functions::printl('back_to_login'); ?>
                     </button>
                 </form>
