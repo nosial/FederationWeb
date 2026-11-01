@@ -117,14 +117,13 @@
             }
             if($this->reportRecord !== null) { $operatorUuids[$this->reportRecord->getSubmittingOperator()] = true; if($this->reportRecord->getAssignedOperator() !== null) $operatorUuids[$this->reportRecord->getAssignedOperator()] = true; if($this->reportRecord->getReportingEntity() !== null) $entityUuids[$this->reportRecord->getReportingEntity()] = true; }
             foreach($this->reportEvidence ?? [] as $evidenceRecord) { $operatorUuids[$evidenceRecord->getOperatorUuid()] = true; $entityUuids[$evidenceRecord->getEntityUuid()] = true; }
-            $typeValue = $this->record->getType()->value;
             $this->expires = $this->record->getExpires();
             $now = time();
             $this->totalDuration = $this->record->getCreated() > 0 && $this->expires !== null ? $this->expires - $this->record->getCreated() : 0;
             $this->elapsed = $this->record->getCreated() > 0 && $this->expires !== null ? $now - $this->record->getCreated() : 0;
             $this->operatorNames = $this->loadOperatorNames(array_keys($operatorUuids));
             $this->entityAddresses = $this->loadEntityAddresses(array_keys($entityUuids));
-            $this->typeBadge = match($typeValue) { 'SPAM', 'SCAM' => 'fw-badge-amber', 'MALWARE', 'ILLEGAL_CONTENT' => 'fw-badge-red', 'PHISHING' => 'fw-badge-blue', 'SERVICE_ABUSE' => 'fw-badge-purple', default => 'fw-badge-gray' };
+            $this->typeBadge = Utilities::getIncidentBadge($this->record->getType());
             $this->remaining = $this->expires !== null ? $this->expires - $now : null;
             $this->expirationPercentage = $this->totalDuration > 0 ? min(100, max(0, ($this->elapsed / $this->totalDuration) * 100)) : 0;
         }
@@ -224,14 +223,7 @@
          */
         public function getIncidentTypeBadge(IncidentType $type): string
         {
-            return match($type->value)
-            {
-                'SPAM', 'SCAM' => 'fw-badge-amber',
-                'MALWARE', 'ILLEGAL_CONTENT' => 'fw-badge-red',
-                'PHISHING' => 'fw-badge-blue',
-                'SERVICE_ABUSE' => 'fw-badge-purple',
-                default => 'fw-badge-gray',
-            };
+            return Utilities::getIncidentBadge($type);
         }
         /** Returns the badge CSS class for an evidence classification flag.
          * @param ClassificationFlag|null $flag The classification flag, if any.
