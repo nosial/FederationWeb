@@ -79,6 +79,12 @@
                                     case 'anonymous_disabled':
                                         Functions::printl('error_anonymous_disabled');
                                         break;
+                                    case 'rate_limited':
+                                        Functions::printl('error_rate_limited');
+                                        break;
+                                    case 'unsupported_version':
+                                        Functions::printl('error_unsupported_version', ['version' => Utilities::SUPPORTED_API_MAJOR_VERSION]);
+                                        break;
                                     default:
                                         Functions::printl('error_generic');
                                         break;
