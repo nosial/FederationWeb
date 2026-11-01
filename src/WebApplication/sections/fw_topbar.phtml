@@ -274,6 +274,10 @@
                                 </div>
                                 <div id="reportEvidenceList">
                                     <div class="fw-report-evidence-entry" data-report-evidence>
+                                        <?php
+                                            WebSession::set('fw_content_input', ['type_name' => 'evidence[0][content_type]', 'context_name' => 'evidence[0][context]', 'evidence_field' => true]);
+                                            Functions::insertSection('content_input_fields.phtml');
+                                        ?>
                                         <div class="fw-form-group">
                                             <label class="fw-form-label"><?php Functions::printl('new_report_content_label'); ?></label>
                                             <textarea name="evidence[0][content]" data-evidence-field="content" class="fw-form-control fw-form-textarea fw-textarea-code" rows="4" placeholder="<?php Functions::printl('new_report_content_placeholder'); ?>" required></textarea>
