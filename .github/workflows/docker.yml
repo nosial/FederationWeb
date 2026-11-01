@@ -12,10 +12,15 @@ on:
     branches:
       - master
       - dev
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+
+concurrency:
+  group: docker-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -36,11 +41,29 @@ jobs:
         uses: docker/setup-buildx-action@v4
 
       - name: Log in to Container Registry
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Stable releases refresh the aliases consumed by downstream images.
+      # Prereleases and dev builds retain their separate tags.
+      - name: Select image release channel
+        id: channel
+        shell: bash
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          if [[ "$REF_TYPE" == branch && "$REF_NAME" == "$DEFAULT_BRANCH" ]] ||
+             [[ "$REF_TYPE" == tag && "$REF_NAME" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "stable=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "stable=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Extract metadata
         id: meta
@@ -53,7 +76,7 @@ jobs:
             type=sha,enable=false
             type=ref,event=branch
             type=semver,pattern={{version}}
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+            type=raw,value=latest,enable=${{ steps.channel.outputs.stable == 'true' }}
           labels: |
             org.opencontainers.image.title=FederationWeb
             org.opencontainers.image.description=FederationLib Administration Web UI
@@ -66,13 +89,14 @@ jobs:
           context: .
           file: Dockerfile
           platforms: linux/amd64
+          pull: true
           # Pull requests only check that the image builds; they get no image tags and pull requests
           # from forks cannot write to the registry
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=federationweb
+          cache-to: type=gha,mode=max,scope=federationweb
 
       - name: Generate artifact attestation
         if: github.event_name != 'pull_request'
