@@ -89,10 +89,6 @@
   }
 }
 
-.fw-card-accent {
-  border-left: 3px solid var(--fw-accent, transparent);
-}
-
 .fw-card-body--flush { padding: 0; }
 
 .fw-card-body-list {
@@ -108,13 +104,6 @@
   .fw-card-header { padding: 6px 10px; }
   .fw-card-body { padding: 8px 10px; }
 }
-
-.accent-purple { --fw-accent: #{$accent-purple}; }
-.accent-blue { --fw-accent: #{$accent-blue}; }
-.accent-cyan { --fw-accent: #{$accent-cyan}; }
-.accent-green { --fw-accent: #{$accent-green}; }
-.accent-amber { --fw-accent: #{$accent-amber}; }
-.accent-red { --fw-accent: #{$accent-red}; }
 
 // === Stat cards ===
 .fw-stat-card {
