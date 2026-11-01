@@ -1,5 +1,6 @@
 <?php
     use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
     use WebKernel\ViewAuthorization;
 ?>
 <?php
@@ -24,6 +25,10 @@
                                     <div class="fw-autocomplete-dropdown" id="entityDropdown"></div>
                                 </div>
                             </div>
+                            <?php
+                                WebSession::set('fw_content_input', ['type_name' => 'evidence_content_type', 'context_name' => 'evidence_context']);
+                                Functions::insertSection('../sections/content_input_fields.phtml');
+                            ?>
                             <div class="fw-form-group">
                                 <label class="fw-form-label"><?php Functions::printl('modal_submit_text_label'); ?></label>
                                 <textarea class="fw-form-control" name="evidence_text" rows="4" placeholder="<?php Functions::printl('modal_submit_text_label'); ?>" autocomplete="off"></textarea>
