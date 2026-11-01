@@ -229,12 +229,14 @@
 
 
         /**
-         * Keeps a newly generated access token in the session until the operator page shows it.
+         * Keeps a newly generated access token in the session until the operator page shows it. The server discloses
+         * an access token only in the response that creates the operator or generates the token, so it is never
+         * shown again once the page has shown it.
          *
          * @param string $operatorUuid The operator the token belongs to.
          * @param string $token The generated access token.
          */
-        private function storeNewToken(string $operatorUuid, string $token): void
+        public static function storeNewToken(string $operatorUuid, string $token): void
         {
             $cookieSession = WebSession::get('cookie_session');
             if($cookieSession === null)
@@ -285,23 +287,28 @@
                         $redirect['success'] = 'operator_updated';
                         break;
                     case 'generate_token':
-                        // The token is shown once from the session, never placed in the redirect URL,
-                        // where it would be kept in browser history and access logs.
-                        $this->storeNewToken($this->operator->getUuid(), $this->federationClient->generateOperatorAccessToken($this->operator->getUuid()));
+                        self::storeNewToken($this->operator->getUuid(), $this->federationClient->generateOperatorAccessToken($this->operator->getUuid()));
                         $redirect['success'] = 'api_key_refreshed';
                         break;
                     case 'set_permissions':
-                        $this->federationClient->setOperatorPermissions($this->operator->getUuid(), $request->getParameter('perm_operator') === '1');
-                        $this->federationClient->setClientPermissions($this->operator->getUuid(), $request->getParameter('perm_client') === '1');
-                        $this->federationClient->setManagementPermissions($this->operator->getUuid(), $request->getParameter('perm_management') === '1');
+                        $management = $request->getParameter('perm_management') === '1';
+                        $this->federationClient->updateOperatorPermissions($this->operator->getUuid(),
+                            client: $management || $request->getParameter('perm_client') === '1',
+                            management: $management,
+                            operator: $request->getParameter('perm_operator') === '1'
+                        );
                         $redirect['success'] = 'permission_updated';
+                        break;
+                    case 'update_configuration':
+                        $this->federationClient->updateOperatorConfiguration($this->operator->getUuid(),
+                            autoAssignReports: $request->getParameter('config_auto_assign_reports') === '1',
+                            autoAssignAutomatedReports: $request->getParameter('config_auto_assign_automated_reports') === '1',
+                            isBot: $request->getParameter('config_is_bot') === '1'
+                        );
+                        $redirect['success'] = 'configuration_updated';
                         break;
                     case 'disable_operator': $this->federationClient->disableOperator($this->operator->getUuid()); $redirect['success'] = 'operator_disabled'; break;
                     case 'enable_operator': $this->federationClient->enableOperator($this->operator->getUuid()); $redirect['success'] = 'operator_enabled'; break;
-                    case 'toggle_auto_assign':
-                        $this->federationClient->setAutoAssign($this->operator->getUuid(), !$this->operator->isAutoAssigned());
-                        $redirect['success'] = $this->operator->isAutoAssigned() ? 'auto_assign_disabled' : 'auto_assign_enabled';
-                        break;
                     case 'delete_operator':
                         $this->federationClient->deleteOperator($this->operator->getUuid());
                         Utilities::redirect('operators', queryParameters: ['success' => 'operator_deleted']);
@@ -313,7 +320,7 @@
                 $redirect['error'] = match ($action)
                 {
                     'edit_operator' => 'operator_rename_failed', 'generate_token' => 'api_key_refresh_failed', 'set_permissions' => 'permission_update_failed',
-                    'disable_operator' => 'operator_disable_failed', 'enable_operator' => 'operator_enable_failed', 'toggle_auto_assign' => 'auto_assign_update_failed',
+                    'disable_operator' => 'operator_disable_failed', 'enable_operator' => 'operator_enable_failed', 'update_configuration' => 'configuration_update_failed',
                     'delete_operator' => 'operator_delete_failed', default => $action . '_failed',
                 };
                 $redirect['error_message'] = $exception->getMessage();
