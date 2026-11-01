@@ -126,6 +126,18 @@
                                                 ?>selected<?php
                                             }
                                         ?>><?php Functions::printl('filter_unclassified'); ?></option>
+                                        <option value="automated" <?php
+                                            if ($view->getCategoryFilter() === 'automated')
+                                            {
+                                                ?>selected<?php
+                                            }
+                                        ?>><?php Functions::printl('filter_automated'); ?></option>
+                                        <option value="not_automated" <?php
+                                            if ($view->getCategoryFilter() === 'not_automated')
+                                            {
+                                                ?>selected<?php
+                                            }
+                                        ?>><?php Functions::printl('filter_not_automated'); ?></option>
                                     </select>
                                 </div>
                                 <div class="fw-filter-actions">
@@ -147,10 +159,11 @@
                                 <label><input type="checkbox" data-col="3" checked> <?php Functions::printl('detail_report'); ?></label>
                                 <label><input type="checkbox" data-col="4" checked> <?php Functions::printl('classification'); ?></label>
                                 <label><input type="checkbox" data-col="5" checked> <?php Functions::printl('confidential'); ?></label>
-                                <label><input type="checkbox" data-col="6" checked> <?php Functions::printl('tag'); ?></label>
-                                <label><input type="checkbox" data-col="7" checked> <?php Functions::printl('created'); ?></label>
-                                <label><input type="checkbox" data-col="8" checked> <?php Functions::printl('updated'); ?></label>
-                                <label><input type="checkbox" data-col="9" checked> <?php Functions::printl('actions'); ?></label>
+                                <label><input type="checkbox" data-col="6" checked> <?php Functions::printl('automated'); ?></label>
+                                <label><input type="checkbox" data-col="7" checked> <?php Functions::printl('tag'); ?></label>
+                                <label><input type="checkbox" data-col="8" checked> <?php Functions::printl('created'); ?></label>
+                                <label><input type="checkbox" data-col="9" checked> <?php Functions::printl('updated'); ?></label>
+                                <label><input type="checkbox" data-col="10" checked> <?php Functions::printl('actions'); ?></label>
                             </div>
                         </form>
                         <div class="fw-card h-100">
