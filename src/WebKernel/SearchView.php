@@ -291,7 +291,10 @@
                 RecordType::BLACKLIST => Functions::getRouteUrl('blacklist_detail', pathVariables: ['blacklist_uuid' => $record->getUuid()]),
                 RecordType::OPERATOR => Functions::getRouteUrl('operator_detail', pathVariables: ['operator_id' => $record->getUuid()]),
                 RecordType::AUDIT_LOG => Functions::getRouteUrl('audit_log_detail', pathVariables: ['audit_log_uuid' => $record->getUuid()]),
-                RecordType::ATTACHMENT => Functions::getRouteUrl('evidence_detail', pathVariables: ['evidence_uuid' => $record->getEvidenceUuid()]),
+                // An attachment retained without its evidence has no page to show it on
+                RecordType::ATTACHMENT => $record->getEvidenceUuid() === null
+                    ? Functions::getRouteUrl('search', queryParams: ['q' => $record->getUuid()])
+                    : Functions::getRouteUrl('evidence_detail', pathVariables: ['evidence_uuid' => $record->getEvidenceUuid()]),
             };
         }
 
@@ -401,7 +404,8 @@
                 IncidentType::PHISHING => 'fw-badge-blue',
                 IncidentType::SCAM, IncidentType::SPAM => 'fw-badge-amber',
                 IncidentType::SERVICE_ABUSE => 'fw-badge-purple',
-                IncidentType::OTHER => 'fw-badge-gray',
+                IncidentType::ADVERTISING, IncidentType::TRACKING => 'fw-badge-cyan',
+                default => 'fw-badge-gray',
             };
         }
 
@@ -536,7 +540,7 @@
                     $uuidPrefix($record->getUuid()) . ' · ' . $formatDate($record->getTimestamp()),
                 ],
                 RecordType::ATTACHMENT => [
-                    Functions::getRouteUrl('evidence_detail', pathVariables: ['evidence_uuid' => $record->getEvidenceUuid() ?? '']),
+                    $this->getDetailUrl(RecordType::ATTACHMENT, $record),
                     $record->getFileName() ?? $this->localize('unknown_file'),
                     $record->getFileMime() ?? $this->localize('unknown_type'),
                 ],
