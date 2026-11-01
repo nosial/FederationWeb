@@ -70,7 +70,8 @@
             $this->type = $this->record?->getType();
             $this->category = $this->record?->getType()->getCategory();
             $this->hasRelatedCards = $this->record !== null && ($this->record->getOperatorUuid() !== null || $this->record->getEntityUuid() !== null
-                || $this->record->getBlacklistUuid() !== null || $this->record->getEvidenceUuid() !== null || $this->record->getFileAttachmentUuid() !== null);
+                || $this->record->getBlacklistUuid() !== null || $this->record->getEvidenceUuid() !== null || $this->record->getFileAttachmentUuid() !== null
+                || $this->record->getReportUuid() !== null);
         }
 
         /**
