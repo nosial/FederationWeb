@@ -5,6 +5,13 @@ assembly:
   name: FederationWeb
   package: net.nosial.federationweb
   version: 1.0.4
+  url: 'https://github.com/nosial/FederationWeb'
+  license: 'MIT'
+  description: 'Administration Web UI for FederationLib'
+  author: 'Netkas <netkas@nosial.net>'
+  organization: 'Nosial'
+  product: 'Federation'
+  copyright: 'Copyright (c) 2022-2026 Nosial'
 dependencies:
   net.nosial.loglib2: nosial/loglib2@github
   net.nosial.dynamicalweb: nosial/dynamicalweb@github
