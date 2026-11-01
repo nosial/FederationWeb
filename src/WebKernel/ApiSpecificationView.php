@@ -201,6 +201,7 @@ class ApiSpecificationView
             }
             return ['label' => $name, 'type' => 'ref', 'ref' => $schema['$ref']];
         }
+        $type = self::getPrimaryType($schema);
         if ($type !== null) {
             if ($type === 'array' && isset($schema['items']) && is_array($schema['items'])) {
                 $itemType = self::getSchemaType($schema['items'], $spec);
