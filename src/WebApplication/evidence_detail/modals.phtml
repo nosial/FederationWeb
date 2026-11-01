@@ -8,7 +8,7 @@
     $view = WebSession::get('evidence_detail_view');
 ?>
 <?php
-    if (ViewAuthorization::canManageRecords())
+    if ($view->canToggleConfidential())
     {
         $isConfidential = $view->getEvidence()->isConfidential();
         ?>
@@ -99,7 +99,14 @@
                             </div>
                         </div>
                     </div>
+        <?php
+    }
+?>
 
+<?php
+    if (ViewAuthorization::canUploadAttachment($view->getEvidence()))
+    {
+        ?>
                     <!-- Upload Attachment Modal -->
                     <div class="modal fade" id="modalUploadAttachment" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
@@ -112,10 +119,32 @@
                                     <input type="hidden" name="action" value="upload_attachment">
                                     <div class="modal-body">
                                         <p class="fw-form-help mb-2"><?php Functions::printl('upload_attachment_modal_desc'); ?></p>
+                                        <?php
+                                            // A server that publishes allow_url_uploads retrieves a file from a URL itself
+                                            if ($view->isUrlUploadAllowed())
+                                            {
+                                                ?>
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('upload_attachment_modal_file_label'); ?></label>
+                                            <input type="file" class="fw-form-control" name="attachment_file">
+                                        </div>
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('upload_attachment_modal_url_label'); ?></label>
+                                            <input type="url" class="fw-form-control" name="attachment_url" placeholder="https://" autocomplete="off">
+                                            <div class="fw-form-help"><?php Functions::printl('upload_attachment_modal_url_help'); ?></div>
+                                        </div>
+                                                <?php
+                                            }
+                                            else
+                                            {
+                                                ?>
                                         <div class="fw-form-group">
                                             <label class="fw-form-label"><?php Functions::printl('upload_attachment_modal_file_label'); ?></label>
                                             <input type="file" class="fw-form-control" name="attachment_file" required>
                                         </div>
+                                                <?php
+                                            }
+                                        ?>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
