@@ -18,6 +18,12 @@
                         </div>
                         <div class="fw-record-hero-status">
                             <a href="<?php Functions::printRoute('entity_detail_print', ['entity_id' => $view->getEntity()->getUuid()]); ?>" class="fw-btn fw-btn-secondary fw-btn-sm"><i class="bi bi-printer"></i> <?php Functions::printl('print_page'); ?></a>
+                            <?php
+                                if ($view->getEntity()->isTelephone())
+                                {
+                                    ?><span class="fw-badge fw-badge-blue"><i class="bi bi-telephone"></i> <?php Functions::printl('telephone_entity'); ?></span><?php
+                                }
+                            ?>
                             <span class="fw-badge <?php Functions::print($view->getEntity()->getReputation() < 0 ? 'fw-badge-red' : ($view->getEntity()->getReputation() > 0 ? 'fw-badge-green' : 'fw-badge-gray')); ?>"><?php Functions::print($view->getEntity()->getReputation()); ?></span>
                         </div>
                     </div>
@@ -25,7 +31,7 @@
                     <section class="mb-4">
                         <div class="row g-4">
                             <div class="col-xl-9 col-lg-8">
-                                <div class="fw-card fw-card-accent accent-amber h-100">
+                                <div class="fw-card h-100">
                                     <div class="fw-card-header">
                                         <h5><i class="bi bi-person fw-icon-amber"></i> <?php Functions::printl('detail_heading'); ?></h5>
                                     </div>
@@ -309,6 +315,20 @@
                                     <span class="fw-badge fw-badge-purple"><?php Functions::print(str_replace('_', ' ', $queryResult->getSuggestedAction()?->value ?? '—')); ?></span>
                                 </div>
                             </div>
+                            <?php
+                                // The suggested action considers the blacklist records of the assessed concerns only
+                                if (!empty(WebSession::get('server_information')?->getConcerns()))
+                                {
+                                    WebSession::set('fw_concerns', $view->getConcerns());
+                                    ?>
+                            <form method="GET" action="<?php Functions::printRoute('entity_query'); ?>" class="fw-card-body pb-0">
+                                <input type="hidden" name="identifier" value="<?php Functions::print($view->getEntity()->getUuid()); ?>">
+                                <?php Functions::insertSection('../sections/concerns_fields.phtml'); ?>
+                                <button type="submit" class="fw-btn fw-btn-secondary fw-btn-sm mb-3"><i class="bi bi-arrow-repeat"></i> <?php Functions::printl('query_entity_apply_concerns'); ?></button>
+                            </form>
+                                    <?php
+                                }
+                            ?>
                             <div class="fw-tabs" role="tablist">
                                 <button class="fw-tab active" data-bs-toggle="tab" data-bs-target="#tabEntityQueryRelated" type="button" role="tab">
                                     <i class="bi bi-diagram-3"></i>
@@ -382,7 +402,7 @@
                                                     <tr class="fw-row-link" data-href="<?php Functions::printRoute('blacklist_detail', ['blacklist_uuid' => $blacklist->getUuid()]); ?>">
                                                         <td class="fw-mono"><a href="<?php Functions::printRoute('blacklist_detail', ['blacklist_uuid' => $blacklist->getUuid()]); ?>" class="fw-detail-link"><span class="fw-uuid"><?php Functions::print(substr($blacklist->getUuid(), 0, 8)); ?></span></a><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($blacklist->getUuid()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></td>
                                                         <td><a href="<?php Functions::printRoute('entity_detail', ['entity_id' => $blacklist->getEntityUuid()]); ?>" class="fw-detail-link"><?php Functions::print($view->getQueryEntityAddress($blacklist->getEntityUuid())); ?></a></td>
-                                                        <td><?php $badgeClass = match ($blacklist->getType()->value) { 'SPAM', 'SCAM' => 'fw-badge-amber', 'MALWARE', 'ILLEGAL_CONTENT' => 'fw-badge-red', 'PHISHING' => 'fw-badge-blue', 'SERVICE_ABUSE' => 'fw-badge-purple', default => 'fw-badge-gray' }; ?><span class="fw-badge <?php Functions::print($badgeClass); ?>"><?php Functions::print($blacklist->getType()->value); ?></span></td>
+                                                        <td><span class="fw-badge <?php Functions::print(Utilities::getIncidentBadge($blacklist->getType())); ?>"><?php Functions::print($blacklist->getType()->value); ?></span></td>
                                                         <td><?php $reportUuid = $blacklist->getReportUuid(); ?><?php if($reportUuid !== null) { ?><a href="<?php Functions::printRoute('report_detail', ['report_uuid' => $reportUuid]); ?>" class="fw-detail-link"><span class="fw-uuid"><?php Functions::print(substr($reportUuid, 0, 8)); ?></span></a><?php } else { ?><span class="fw-uuid">—</span><?php } ?></td>
                                                         <td class="fw-mono"><?php Functions::print($blacklist->getExpires() === null ? '—' : $view->formatDate($blacklist->getExpires(), 'Y-m-d')); ?></td>
                                                         <td class="fw-mono"><?php Functions::print($view->formatDate($blacklist->getCreated(), 'Y-m-d')); ?></td>

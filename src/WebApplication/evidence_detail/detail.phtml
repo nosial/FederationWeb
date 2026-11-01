@@ -28,13 +28,18 @@
                                         {
                                             ?><span class="fw-badge fw-badge-amber"><?php Functions::printl('detail_confidential'); ?></span><?php
                                         }
+
+                                        if ($view->getEvidence()->isAutomated())
+                                        {
+                                            ?><span class="fw-badge fw-badge-cyan"><i class="bi bi-robot"></i> <?php Functions::printl('automated'); ?></span><?php
+                                        }
                                     ?>
                                 </div>
                             </div>
                             <section>
                                 <div class="row g-4">
                                     <div class="col-xl-8 col-lg-7">
-                                        <div class="fw-card fw-card-accent accent-cyan mb-4">
+                                        <div class="fw-card mb-4">
                                             <div class="fw-card-header">
                                                 <h5><i class="bi bi-file-earmark-text fw-icon-cyan"></i> <?php Functions::printl('detail_heading'); ?></h5>
                                             </div>
@@ -89,6 +94,21 @@
                                                     </span>
                                                 </div>
                                                 <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('automated'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getEvidence()->isAutomated())
+                                                            {
+                                                                ?><span class="fw-dot amber"></span> <?php Functions::printl('yes'); ?><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-dot gray"></span> <?php Functions::printl('no'); ?><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
                                                     <span class="fw-detail-label"><?php Functions::printl('classification'); ?></span>
                                                     <span class="fw-detail-value">
                                                         <?php
@@ -137,6 +157,10 @@
                                                         ?>
                                                     </span>
                                                 </div>
+                                                <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('content_type'); ?></span>
+                                                    <span class="fw-detail-value"><span class="fw-badge fw-badge-gray"><?php Functions::printl('content_type_' . strtolower($view->getEvidence()->getContentType()->value)); ?></span></span>
+                                                </div>
                                                 <div class="fw-detail-row fw-detail-row-full">
                                                     <span class="fw-detail-label"><?php Functions::printl('detail_text_content'); ?></span>
                                                     <span class="fw-detail-value">
@@ -152,6 +176,44 @@
                                                         ?>
                                                     </span>
                                                 </div>
+                                                <?php
+                                                    $context = $view->getEvidence()->getContext();
+                                                    if (!empty($context))
+                                                    {
+                                                        ?>
+                                                <div class="fw-detail-row fw-detail-row-full">
+                                                    <span class="fw-detail-label"><?php Functions::printl('detail_context'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <div class="fw-metadata-list">
+                                                            <?php
+                                                                // The keys are defined per content type, a key this application does not know is
+                                                                // shown as it is
+                                                                $knownContextKeys = $view->getEvidence()->getContentType()->getContextKeys();
+                                                                foreach ($context as $contextKey => $contextValue)
+                                                                {
+                                                                    ?>
+                                                            <div class="fw-metadata-item">
+                                                                <span class="fw-metadata-key"><?php
+                                                                    if (in_array($contextKey, $knownContextKeys, true))
+                                                                    {
+                                                                        Functions::printl('context_' . $contextKey);
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        Functions::print((string)$contextKey);
+                                                                    }
+                                                                ?></span>
+                                                                <span class="fw-metadata-value"><?php Functions::print(is_scalar($contextValue) ? (string)$contextValue : json_encode($contextValue)); ?></span>
+                                                            </div>
+                                                                    <?php
+                                                                }
+                                                            ?>
+                                                        </div>
+                                                    </span>
+                                                </div>
+                                                        <?php
+                                                    }
+                                                ?>
                                                 <div class="fw-detail-row fw-detail-row-full">
                                                     <span class="fw-detail-label"><?php Functions::printl('detail_note'); ?></span>
                                                     <span class="fw-detail-value">
@@ -239,7 +301,7 @@
                                                 ?></h5>
                                                 <div class="fw-card-actions">
                                                     <?php
-                                                        if (ViewAuthorization::canContribute())
+                                                        if (ViewAuthorization::canUploadAttachment($view->getEvidence()))
                                                         {
                                                             ?><button type="button" class="fw-btn fw-btn-primary fw-btn-sm" data-bs-toggle="modal" data-bs-target="#modalUploadAttachment"><i class="bi bi-upload"></i> <?php Functions::printl('upload_attachment'); ?></button><?php
                                                         }
@@ -331,6 +393,21 @@
                                                     </span>
                                                 </div>
                                                 <div class="fw-detail-row">
+                                                    <span class="fw-detail-label"><?php Functions::printl('automated'); ?></span>
+                                                    <span class="fw-detail-value">
+                                                        <?php
+                                                            if ($view->getEvidence()->isAutomated())
+                                                            {
+                                                                ?><span class="fw-dot amber"></span> <?php Functions::printl('yes'); ?><?php
+                                                            }
+                                                            else
+                                                            {
+                                                                ?><span class="fw-dot gray"></span> <?php Functions::printl('no'); ?><?php
+                                                            }
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                                <div class="fw-detail-row">
                                                     <span class="fw-detail-label"><?php Functions::printl('classification'); ?></span>
                                                     <span class="fw-detail-value">
                                                         <?php
@@ -396,7 +473,7 @@
                                             <div class="fw-card-body">
                                                 <div class="fw-detail-actions">
                                                     <?php
-                                                        if (ViewAuthorization::canManageRecords())
+                                                        if ($view->canToggleConfidential())
                                                         {
                                                             ?>
                                                     <button type="button" class="fw-btn fw-btn-secondary fw-btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalToggleConfidential"><i class="bi bi-shield-<?php Functions::print($view->getEvidence()->isConfidential() ? 'exclamation' : 'check'); ?>"></i> <?php Functions::printl($view->getEvidence()->isConfidential() ? 'remove_confidential' : 'mark_confidential'); ?></button>
@@ -410,7 +487,7 @@
                                                         {
                                                             ?><button type="button" class="fw-btn fw-btn-secondary fw-btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalAddToReport"><i class="bi bi-link-45deg"></i> <?php Functions::printl('add_to_report'); ?></button><?php
                                                         }
-                                                        if (ViewAuthorization::canContribute())
+                                                        if (ViewAuthorization::canUploadAttachment($view->getEvidence()))
                                                         {
                                                             ?><button type="button" class="fw-btn fw-btn-secondary fw-btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalUploadAttachment"><i class="bi bi-upload"></i> <?php Functions::printl('upload_attachment'); ?></button><?php
                                                         }
