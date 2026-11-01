@@ -201,6 +201,45 @@ global:
   operator_unavailable: Detalles del operador no disponibles
   relationship: Relación
   submitting_operator: Operador remitente
+  auto_assign_reports_only: 'Solo informes'
+  auto_assign_automated_only: 'Solo informes automatizados'
+  bot: 'Bot'
+  concerns_label: 'Preocupaciones'
+  concerns_help: 'Solo los tipos de incidente seleccionados afectan a la acción sugerida. Déjelos sin seleccionar para usar los valores predeterminados del servidor.'
+  content_type: 'Tipo de contenido'
+  content_type_text: 'Texto'
+  content_type_email: 'Correo electrónico'
+  content_type_sms: 'SMS'
+  content_type_web_page: 'Página web'
+  content_type_hostname: 'Nombre de host'
+  content_type_url: 'URL'
+  context_subject: 'Asunto'
+  context_subject_placeholder: 'p. ej. Su cuenta ha sido suspendida'
+  context_sender: 'Remitente'
+  context_sender_placeholder: 'p. ej. support@example.com'
+  context_reply_to: 'Responder a'
+  context_reply_to_placeholder: 'p. ej. reply@example.com'
+  context_region: 'Región de recepción'
+  context_region_placeholder: 'Código de país ISO, p. ej. US'
+  context_sender_id: 'ID del remitente'
+  context_sender_id_placeholder: 'Código corto o remitente alfanumérico, p. ej. BANK'
+  context_url: 'URL'
+  context_url_placeholder: 'https://example.com/page'
+  context_final_url: 'URL final (tras redirecciones)'
+  context_final_url_placeholder: 'https://example.com/landing'
+  context_title: 'Título de la página'
+  context_title_placeholder: 'Título de la página'
+  context_description: 'Descripción de la página'
+  context_description_placeholder: 'Descripción de la página'
+  context_language: 'Idioma de la página'
+  context_language_placeholder: 'p. ej. es'
+  context_query_type: 'Tipo de consulta DNS'
+  context_query_type_placeholder: 'p. ej. A o AAAA'
+  detail_context: 'Contexto'
+  incident_advertising: 'Publicidad'
+  incident_tracking: 'Rastreo'
+  optional_label: '(opcional)'
+  print_filter_type: 'Tipo de incidente'
 fw_topbar:
   overview: Resumen
   page_operators: Operadores
@@ -271,6 +310,17 @@ dashboard:
   spec_load_failed: Error al cargar la especificación de la API
   endpoint_count: '{count} puntos de enlace'
   endpoint_count_single: 1 punto de enlace
+  public_telephone_entities: 'Entidades telefónicas'
+  allow_url_uploads: 'Subidas por URL'
+  collects_public_scan_content: 'Almacena contenido escaneado público'
+  scanning_capabilities: 'Escaneo de contenido'
+  scan_content_types: 'Tipos de contenido'
+  scan_concerns: 'Preocupaciones'
+  scan_default_concerns: 'Preocupaciones predeterminadas'
+  scan_files: 'Archivos escaneados'
+  scan_files_limits: 'Hasta {files} archivos de {size} cada uno'
+  scan_files_ignored: 'Ignorados'
+  not_published: 'No publicado'
 404:
   page_title: 404 No encontrado
   error_code: Página no encontrada
@@ -298,6 +348,8 @@ authenticate:
   error_server_unreachable: No se pudo conectar al servidor especificado. Compruebe la URL del host.
   server_name_fallback: Servidor de la federación
   error_anonymous_disabled: No se permite el acceso anónimo. Proporcione un token de acceso.
+  error_rate_limited: 'Se enviaron demasiadas solicitudes a este servidor. Espere un momento e inténtelo de nuevo.'
+  error_unsupported_version: 'Este servidor implementa una versión no compatible de la interfaz Open Federated Database. FederationWeb requiere la versión {version}.'
 operators:
   meta_description: 'Los operadores registrados en {server_name}, que envían y gestionan sus registros.'
   meta_description_record: 'Operador {name} en {server_name}, registrado el {created}.'
@@ -393,6 +445,17 @@ operators:
   failed_reports: Error al cargar registros de informes para este operador.
   failed_evidence: Error al cargar registros de evidencia para este operador.
   failed_blacklist: Error al cargar registros de lista negra para este operador.
+  auto_assign_reports: 'Asignar informes automáticamente'
+  auto_assign_automated_reports: 'Asignar informes automatizados automáticamente'
+  edit_configuration: 'Editar configuración'
+  modal_configuration_title: 'Configuración del operador'
+  modal_configuration_auto_assign_reports_desc: 'Los informes enviados por operadores pueden asignarse automáticamente a este operador'
+  modal_configuration_auto_assign_automated_reports_desc: 'Los informes creados por el servidor o por bots pueden asignarse automáticamente a este operador'
+  modal_configuration_bot_desc: 'Las pruebas e informes enviados por este operador son automatizados, y sus pruebas se crean como confidenciales'
+  modal_configuration_save: 'Guardar configuración'
+  configuration_updated: 'Configuración actualizada correctamente'
+  configuration_update_failed: 'No se pudo actualizar la configuración'
+  modal_token_help: 'El servidor muestra un token de acceso solo una vez, cuando se genera. Generar un token nuevo reemplaza el actual.'
 entities:
   meta_description: 'Las entidades conocidas por {server_name}, con su reputación, relaciones y registros relacionados.'
   meta_description_record: 'Entidad {address} en {server_name}, conocida desde el {created}, con sus informes, evidencias y registros de lista negra.'
@@ -521,6 +584,10 @@ entities:
   primary_operator_none: Ningún operador ha interactuado con esta entidad todavía.
   primary_operator_missing: No se pudo cargar el registro del operador.
   primary_operator_records: Registros vinculados
+  modal_blacklist_report_help: 'El informe que respalda la decisión, que puede referirse a otra entidad (p. ej. el dominio que anunciaba una cuenta denunciada).'
+  modal_evidence_telephone_confidential: 'Las pruebas sobre un número de teléfono siempre se envían como confidenciales, ya que pueden contener mensajes privados.'
+  query_entity_apply_concerns: 'Aplicar preocupaciones'
+  telephone_entity: 'Número de teléfono'
 reports:
   meta_description: 'Informes de incidentes enviados a {server_name} por sus operadores.'
   meta_description_record: 'Informe de {incident_type} enviado a {server_name} el {created}. Estado: {status}.'
@@ -661,6 +728,10 @@ evidence:
   owning_entity: Entidad propietaria
   parent_report: Informe principal
   report_unavailable: Detalles del informe no disponibles
+  filter_automated: 'Automatizadas'
+  filter_not_automated: 'No automatizadas'
+  upload_attachment_modal_url_label: 'O recuperar desde una URL'
+  upload_attachment_modal_url_help: 'El servidor recupera el archivo desde esta URL. Deje el archivo vacío para usarla.'
 blacklist:
   meta_description: 'Las entidades en la lista negra de {server_name}, con el tipo de incidente y la expiración de cada registro.'
   meta_description_record: '{entity} incluido en la lista negra de {server_name} por {incident_type} el {created}. Estado: {status}.'
@@ -706,6 +777,7 @@ blacklist:
   size: Tamaño
   no_linked_report: No hay informe vinculado a este registro
   report_unavailable: Detalles del informe no disponibles
+  filter_all_types: 'Todos los tipos de incidente'
 audit_log:
   meta_description: 'El registro de auditoría de {server_name}, con los cambios realizados en sus operadores, entidades y registros.'
   meta_description_record: '{created} en {server_name}: {message}'
@@ -761,5 +833,7 @@ configuration_error:
   error_code: Error
   error_subtitle: Ocurrió un error de configuración
   server_unavailable: El servidor de la federación no está disponible actualmente. Compruebe que esté funcionando e inténtelo de nuevo.
+  rate_limited: 'El servidor de la federación está limitando la frecuencia de las solicitudes. Espere un momento e inténtelo de nuevo.'
   missing_configuration: No se pudo iniciar el servidor de la federación porque faltan parámetros de configuración. Consulte los registros para obtener más detalles.
   unknown_error: Ocurrió un error desconocido al intentar iniciar la aplicación web. Consulte los registros para obtener más detalles.
+  unsupported_version: 'El servidor de federación implementa una versión no compatible de la interfaz Open Federated Database. FederationWeb requiere la versión {version}.'

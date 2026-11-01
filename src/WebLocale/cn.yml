@@ -201,6 +201,45 @@ global:
   operator_unavailable: 操作员详情不可用
   relationship: 关系
   submitting_operator: 提交操作员
+  auto_assign_reports_only: '仅普通报告'
+  auto_assign_automated_only: '仅自动报告'
+  bot: '机器人'
+  concerns_label: '关注类型'
+  concerns_help: '仅所选事件类型会影响建议操作。全部不选则使用服务器默认值。'
+  content_type: '内容类型'
+  content_type_text: '文本'
+  content_type_email: '电子邮件'
+  content_type_sms: '短信'
+  content_type_web_page: '网页'
+  content_type_hostname: '主机名'
+  content_type_url: 'URL'
+  context_subject: '主题'
+  context_subject_placeholder: '例如：您的账户已被暂停'
+  context_sender: '发件人'
+  context_sender_placeholder: '例如：support@example.com'
+  context_reply_to: '回复地址'
+  context_reply_to_placeholder: '例如：reply@example.com'
+  context_region: '接收地区'
+  context_region_placeholder: 'ISO 国家代码，例如：US'
+  context_sender_id: '发送方标识'
+  context_sender_id_placeholder: '短代码或字母数字发送方，例如：BANK'
+  context_url: 'URL'
+  context_url_placeholder: 'https://example.com/page'
+  context_final_url: '最终 URL（重定向后）'
+  context_final_url_placeholder: 'https://example.com/landing'
+  context_title: '页面标题'
+  context_title_placeholder: '页面的标题'
+  context_description: '页面描述'
+  context_description_placeholder: '页面的描述'
+  context_language: '页面语言'
+  context_language_placeholder: '例如：en'
+  context_query_type: 'DNS 查询类型'
+  context_query_type_placeholder: '例如：A 或 AAAA'
+  detail_context: '上下文'
+  incident_advertising: '广告'
+  incident_tracking: '跟踪'
+  optional_label: '（可选）'
+  print_filter_type: '事件类型'
 fw_topbar:
   overview: 概览
   page_operators: 操作员
@@ -271,6 +310,17 @@ dashboard:
   spec_load_failed: 加载 API 规范失败
   endpoint_count: '{count} 个端点'
   endpoint_count_single: 1 个端点
+  public_telephone_entities: '电话实体'
+  allow_url_uploads: '通过 URL 上传'
+  collects_public_scan_content: '存储公开扫描内容'
+  scanning_capabilities: '内容扫描'
+  scan_content_types: '内容类型'
+  scan_concerns: '关注类型'
+  scan_default_concerns: '默认关注类型'
+  scan_files: '扫描文件'
+  scan_files_limits: '最多 {files} 个文件，每个不超过 {size}'
+  scan_files_ignored: '忽略'
+  not_published: '未公布'
 404:
   page_title: 404 未找到
   error_code: 页面未找到
@@ -298,6 +348,8 @@ authenticate:
   error_server_unreachable: 无法连接到指定的服务器，请检查主机 URL。
   server_name_fallback: 联邦服务器
   error_anonymous_disabled: 不允许匿名访问，请提供访问令牌。
+  error_rate_limited: '向此服务器发送的请求过多，请稍候再试。'
+  error_unsupported_version: '该服务器实现了不受支持的开放联邦数据库接口版本。FederationWeb 需要版本 {version}。'
 operators:
   meta_description: '在 {server_name} 上注册的操作员，负责提交和管理记录。'
   meta_description_record: '{server_name} 上的操作员 {name}，注册于 {created}。'
@@ -393,6 +445,17 @@ operators:
   failed_reports: 加载该操作员的报告记录失败。
   failed_evidence: 加载该操作员的证据记录失败。
   failed_blacklist: 加载该操作员的黑名单记录失败。
+  auto_assign_reports: '自动分配报告'
+  auto_assign_automated_reports: '自动分配自动报告'
+  edit_configuration: '编辑配置'
+  modal_configuration_title: '操作员配置'
+  modal_configuration_auto_assign_reports_desc: '操作员提交的报告可以自动分配给此操作员'
+  modal_configuration_auto_assign_automated_reports_desc: '服务器或机器人创建的报告可以自动分配给此操作员'
+  modal_configuration_bot_desc: '此操作员提交的证据和报告为自动生成，其证据创建时即为机密'
+  modal_configuration_save: '保存配置'
+  configuration_updated: '配置更新成功'
+  configuration_update_failed: '配置更新失败'
+  modal_token_help: '服务器仅在生成访问令牌时显示一次。生成新令牌将替换当前令牌。'
 entities:
   meta_description: '{server_name} 已知的实体，包括其信誉、关系和相关记录。'
   meta_description_record: '{server_name} 上的实体 {address}，自 {created} 起已知，包括其报告、证据和黑名单记录。'
@@ -521,6 +584,10 @@ entities:
   primary_operator_none: 尚无操作员与该实体互动。
   primary_operator_missing: 无法加载操作员记录。
   primary_operator_records: 关联记录
+  modal_blacklist_report_help: '支持该决定的报告，可以涉及其他实体（例如被举报账户所推广的域名）。'
+  modal_evidence_telephone_confidential: '有关电话号码的证据始终以机密方式提交，因为其可能包含私人信息。'
+  query_entity_apply_concerns: '应用关注类型'
+  telephone_entity: '电话号码'
 reports:
   meta_description: '操作员提交到 {server_name} 的事件报告。'
   meta_description_record: '于 {created} 提交到 {server_name} 的{incident_type}报告。状态：{status}。'
@@ -661,6 +728,10 @@ evidence:
   owning_entity: 所属实体
   parent_report: 主报告
   report_unavailable: 报告详情不可用
+  filter_automated: '自动生成'
+  filter_not_automated: '非自动生成'
+  upload_attachment_modal_url_label: '或从 URL 获取'
+  upload_attachment_modal_url_help: '服务器将自行从此 URL 获取文件。如需使用，请不要选择文件。'
 blacklist:
   meta_description: '{server_name} 黑名单中的实体，包括每条记录的事件类型和到期时间。'
   meta_description_record: '{entity} 于 {created} 因{incident_type}被列入 {server_name} 黑名单。状态：{status}。'
@@ -706,6 +777,7 @@ blacklist:
   size: 大小
   no_linked_report: 无链接到此记录的报告
   report_unavailable: 报告详情不可用
+  filter_all_types: '所有事件类型'
 audit_log:
   meta_description: '{server_name} 的审计日志，记录对操作员、实体和记录所做的更改。'
   meta_description_record: '{created}，{server_name}：{message}'
@@ -761,5 +833,7 @@ configuration_error:
   error_code: 错误
   error_subtitle: 发生配置错误
   server_unavailable: 联邦服务器当前不可用，请检查其是否运行后重试。
+  rate_limited: '联邦服务器正在限制请求频率，请稍候再试。'
   missing_configuration: 由于缺少配置参数，联邦服务器无法启动。有关详细信息，请参阅日志。
   unknown_error: 尝试启动 Web 应用程序时发生未知错误。有关详细信息，请参阅日志。
+  unsupported_version: '联邦服务器实现了不受支持的开放联邦数据库接口版本。FederationWeb 需要版本 {version}。'

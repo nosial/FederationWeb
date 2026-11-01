@@ -201,6 +201,45 @@ global:
   operator_unavailable: Данные оператора недоступны
   relationship: Связь
   submitting_operator: Отправивший оператор
+  auto_assign_reports_only: 'Только отчёты'
+  auto_assign_automated_only: 'Только автоматические отчёты'
+  bot: 'Бот'
+  concerns_label: 'Категории угроз'
+  concerns_help: 'На рекомендуемое действие влияют только выбранные типы инцидентов. Не выбирайте ни одного, чтобы использовать значения сервера по умолчанию.'
+  content_type: 'Тип содержимого'
+  content_type_text: 'Текст'
+  content_type_email: 'Электронное письмо'
+  content_type_sms: 'SMS'
+  content_type_web_page: 'Веб-страница'
+  content_type_hostname: 'Имя хоста'
+  content_type_url: 'URL'
+  context_subject: 'Тема'
+  context_subject_placeholder: 'напр. Ваш аккаунт заблокирован'
+  context_sender: 'Отправитель'
+  context_sender_placeholder: 'напр. support@example.com'
+  context_reply_to: 'Адрес для ответа'
+  context_reply_to_placeholder: 'напр. reply@example.com'
+  context_region: 'Регион получения'
+  context_region_placeholder: 'Код страны ISO, напр. US'
+  context_sender_id: 'Идентификатор отправителя'
+  context_sender_id_placeholder: 'Короткий номер или буквенное имя, напр. BANK'
+  context_url: 'URL'
+  context_url_placeholder: 'https://example.com/page'
+  context_final_url: 'Итоговый URL (после перенаправлений)'
+  context_final_url_placeholder: 'https://example.com/landing'
+  context_title: 'Заголовок страницы'
+  context_title_placeholder: 'Заголовок страницы'
+  context_description: 'Описание страницы'
+  context_description_placeholder: 'Описание страницы'
+  context_language: 'Язык страницы'
+  context_language_placeholder: 'напр. ru'
+  context_query_type: 'Тип DNS-запроса'
+  context_query_type_placeholder: 'напр. A или AAAA'
+  detail_context: 'Контекст'
+  incident_advertising: 'Реклама'
+  incident_tracking: 'Отслеживание'
+  optional_label: '(необязательно)'
+  print_filter_type: 'Тип инцидента'
 fw_topbar:
   overview: Обзор
   page_operators: Операторы
@@ -271,6 +310,17 @@ dashboard:
   spec_load_failed: Не удалось загрузить спецификацию API
   endpoint_count: 'Эндпоинтов: {count}'
   endpoint_count_single: 1 эндпоинт
+  public_telephone_entities: 'Телефонные сущности'
+  allow_url_uploads: 'Загрузка по URL'
+  collects_public_scan_content: 'Хранит публично отсканированное содержимое'
+  scanning_capabilities: 'Сканирование содержимого'
+  scan_content_types: 'Типы содержимого'
+  scan_concerns: 'Категории угроз'
+  scan_default_concerns: 'Категории по умолчанию'
+  scan_files: 'Сканируемые файлы'
+  scan_files_limits: 'До {files} файлов по {size} каждый'
+  scan_files_ignored: 'Игнорируются'
+  not_published: 'Не опубликовано'
 404:
   page_title: 404 Не найдено
   error_code: Страница не найдена
@@ -298,6 +348,8 @@ authenticate:
   error_server_unreachable: Не удалось подключиться к указанному серверу. Проверьте URL хоста.
   server_name_fallback: Сервер федерации
   error_anonymous_disabled: Анонимный доступ запрещён. Пожалуйста, укажите токен доступа.
+  error_rate_limited: 'На этот сервер отправлено слишком много запросов. Подождите немного и попробуйте снова.'
+  error_unsupported_version: 'Этот сервер реализует неподдерживаемую версию интерфейса Open Federated Database. FederationWeb требуется версия {version}.'
 operators:
   meta_description: 'Операторы, зарегистрированные на {server_name}, которые отправляют записи и управляют ими.'
   meta_description_record: 'Оператор {name} на {server_name}, зарегистрирован {created}.'
@@ -393,6 +445,17 @@ operators:
   failed_reports: Не удалось загрузить записи отчётов для этого оператора.
   failed_evidence: Не удалось загрузить записи доказательств для этого оператора.
   failed_blacklist: Не удалось загрузить записи чёрного списка для этого оператора.
+  auto_assign_reports: 'Автоназначение отчётов'
+  auto_assign_automated_reports: 'Автоназначение автоматических отчётов'
+  edit_configuration: 'Изменить настройки'
+  modal_configuration_title: 'Настройки оператора'
+  modal_configuration_auto_assign_reports_desc: 'Отчёты, отправленные операторами, могут автоматически назначаться этому оператору'
+  modal_configuration_auto_assign_automated_reports_desc: 'Отчёты, созданные сервером или ботами, могут автоматически назначаться этому оператору'
+  modal_configuration_bot_desc: 'Доказательства и отчёты этого оператора считаются автоматическими, а его доказательства создаются конфиденциальными'
+  modal_configuration_save: 'Сохранить настройки'
+  configuration_updated: 'Настройки успешно обновлены'
+  configuration_update_failed: 'Не удалось обновить настройки'
+  modal_token_help: 'Сервер показывает токен доступа только один раз — при его создании. Новый токен заменяет текущий.'
 entities:
   meta_description: 'Сущности, известные {server_name}, с их репутацией, связями и связанными записями.'
   meta_description_record: 'Сущность {address} на {server_name}, известна с {created}, с её отчётами, доказательствами и записями чёрного списка.'
@@ -521,6 +584,10 @@ entities:
   primary_operator_none: Ни один оператор ещё не взаимодействовал с этой сущностью.
   primary_operator_missing: Не удалось загрузить запись оператора.
   primary_operator_records: Связанные записи
+  modal_blacklist_report_help: 'Отчёт, обосновывающий решение; он может касаться другой сущности (напр. домена, который рекламировал аккаунт из жалобы).'
+  modal_evidence_telephone_confidential: 'Доказательства о телефонном номере всегда отправляются как конфиденциальные, так как могут содержать личные сообщения.'
+  query_entity_apply_concerns: 'Применить категории'
+  telephone_entity: 'Телефонный номер'
 reports:
   meta_description: 'Отчёты об инцидентах, отправленные операторами на {server_name}.'
   meta_description_record: 'Отчёт ({incident_type}), отправленный на {server_name} {created}. Статус: {status}.'
@@ -661,6 +728,10 @@ evidence:
   owning_entity: Владеющая сущность
   parent_report: Родительский отчёт
   report_unavailable: Данные отчёта недоступны
+  filter_automated: 'Автоматические'
+  filter_not_automated: 'Не автоматические'
+  upload_attachment_modal_url_label: 'Или загрузить по URL'
+  upload_attachment_modal_url_help: 'Сервер сам загрузит файл по этому URL. Не выбирайте файл, чтобы использовать его.'
 blacklist:
   meta_description: 'Сущности в чёрном списке {server_name}, с типом инцидента и сроком действия каждой записи.'
   meta_description_record: '{entity} в чёрном списке {server_name} ({incident_type}) с {created}. Статус: {status}.'
@@ -706,6 +777,7 @@ blacklist:
   size: Размер
   no_linked_report: К этой записи не привязан отчёт
   report_unavailable: Данные отчёта недоступны
+  filter_all_types: 'Все типы инцидентов'
 audit_log:
   meta_description: 'Журнал аудита {server_name} с изменениями операторов, сущностей и записей.'
   meta_description_record: '{created}, {server_name}: {message}'
@@ -761,5 +833,7 @@ configuration_error:
   error_code: Ошибка
   error_subtitle: Произошла ошибка конфигурации
   server_unavailable: Сервер федерации в настоящее время недоступен. Убедитесь, что он запущен, и попробуйте снова.
+  rate_limited: 'Сервер федерации ограничивает частоту запросов. Подождите немного и попробуйте снова.'
   missing_configuration: Не удалось запустить сервер федерации из-за отсутствия параметров конфигурации. Дополнительные сведения см. в журналах.
   unknown_error: Произошла неизвестная ошибка при попытке запуска веб-приложения. Дополнительные сведения см. в журналах.
+  unsupported_version: 'Сервер федерации реализует неподдерживаемую версию интерфейса Open Federated Database. FederationWeb требуется версия {version}.'

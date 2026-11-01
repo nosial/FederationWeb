@@ -201,6 +201,45 @@ global:
   operator_unavailable: Operator details unavailable
   relationship: Relationship
   submitting_operator: Submitting Operator
+  auto_assign_reports_only: 'Reports only'
+  auto_assign_automated_only: 'Automated reports only'
+  bot: 'Bot'
+  concerns_label: 'Concerns'
+  concerns_help: 'Only the selected incident types affect the suggested action. Leave all unselected to use the server defaults.'
+  content_type: 'Content Type'
+  content_type_text: 'Text'
+  content_type_email: 'Email'
+  content_type_sms: 'SMS'
+  content_type_web_page: 'Web Page'
+  content_type_hostname: 'Hostname'
+  content_type_url: 'URL'
+  context_subject: 'Subject'
+  context_subject_placeholder: 'e.g. Your account has been suspended'
+  context_sender: 'Sender'
+  context_sender_placeholder: 'e.g. support@example.com'
+  context_reply_to: 'Reply-To'
+  context_reply_to_placeholder: 'e.g. reply@example.com'
+  context_region: 'Region Received In'
+  context_region_placeholder: 'ISO country code, e.g. US'
+  context_sender_id: 'Sender ID'
+  context_sender_id_placeholder: 'Short code or alphanumeric sender, e.g. BANK'
+  context_url: 'URL'
+  context_url_placeholder: 'https://example.com/page'
+  context_final_url: 'Final URL (after redirects)'
+  context_final_url_placeholder: 'https://example.com/landing'
+  context_title: 'Page Title'
+  context_title_placeholder: 'Title of the page'
+  context_description: 'Page Description'
+  context_description_placeholder: 'Description of the page'
+  context_language: 'Page Language'
+  context_language_placeholder: 'e.g. en'
+  context_query_type: 'DNS Query Type'
+  context_query_type_placeholder: 'e.g. A or AAAA'
+  detail_context: 'Context'
+  incident_advertising: 'Advertising'
+  incident_tracking: 'Tracking'
+  optional_label: '(optional)'
+  print_filter_type: 'Incident Type'
 fw_topbar:
   overview: Overview
   page_operators: Operators
@@ -271,6 +310,17 @@ dashboard:
   spec_load_failed: Failed to load the API specification
   endpoint_count: '{count} endpoints'
   endpoint_count_single: 1 endpoint
+  public_telephone_entities: 'Telephone Entities'
+  allow_url_uploads: 'Uploads by URL'
+  collects_public_scan_content: 'Stores Public Scan Content'
+  scanning_capabilities: 'Content Scanning'
+  scan_content_types: 'Content Types'
+  scan_concerns: 'Concerns'
+  scan_default_concerns: 'Default Concerns'
+  scan_files: 'Scanned Files'
+  scan_files_limits: 'Up to {files} files of {size} each'
+  scan_files_ignored: 'Ignored'
+  not_published: 'Not published'
 404:
   page_title: 404 Not Found
   error_code: Page Not Found
@@ -298,6 +348,8 @@ authenticate:
   error_server_unreachable: Could not connect to the specified server. Please check the host URL.
   server_name_fallback: Federation Server
   error_anonymous_disabled: Anonymous access is not allowed. Please provide an access token.
+  error_rate_limited: 'Too many requests were sent to this server. Please wait a moment and try again.'
+  error_unsupported_version: 'This server implements an unsupported version of the Open Federated Database interface. FederationWeb requires version {version}.'
 operators:
   meta_description: 'The operators registered on {server_name}, who submit and manage its records.'
   meta_description_record: 'Operator {name} on {server_name}, registered {created}.'
@@ -393,6 +445,17 @@ operators:
   failed_reports: Failed to load report records for this operator.
   failed_evidence: Failed to load evidence records for this operator.
   failed_blacklist: Failed to load blacklist records for this operator.
+  auto_assign_reports: 'Auto-Assign Reports'
+  auto_assign_automated_reports: 'Auto-Assign Automated Reports'
+  edit_configuration: 'Edit Configuration'
+  modal_configuration_title: 'Operator Configuration'
+  modal_configuration_auto_assign_reports_desc: 'Reports submitted by operators may be assigned to this operator automatically'
+  modal_configuration_auto_assign_automated_reports_desc: 'Reports created by the server or bots may be assigned to this operator automatically'
+  modal_configuration_bot_desc: 'Evidence and reports submitted by this operator are automated, and its evidence is created confidential'
+  modal_configuration_save: 'Save Configuration'
+  configuration_updated: 'Configuration updated successfully'
+  configuration_update_failed: 'Failed to update configuration'
+  modal_token_help: 'The server shows an access token only once, when it is generated. Generating a new token replaces the current one.'
 entities:
   meta_description: 'The entities known to {server_name}, with their reputation, relationships and related records.'
   meta_description_record: 'Entity {address} on {server_name}, known since {created}, with its reports, evidence and blacklist records.'
@@ -521,6 +584,10 @@ entities:
   primary_operator_none: No operator has interacted with this entity yet.
   primary_operator_missing: The operator record could not be loaded.
   primary_operator_records: Linked Records
+  modal_blacklist_report_help: 'The report supporting the decision, which may concern another entity (eg; the domain a reported account advertised).'
+  modal_evidence_telephone_confidential: 'Evidence about a telephone number is always submitted as confidential, as it is likely to contain private messages.'
+  query_entity_apply_concerns: 'Apply Concerns'
+  telephone_entity: 'Telephone Number'
 reports:
   meta_description: 'Incident reports submitted to {server_name} by its operators.'
   meta_description_record: '{incident_type} report submitted to {server_name} on {created}. Status: {status}.'
@@ -661,6 +728,10 @@ evidence:
   owning_entity: Owning Entity
   parent_report: Parent Report
   report_unavailable: Report details unavailable
+  filter_automated: 'Automated'
+  filter_not_automated: 'Not Automated'
+  upload_attachment_modal_url_label: 'Or retrieve from URL'
+  upload_attachment_modal_url_help: 'The server retrieves the file from this URL itself. Leave the file empty to use it.'
 blacklist:
   meta_description: 'The entities blacklisted on {server_name}, with the incident type and expiry of each record.'
   meta_description_record: '{entity} blacklisted on {server_name} for {incident_type} on {created}. Status: {status}.'
@@ -706,6 +777,7 @@ blacklist:
   size: Size
   no_linked_report: No report linked to this record
   report_unavailable: Report details unavailable
+  filter_all_types: 'All Incident Types'
 audit_log:
   meta_description: 'The audit log of {server_name}, recording the changes made to its operators, entities and records.'
   meta_description_record: '{created} on {server_name}: {message}'
@@ -761,5 +833,7 @@ configuration_error:
   error_code: Error
   error_subtitle: There was a configuration error
   server_unavailable: The Federation Server is currently unavailable. Check that it is running and try again.
+  rate_limited: 'The Federation Server is limiting the rate of requests. Wait a moment and try again.'
   missing_configuration: The Federation Server could not be started because configuration parameters are missing. See the logs for more details.
   unknown_error: An unknown error occurred while trying to start the Web Application. See the logs for more details.
+  unsupported_version: 'The Federation Server implements an unsupported version of the Open Federated Database interface. FederationWeb requires version {version}.'
