@@ -285,14 +285,19 @@
                     case 'create_operator':
                         $name = $request->getParameter('operator_name');
                         if(empty($name)) throw new Exception('Operator name is required');
-                        $this->federationClient->createOperator($name);
-                        $redirect['success'] = 'operator_created';
+                        // The server discloses the access token of a new operator only in this response, so it is
+                        // shown once on the page of the operator
+                        $created = $this->federationClient->createOperator($name);
+                        OperatorDetailView::storeNewToken($created->getUuid(), $created->getAccessToken());
+                        Utilities::redirect('operator_detail', ['operator_id' => $created->getUuid()], ['success' => 'operator_created']);
                         break;
                     case 'delete_operator': $this->federationClient->deleteOperator($uuid); $redirect['success'] = 'operator_deleted'; break;
                     case 'enable_operator': $this->federationClient->enableOperator($uuid); $redirect['success'] = 'operator_enabled'; break;
                     case 'disable_operator': $this->federationClient->disableOperator($uuid); $redirect['success'] = 'operator_disabled'; break;
                     case 'toggle_auto_assign':
+                        // Opts the operator in to both kinds of reports, or out of both when it opts in to either
                         $operator = $this->federationClient->getOperator($uuid);
+                        if($operator->getConfiguration() === null) throw new Exception('The configuration of the operator is not disclosed');
                         $this->federationClient->setAutoAssign($uuid, !$operator->isAutoAssigned());
                         $redirect['success'] = $operator->isAutoAssigned() ? 'auto_assign_disabled' : 'auto_assign_enabled';
                         break;
