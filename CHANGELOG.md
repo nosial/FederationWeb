@@ -5,9 +5,73 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.4] - Ongoing
+## [1.0.4] - 2026-11-01
 
-This is an ongoing update
+This update follows version `2.2` of the OFD Specification and requires FederationLib `2.1.0` or newer, servers of
+versions `2.0` and `2.1` remain supported. Servers of another major version of the interface are refused.
+
+### Added
+ - The Content Scanning card of the dashboard shows the file limits of scanning (`max_scan_files` and
+   `max_scan_file_size`), or that the server ignores the files submitted with scanned content.
+ - Signing in to, or continuing a session with, a server whose `api_version` is not of major version `2` shows an
+   error saying the version is unsupported, with a button to sign out.
+ - Operator configuration: the operator detail page shows the auto-assign opt-ins for ordinary and automated reports
+   and the bot setting, and an Edit Configuration modal changes them. Operators can change their own configuration,
+   operators with operator permissions that of any operator. A configuration the server does not disclose is shown as
+   a dash, and bot operators carry a Bot badge.
+ - Evidence forms (the evidence list, the entity page and the New Report form) take a content type (`TEXT`, `EMAIL`,
+   `SMS`, `WEB_PAGE`, `HOSTNAME` or `URL`) and the context fields defined for it, and evidence detail pages show the
+   content type and context.
+ - Evidence shows whether it is automated, in the evidence list (with Automated and Not Automated filters), on its
+   detail page and in printed lists.
+ - Attachments can be uploaded from a URL, which the server retrieves itself, when the server publishes
+   `allow_url_uploads`.
+ - Query Entity and the entity page let the concerns to assess be chosen when the server publishes its concerns.
+ - Blacklist records can be filtered by incident type, including in printed lists.
+ - The `ADVERTISING` and `TRACKING` incident types.
+ - Audit log entries link the report they concern.
+ - The dashboard shows whether telephone entities are public, whether the server accepts uploads by URL and stores
+   public scan content, and the content types and concerns it scans for.
+ - Entity pages of telephone numbers carry a Telephone Number badge.
+ - A server that limits the rate of its requests (OFD 2.2) is reported as such: a request it rejects with HTTP 429
+   shows that the server is limiting requests, with a button to retry, instead of saying that it is unavailable, and
+   signing in shows it instead of saying that the server is unreachable or the access token is invalid.
+
+### Changed
+ - Server reads are cached in DynamicalWeb's memcached instance and shared between requests for
+   `FEDERATION_CACHE_TTL` seconds (default `60`, `0` disables it), per server and access token. Submitting a form
+   discards the cache of the server, so changes made through the web application show on the next page. Lists,
+   searches and the audit log are now also read once per request. The Docker image enables memcached explicitly
+   ([#4](https://github.com/nosial/FederationWeb/issues/4))
+ - Cards no longer have colored borders: the accent stripes of the related-record cards on detail pages and of the
+   record header, reputation and operator profile cards were removed, so every card keeps the neutral border
+ - Rewrote the README in the style of the Symfony documentation, and documented the features it left out: signing in
+   and the error page, browsing, searching, querying entities, submitting and managing records, printing, the API
+   specification page, themes and languages, link previews, the complete Docker stack and the security measures
+ - Included the project's light and dark icons from NosialFrontier in the README header.
+ - Permissions are updated in a single request, and management permissions keep client permissions granted in the
+   Set Permissions modal, as management permissions inherit them.
+ - Creating an operator opens its page with its access token, as the server discloses it only in that response. The
+   Generate Access Token modal no longer offers to show an existing token, which the server never discloses.
+ - Blacklisting an entity no longer requires a report, and the report may concern another entity.
+ - Evidence about a telephone number is always submitted as confidential.
+ - Upload Attachment is only offered for evidence the operator submitted, unless it holds management permissions.
+ - Removing the confidential mark is no longer offered for evidence linked to an illegal content report, which the
+   server rejects.
+ - The root and system operators no longer show management actions, which the server rejects.
+ - Entity metadata is shown to every authenticated operator, and to anonymous visitors when the server publishes
+   `public_entity_metadata`.
+ - Updated the project to use ncc 3.1.11
+
+### Fixed
+ - Sorting the reports of an entity, of an operator or assigned to an operator takes effect, as FederationLib `2.1.0`
+   honours the `by` and `order` parameters of these lists, which earlier servers ignored.
+ - A failed attachment download shows the error message of the server (eg; that the attachment does not exist).
+ - Updated the documented PHP minimum to match current ncc's PHP 8.4.1 requirement.
+ - File attachments retained without their evidence no longer break the search and audit log pages.
+ - The API Specification page failed with HTTP 500 for FederationLib `2.0.0`, whose OpenAPI 3.2 specification gives
+   nullable members a list of types (eg; `["string", "null"]`). Such types are now shown as `string | null`, and the
+   nested members of nullable objects and arrays are shown like any other.
 
 
 
