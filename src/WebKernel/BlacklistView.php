@@ -18,6 +18,7 @@
         private int $page;
         private ?string $searchQuery;
         private ?string $categoryFilter;
+        private ?IncidentType $typeFilter;
         private ?string $sortBy;
         private ?string $operatorId;
         private ?string $entityId;
@@ -59,12 +60,14 @@
             $page = WebSession::getRequest()->getIntParameter('page', 1, min: 1);
             $searchQuery = $query['search_query'] ?? null;
             $categoryFilter = $query['category_filter'] ?? null;
+            $typeFilter = is_string($query['type_filter'] ?? null) ? IncidentType::tryFromCaseInsensitive($query['type_filter']) : null;
+            $types = $typeFilter === null ? null : [$typeFilter];
             $sortBy = $query['sort_by'] ?? null;
             $sortOrder = $query['sort_order'] ?? null;
             $operatorId = $query['operator_id'] ?? null;
             $entityId = $query['entity_id'] ?? null;
             $hasSearch = $searchQuery !== null && $searchQuery !== '';
-            $hasCategoryFilter = $categoryFilter !== null && $categoryFilter !== '';
+            $hasCategoryFilter = ($categoryFilter !== null && $categoryFilter !== '') || $typeFilter !== null;
             $apiOrder = match (strtoupper($sortOrder ?? ''))
             {
                 'ASC' => 'ASC',
@@ -76,19 +79,19 @@
             {
                 if($operatorId !== null)
                 {
-                    $all = $this->fetchAllPages(fn(int $page): array => $this->federationClient->listOperatorBlacklist($operatorId, page: $page, includeLifted: true, by: $sortBy, order: $apiOrder));
+                    $all = $this->filterType($this->fetchAllPages(fn(int $page): array => $this->federationClient->listOperatorBlacklist($operatorId, page: $page, includeLifted: true, by: $sortBy, order: $apiOrder)), $typeFilter);
                     [$page, $totalRecords, $totalPages, $records] = $this->paginate($all, $page);
                 }
                 elseif($entityId !== null)
                 {
-                    $all = $this->fetchAllPages(fn(int $page): array => $this->federationClient->listEntityBlacklistRecords($entityId, page: $page, includeLifted: true, by: $sortBy, order: $apiOrder));
+                    $all = $this->filterType($this->fetchAllPages(fn(int $page): array => $this->federationClient->listEntityBlacklistRecords($entityId, page: $page, includeLifted: true, by: $sortBy, order: $apiOrder)), $typeFilter);
                     [$page, $totalRecords, $totalPages, $records] = $this->paginate($all, $page);
                 }
                 elseif($hasSearch || $hasCategoryFilter || $allRecords)
                 {
                     $all = $hasSearch && strlen($searchQuery) >= 2
-                        ? $this->fetchAllPages(fn(int $page): array => $this->federationClient->searchBlacklist($searchQuery, page: $page, category: $categoryFilter, by: $sortBy, order: $apiOrder))
-                        : $this->fetchAllPages(fn(int $page): array => $this->federationClient->listBlacklistRecords(page: $page, includeLifted: true, category: $categoryFilter, by: $sortBy, order: $apiOrder));
+                        ? $this->fetchAllPages(fn(int $page): array => $this->federationClient->searchBlacklist($searchQuery, page: $page, category: $categoryFilter, by: $sortBy, order: $apiOrder, types: $types))
+                        : $this->fetchAllPages(fn(int $page): array => $this->federationClient->listBlacklistRecords(page: $page, includeLifted: true, category: $categoryFilter, by: $sortBy, order: $apiOrder, types: $types));
                     [$page, $totalRecords, $totalPages, $records] = $this->paginate($all, $page, false);
                 }
                 else
@@ -115,6 +118,7 @@
             $this->page = $page;
             $this->searchQuery = $searchQuery;
             $this->categoryFilter = $categoryFilter;
+            $this->typeFilter = $typeFilter;
             $this->sortBy = $sortBy;
             $this->operatorId = $operatorId;
             $this->entityId = $entityId;
@@ -130,6 +134,7 @@
                 'entity_id' => $entityId,
                 'search_query' => $searchQuery,
                 'category_filter' => $categoryFilter,
+                'type_filter' => $typeFilter?->value,
                 'sort_by' => $sortBy,
                 'sort_order' => $sortOrder,
             ]);
@@ -186,6 +191,12 @@
          * @return string|null The filter, or null when none is active.
          */
         public function getCategoryFilter(): ?string { return $this->categoryFilter; }
+        /**
+         * Returns the active incident type filter.
+         *
+         * @return IncidentType|null The incident type, or null when none is active.
+         */
+        public function getTypeFilter(): ?IncidentType { return $this->typeFilter; }
         /**
          * Returns the active blacklist sort field.
          *
@@ -263,14 +274,7 @@
          */
         public function getTypeBadge(IncidentType $type): string
         {
-            return match($type->value)
-            {
-                'SPAM', 'SCAM' => 'fw-badge-amber',
-                'MALWARE', 'ILLEGAL_CONTENT' => 'fw-badge-red',
-                'PHISHING' => 'fw-badge-blue',
-                'SERVICE_ABUSE' => 'fw-badge-purple',
-                default => 'fw-badge-gray',
-            };
+            return Utilities::getIncidentBadge($type);
         }
         /**
          * Formats a timestamp for display.
@@ -349,6 +353,23 @@
             $records = $preserveKeys ? array_values($records) : $records;
 
             return [$page, $totalRecords, $totalPages, array_slice($records, ($page - 1) * $this->limit, $this->limit)];
+        }
+
+        /**
+         * Keeps the blacklist records of an incident type, for the lists that cannot be filtered by the server.
+         *
+         * @param array $records The blacklist records.
+         * @param IncidentType|null $type The incident type, null to keep every record.
+         * @return array The matching blacklist records.
+         */
+        private function filterType(array $records, ?IncidentType $type): array
+        {
+            if($type === null)
+            {
+                return $records;
+            }
+
+            return array_values(array_filter($records, static fn($record): bool => $record->getType() === $type));
         }
 
         /**
