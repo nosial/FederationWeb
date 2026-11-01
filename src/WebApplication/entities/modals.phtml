@@ -62,6 +62,7 @@
                         <label class="fw-form-label" for="queryEntityIdentifier"><?php Functions::printl('query_entity_identifier_label'); ?></label>
                         <input type="text" class="fw-form-control" id="queryEntityIdentifier" name="identifier" placeholder="<?php Functions::printl('query_entity_identifier_placeholder'); ?>" required autocomplete="off">
                     </div>
+                    <?php Functions::insertSection('../sections/concerns_fields.phtml'); ?>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
