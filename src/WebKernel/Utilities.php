@@ -6,9 +6,13 @@
     use DynamicalWeb\Classes\RequestCache;
     use DynamicalWeb\Html\Functions;
     use DynamicalWeb\WebSession;
+    use FederationLib\Enums\ContentType;
+    use FederationLib\Enums\IncidentType;
+    use FederationLib\Exceptions\RequestException;
     use FederationLib\FederationClient;
     use FederationLib\Objects\EvidenceRecord;
     use FederationLib\Objects\ReportRecord;
+    use FederationLib\Objects\ServerInformation;
 
     /**
      * Provides common web application utility functions.
@@ -21,6 +25,138 @@
          * crafted; error_message in particular carries unlocalized text.
          */
         private const array STATUS_PARAMETERS = ['success', 'error', 'error_message'];
+
+        /**
+         * The major version of the OFD interface this web application implements. Implementations of different
+         * major versions are not expected to interoperate (OFD "Versioning").
+         */
+        public const int SUPPORTED_API_MAJOR_VERSION = 2;
+
+        /** The entity host of telephone entities (OFD "Telephone Entities"). */
+        private const string TELEPHONE_ENTITY_HOST = 'e164.arpa';
+
+        /**
+         * Returns whether the server implements the major version of the OFD interface this web application
+         * implements, judged by the api_version it publishes.
+         *
+         * @param ServerInformation $serverInformation The server information.
+         * @return bool True when the major version of the server is supported.
+         */
+        public static function isSupportedApiVersion(ServerInformation $serverInformation): bool
+        {
+            $major = explode('.', $serverInformation->getApiVersion(), 2)[0];
+            return ctype_digit($major) && (int)$major === self::SUPPORTED_API_MAJOR_VERSION;
+        }
+
+        /**
+         * Returns whether the server rejected a request because it limits the rate of its requests (OFD 2.2 "Rate
+         * Limiting"), with HTTP 429. The server did not perform the request, which may be repeated later.
+         *
+         * @param \Throwable $exception The failure of the request.
+         * @return bool True when the request was rejected with HTTP 429.
+         */
+        public static function isRateLimited(\Throwable $exception): bool
+        {
+            return $exception instanceof RequestException && $exception->getCode() === 429;
+        }
+
+        /**
+         * Returns whether an entity identifier refers to a telephone entity. An address is recognized by its
+         * host, any other identifier (a UUID or SHA-256 identifier) by looking the entity up.
+         *
+         * @param FederationClient $client The client to query.
+         * @param string $identifier The entity identifier.
+         * @return bool True when the identifier refers to a telephone entity, false when it does not or the
+         *              entity cannot be looked up.
+         */
+        public static function isTelephoneEntity(FederationClient $client, string $identifier): bool
+        {
+            $identifier = trim($identifier);
+            if(str_contains($identifier, '@'))
+            {
+                return strtolower(substr($identifier, strrpos($identifier, '@') + 1)) === self::TELEPHONE_ENTITY_HOST;
+            }
+
+            try
+            {
+                return $client->getEntityRecord($identifier)->isTelephone();
+            }
+            catch(\Exception $exception)
+            {
+                Logger::getLogger()->warning('Unable to look up the entity of submitted evidence', $exception);
+                return false;
+            }
+        }
+
+        /**
+         * Reads the content type and context submitted with evidence. The context keeps only the non-empty values
+         * of the keys defined for the content type, the server validates the rest.
+         *
+         * @param mixed $contentType The submitted content type, TEXT when absent or not a content type.
+         * @param mixed $context The submitted context, a map of context keys to values.
+         * @return array{0: ContentType, 1: array<string, string>|null} The content type and the context, null
+         *         when it holds no value.
+         */
+        public static function readContentInput(mixed $contentType, mixed $context): array
+        {
+            $type = is_string($contentType) ? (ContentType::tryFromCaseInsensitive(trim($contentType)) ?? ContentType::TEXT) : ContentType::TEXT;
+            $values = [];
+            if(is_array($context))
+            {
+                foreach($type->getContextKeys() as $key)
+                {
+                    $value = $context[$key] ?? null;
+                    if(is_string($value) && trim($value) !== '')
+                    {
+                        $values[$key] = trim($value);
+                    }
+                }
+            }
+
+            return [$type, empty($values) ? null : $values];
+        }
+
+        /**
+         * Reads the concerns requested for an entity query, keeping only those the server can assess.
+         *
+         * @param mixed $value The concerns, as an array or a comma-separated string of incident types.
+         * @param ServerInformation $serverInformation The server information.
+         * @return IncidentType[]|null The concerns, or null when none are requested or the server does not
+         *                             publish its concerns, in which case it assesses its default concerns.
+         */
+        public static function readConcerns(mixed $value, ServerInformation $serverInformation): ?array
+        {
+            $available = $serverInformation->getConcerns();
+            if($available === null || $value === null || $value === '' || $value === [])
+            {
+                return null;
+            }
+
+            $concerns = array_values(array_filter(IncidentType::parseList($value) ?? [],
+                static fn(IncidentType $concern): bool => in_array($concern, $available, true)
+            ));
+
+            return empty($concerns) ? null : $concerns;
+        }
+
+        /**
+         * Returns the badge CSS class for an incident type.
+         *
+         * @param IncidentType $type The incident type.
+         * @return string The badge CSS class.
+         */
+        public static function getIncidentBadge(IncidentType $type): string
+        {
+            return match($type)
+            {
+                IncidentType::MALWARE, IncidentType::ILLEGAL_CONTENT => 'fw-badge-red',
+                IncidentType::SPAM, IncidentType::SCAM => 'fw-badge-amber',
+                IncidentType::PHISHING => 'fw-badge-blue',
+                IncidentType::SERVICE_ABUSE => 'fw-badge-purple',
+                IncidentType::ADVERTISING, IncidentType::TRACKING => 'fw-badge-cyan',
+                default => 'fw-badge-gray',
+            };
+        }
 
         /**
          * Determine whether the current session uses dark mode.
@@ -116,6 +252,21 @@
         public static function formatDate(int $timestamp, string $format='Y-m-d H:i'): string
         {
             return $timestamp > 0 ? date($format, $timestamp) : '—';
+        }
+
+        /**
+         * Format a number of bytes for display.
+         *
+         * @param int $bytes The number of bytes to format.
+         * @return string The human-readable size, or an em dash for a non-positive size.
+         */
+        public static function formatSize(int $bytes): string
+        {
+            if($bytes <= 0) return '—';
+            if($bytes >= 1073741824) return round($bytes / 1073741824, 1) . ' GB';
+            if($bytes >= 1048576) return round($bytes / 1048576, 1) . ' MB';
+            if($bytes >= 1024) return round($bytes / 1024, 1) . ' KB';
+            return $bytes . ' B';
         }
 
         /**
