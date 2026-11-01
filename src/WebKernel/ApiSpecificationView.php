@@ -201,13 +201,12 @@ class ApiSpecificationView
             }
             return ['label' => $name, 'type' => 'ref', 'ref' => $schema['$ref']];
         }
-        if (isset($schema['type'])) {
-            $type = $schema['type'];
-            if ($type === 'array' && isset($schema['items'])) {
+        if ($type !== null) {
+            if ($type === 'array' && isset($schema['items']) && is_array($schema['items'])) {
                 $itemType = self::getSchemaType($schema['items'], $spec);
-                return ['label' => 'array<' . $itemType['label'] . '>', 'type' => 'array', 'items' => $itemType];
+                return ['label' => self::formatType($schema, 'array<' . $itemType['label'] . '>'), 'type' => 'array', 'items' => $itemType];
             }
-            return ['label' => $type, 'type' => $type];
+            return ['label' => self::formatType($schema), 'type' => $type];
         }
         if (isset($schema['enum'])) return ['label' => 'enum', 'type' => 'enum', 'enum' => $schema['enum']];
         if (isset($schema['oneOf'])) return ['label' => 'oneOf', 'type' => 'oneOf', 'subs' => $schema['oneOf'], 'spec' => $spec];
@@ -216,6 +215,43 @@ class ApiSpecificationView
         if (!empty($schema['properties'])) return ['label' => 'object', 'type' => 'object'];
         if (isset($schema['additionalProperties'])) return ['label' => 'map', 'type' => 'map'];
         return ['label' => 'mixed', 'type' => 'mixed'];
+    }
+
+    /**
+     * Returns the type a schema describes. OpenAPI 3.1 and later allow a list of types, eg; ["string", "null"] for a
+     * nullable string, in which case the first type other than null is the type of the schema.
+     *
+     * @param array $schema OpenAPI schema to inspect.
+     * @return string|null The type, or null when the schema declares none.
+     */
+    public static function getPrimaryType(array $schema): ?string
+    {
+        $types = $schema['type'] ?? null;
+        if (is_string($types)) return $types;
+        if (!is_array($types)) return null;
+        $types = array_values(array_filter($types, 'is_string'));
+        foreach ($types as $type) {
+            if ($type !== 'null') return $type;
+        }
+        return $types[0] ?? null;
+    }
+
+    /**
+     * Formats the type of a schema for display, listing every type of a schema with a list of types.
+     *
+     * @param array $schema OpenAPI schema to describe.
+     * @param string|null $primaryLabel Optional. The label of the primary type, eg; array<string>, the primary type itself when null.
+     * @param string $default The label of a schema that declares no type.
+     * @return string The type, eg; "string" or "string | null".
+     */
+    public static function formatType(array $schema, ?string $primaryLabel = null, string $default = 'object'): string
+    {
+        $primary = self::getPrimaryType($schema);
+        if ($primary === null) return $default;
+        $label = $primaryLabel ?? $primary;
+        if (!is_array($schema['type'] ?? null)) return $label;
+        $others = array_filter($schema['type'], static fn($type) => is_string($type) && $type !== $primary);
+        return implode(' | ', [$label, ...$others]);
     }
 
     /**
@@ -266,7 +302,7 @@ class ApiSpecificationView
             }
             return $html;
         }
-        if (isset($schema['type']) && $schema['type'] === 'array' && isset($schema['items'])) {
+        if (self::getPrimaryType($schema) === 'array' && isset($schema['items'])) {
             if (!is_array($schema['items'])) return '<span class="fw-uuid">array</span>';
             $schemaType = self::getSchemaType($schema['items'], $spec);
             if (($schemaType['type'] ?? null) === 'object') return self::renderSchemaProperties($schema['items'], $spec, $visitedRefs, $depth + 1);
@@ -276,8 +312,8 @@ class ApiSpecificationView
             }
             return '<pre class="fw-schema-inline-json"><code>' . self::escape(json_encode($schema['items'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</code></pre>';
         }
-        if (isset($schema['properties'])) {
-            $required = $schema['required'] ?? [];
+        if (isset($schema['properties']) && is_array($schema['properties'])) {
+            $required = is_array($schema['required'] ?? null) ? $schema['required'] : [];
             $html = '<div class="fw-schema-props">';
             foreach ($schema['properties'] as $propertyName => $propertySchema) {
                 if (!is_array($propertySchema)) continue;
@@ -287,14 +323,14 @@ class ApiSpecificationView
                 if (!empty($propertySchema['description'])) $html .= '<span class="fw-schema-prop-desc">' . self::escape($propertySchema['description']) . '</span>';
                 if (!empty($propertySchema['deprecated'])) $html .= '<span class="fw-badge fw-badge-red fw-badge-sm">' . Utilities::localize('deprecated') . '</span>';
                 $html .= '</div>';
-                if (isset($propertySchema['$ref']) || (($propertySchema['type'] ?? null) === 'object') || (($propertySchema['type'] ?? null) === 'array') || isset($propertySchema['oneOf']) || isset($propertySchema['anyOf']) || isset($propertySchema['allOf'])) $html .= '<div class="fw-schema-prop-detail">' . self::renderSchemaProperties($propertySchema, $spec, $visitedRefs, $depth + 1) . '</div>';
+                if (isset($propertySchema['$ref']) || in_array(self::getPrimaryType($propertySchema), ['object', 'array'], true) || isset($propertySchema['oneOf']) || isset($propertySchema['anyOf']) || isset($propertySchema['allOf'])) $html .= '<div class="fw-schema-prop-detail">' . self::renderSchemaProperties($propertySchema, $spec, $visitedRefs, $depth + 1) . '</div>';
                 $html .= '</div>';
             }
             $html .= '</div>';
             if (isset($schema['additionalProperties']) && is_array($schema['additionalProperties'])) $html .= '<div class="fw-schema-additional"><span class="fw-uuid">additionalProperties:</span> ' . self::renderSchemaProperties($schema['additionalProperties'], $spec, $visitedRefs, $depth + 1) . '</div>';
             return $html;
         }
-        if (isset($schema['enum'])) return '<div class="fw-spec-subsection-item"><span class="fw-uuid">enum:</span> <span class="fw-mono">[' . implode(', ', array_map(static fn($value) => '"' . self::escape($value) . '"', $schema['enum'])) . ']</span></div>';
+        if (isset($schema['enum']) && is_array($schema['enum'])) return '<div class="fw-spec-subsection-item"><span class="fw-uuid">enum:</span> <span class="fw-mono">[' . implode(', ', array_map(static fn($value) => $value === null ? 'null' : '"' . self::escape($value) . '"', $schema['enum'])) . ']</span></div>';
         return '<pre class="fw-schema-inline-json"><code>' . self::escape(json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</code></pre>';
     }
 
@@ -325,6 +361,8 @@ class ApiSpecificationView
      */
     private static function escape(mixed $value): string
     {
+        // Values of the specification can be lists or objects (eg; a list of types), which can't be cast to strings
+        if (!is_scalar($value) && $value !== null) $value = json_encode($value, JSON_UNESCAPED_SLASHES);
         return htmlspecialchars((string)$value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 }
