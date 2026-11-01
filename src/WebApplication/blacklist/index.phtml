@@ -2,6 +2,7 @@
     use DynamicalWeb\Enums\RequestMethod;
     use DynamicalWeb\Html\Functions;
     use DynamicalWeb\WebSession;
+    use FederationLib\Enums\IncidentType;
     use WebKernel\BlacklistView;
     use WebKernel\ViewAuthorization;
     use WebKernel\PageMetadata;
@@ -130,6 +131,20 @@
                                                 ?>selected<?php
                                             }
                                         ?>><?php Functions::printl('filter_permanent'); ?></option>
+                                    </select>
+                                    <select class="fw-filter-select" name="type_filter" onchange="this.form.submit()">
+                                        <option value=""><?php Functions::printl('filter_all_types'); ?></option>
+                                        <?php
+                                            foreach (IncidentType::cases() as $incidentType)
+                                            {
+                                                ?><option value="<?php Functions::print($incidentType->value); ?>"<?php
+                                                    if ($view->getTypeFilter() === $incidentType)
+                                                    {
+                                                        ?> selected<?php
+                                                    }
+                                                ?>><?php Functions::printl('incident_' . strtolower($incidentType->value)); ?></option><?php
+                                            }
+                                        ?>
                                     </select>
                                 </div>
                                 <div class="fw-filter-actions">
