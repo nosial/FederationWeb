@@ -2,6 +2,7 @@
     use DynamicalWeb\Html\Functions;
     use DynamicalWeb\WebSession;
     use WebKernel\EntityDetailView;
+    use WebKernel\Utilities;
     use WebKernel\ViewAuthorization;
 
     /** @var EntityDetailView $view */
@@ -18,7 +19,7 @@
                     <section class="mt-3">
                         <div class="row g-4">
                             <div class="col-12 col-xl-6">
-                                <div class="fw-card fw-card-accent accent-amber h-100">
+                                <div class="fw-card h-100">
                                     <div class="fw-card-header">
                                         <h5><i class="bi bi-diagram-3 fw-icon-amber"></i> <?php Functions::printl('relationship_target'); ?></h5>
                                         <?php
@@ -118,7 +119,7 @@
                                 </div>
                             </div>
                             <div class="col-12 col-xl-6">
-                                <div class="fw-card fw-card-accent accent-green h-100">
+                                <div class="fw-card h-100">
                                     <div class="fw-card-header">
                                         <h5><i class="bi bi-person-badge fw-icon-green"></i> <?php Functions::printl('primary_operator'); ?></h5>
                                         <?php
@@ -180,14 +181,8 @@
                                             <span class="fw-detail-label"><?php Functions::printl('auto_assign'); ?></span>
                                             <span class="fw-detail-value">
                                                 <?php
-                                                    if ($primaryOperator->isAutoAssigned())
-                                                    {
-                                                        ?><span class="fw-dot green"></span> <?php Functions::printl('yes');
-                                                    }
-                                                    else
-                                                    {
-                                                        ?><span class="fw-dot gray"></span> <?php Functions::printl('no');
-                                                    }
+                                                    WebSession::set('fw_operator_auto_assign', $primaryOperator);
+                                                    Functions::insertSection('../sections/operator_auto_assign.phtml');
                                                 ?>
                                             </span>
                                         </div>
@@ -506,14 +501,7 @@
                                                         </td>
                                                         <td>
                                                             <?php
-                                                                $blBadgeClass = match ($blacklistRecord->getType()->value)
-                                                                {
-                                                                    'SPAM', 'SCAM' => 'fw-badge-amber',
-                                                                    'MALWARE', 'ILLEGAL_CONTENT' => 'fw-badge-red',
-                                                                    'PHISHING' => 'fw-badge-blue',
-                                                                    'SERVICE_ABUSE' => 'fw-badge-purple',
-                                                                    default => 'fw-badge-gray',
-                                                                };
+                                                                $blBadgeClass = Utilities::getIncidentBadge($blacklistRecord->getType());
                                                                 ?><span class="fw-badge <?php Functions::print($blBadgeClass); ?>"><?php Functions::print(str_replace('_', ' ', $blacklistRecord->getType()->name)); ?></span>
                                                         </td>
                                                         <td>
