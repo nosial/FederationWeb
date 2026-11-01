@@ -9,6 +9,7 @@
     use FederationLib\Enums\IncidentType;
     use FederationLib\FederationClient;
     use FederationLib\Objects\EntityQueryResult;
+    use FederationLib\Objects\ServerInformation;
     use FederationLib\Objects\OperatorRecord;
 
     /**
@@ -31,6 +32,8 @@
         private ?string $errorMessage = null;
         private mixed $relationshipEntity = null;
         private ?EntityQueryResult $queryResult = null;
+        /** @var IncidentType[]|null The concerns the query assesses, null for the default concerns of the server */
+        private ?array $concerns = null;
         private ?string $primaryOperatorUuid = null;
         private int $primaryOperatorRecords = 0;
         private ?OperatorRecord $primaryOperator = null;
@@ -54,9 +57,15 @@
 
             $identifier = trim((string)(WebSession::getRequest()->getPathParameter('entity_id')
                 ?? WebSession::getRequest()->getParameter('identifier')));
+            $serverInformation = WebSession::get('server_information');
+            if($serverInformation instanceof ServerInformation)
+            {
+                $this->concerns = Utilities::readConcerns($_GET['concerns'] ?? null, $serverInformation);
+            }
+
             try
             {
-                $this->queryResult = $this->federationClient->queryEntity($identifier);
+                $this->queryResult = $this->federationClient->queryEntity($identifier, $this->concerns);
                 $this->entity = $this->queryResult->getEntityRecord();
             }
             catch(\Throwable $exception)
@@ -120,6 +129,12 @@
         public function hasError(): bool { return $this->error; }
         /** Returns the relationship-group query result for this entity. */
         public function getQueryResult(): ?EntityQueryResult { return $this->queryResult; }
+        /**
+         * Returns the concerns the entity query assesses.
+         *
+         * @return IncidentType[]|null The requested concerns, or null when the server assesses its default concerns.
+         */
+        public function getConcerns(): ?array { return $this->concerns; }
         /** Returns the query failure detail, when the entity query failed. */
         public function getQueryErrorDetail(): ?string { return $this->queryErrorDetail; }
         /** Resolves an entity UUID within the current query relationship group. */
@@ -314,12 +329,17 @@
                         $this->federationClient->deleteEntity($this->entity->getUuid());
                         Utilities::redirect('entities', queryParameters: ['success' => 'entity_deleted']);
                     case 'submit_evidence':
-                        $this->federationClient->submitEvidence($this->entity->getUuid(), $request->getParameter('evidence_text') ?: null, $request->getParameter('evidence_note') ?: null, $request->getParameter('evidence_tag') ?: null, $request->getParameter('evidence_confidential') === '1');
+                        [$contentType, $context] = Utilities::readContentInput($request->getParameter('evidence_content_type'), $_POST['evidence_context'] ?? null);
+                        // Evidence about a telephone number is likely to hold private messages (OFD "Telephone Entities")
+                        $confidential = $request->getParameter('evidence_confidential') === '1' || $this->entity->isTelephone();
+                        $this->federationClient->submitEvidence($this->entity->getUuid(), $request->getParameter('evidence_text') ?: null, $request->getParameter('evidence_note') ?: null, $request->getParameter('evidence_tag') ?: null, $confidential, contentType: $contentType, context: $context);
                         $redirect['success'] = 'evidence_submitted';
                         break;
                     case 'blacklist_entity':
-                        $reportUuid = $request->getParameter('blacklist_report_uuid');
-                        if(empty($reportUuid)) throw new \Exception('Report UUID is required');
+                        // The supporting report is optional and may concern another entity (eg; the domain a reported
+                        // account advertised)
+                        $reportUuid = trim((string)$request->getParameter('blacklist_report_uuid'));
+                        $reportUuid = $reportUuid === '' ? null : $reportUuid;
                         $type = IncidentType::tryFrom($request->getParameter('blacklist_type'));
                         if($type === null) throw new \Exception('Invalid incident type');
                         $expires = $request->getParameter('blacklist_expires');

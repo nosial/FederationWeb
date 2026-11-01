@@ -8,7 +8,9 @@
     use DynamicalWeb\WebSession;
     use FederationLib\Enums\AuditLogType;
     use FederationLib\Enums\ClassificationFlag;
+    use FederationLib\Enums\IncidentType;
     use FederationLib\FederationClient;
+    use FederationLib\Objects\ServerInformation;
 
     /**
      * Provides data, formatting, downloads, and actions for an evidence detail page.
@@ -118,6 +120,27 @@
          * @return mixed The blacklist record, if the evidence produced one.
          */
         public function getBlacklistRecord(): mixed { return $this->blacklistRecord; }
+        /**
+         * Returns whether the confidentiality of the evidence may be changed: it requires management permissions, and
+         * the server rejects making evidence linked to an illegal content report non-confidential.
+         *
+         * @return bool True when the confidentiality toggle is offered.
+         */
+        public function canToggleConfidential(): bool
+        {
+            return ViewAuthorization::canManageRecords()
+                && !($this->evidence->isConfidential() && $this->reportRecord?->getIncidentType() === IncidentType::ILLEGAL_CONTENT);
+        }
+        /**
+         * Returns whether the server retrieves attachments from a URL itself, which it publishes as allow_url_uploads.
+         *
+         * @return bool True when attachments may be uploaded by URL.
+         */
+        public function isUrlUploadAllowed(): bool
+        {
+            $serverInformation = WebSession::get('server_information');
+            return $serverInformation instanceof ServerInformation && $serverInformation->isAllowUrlUploads();
+        }
         /** Returns the evidence attachments.
          * @return array|null The attachments, or null when loading failed.
          */
@@ -309,6 +332,14 @@
                     case 'add_to_report': $reportUuid = $request->getParameter('report_uuid'); if(empty($reportUuid)) throw new \Exception('Report UUID is required'); $this->federationClient->addEvidenceToReport($this->evidence->getUuid(), $reportUuid); $redirect['success'] = 'evidence_added_to_report'; break;
                     case 'delete_evidence': $this->federationClient->deleteEvidence($this->evidence->getUuid()); Utilities::redirect('evidence', queryParameters: ['success' => 'evidence_deleted']);
                     case 'upload_attachment':
+                        $url = trim((string)$request->getParameter('attachment_url'));
+                        $hasFile = isset($_FILES['attachment_file']) && $_FILES['attachment_file']['error'] !== UPLOAD_ERR_NO_FILE;
+                        if($url !== '' && !$hasFile && $this->isUrlUploadAllowed())
+                        {
+                            $this->federationClient->uploadFileAttachmentByUrl($this->evidence->getUuid(), $url);
+                            $redirect['success'] = 'upload_attachment_success';
+                            break;
+                        }
                         if(!isset($_FILES['attachment_file']) || $_FILES['attachment_file']['error'] !== UPLOAD_ERR_OK)
                         {
                             $code = $_FILES['attachment_file']['error'] ?? -1;
