@@ -20,6 +20,7 @@ services:
       - FEDERATION_SERVER_ENDPOINT=http://federation_server:7000
       #- FEDERATION_DISABLE_CUSTOM_HOST=1
       #- FEDERATION_DISABLE_ANONYMOUS=1
+      #- FEDERATION_CACHE_TTL=60 # Seconds server reads are shared between requests, 0 disables
     networks:
       - internal_network
 

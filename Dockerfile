@@ -1,6 +1,9 @@
+# syntax=docker/dockerfile:1
 # --- STAGE 1: BUILDER (Compiles the NCC Package) ---
-FROM ghcr.io/nosial/ncc:latest AS builder
-RUN apt-get update && apt-get install -y nodejs npm && rm -rf /var/lib/apt/lists/*
+ARG NCC_BUILDER_IMAGE=ghcr.io/nosial/ncc:latest
+ARG WEB_RUNTIME_IMAGE=ghcr.io/nosial/dynamicalweb:latest
+FROM ${NCC_BUILDER_IMAGE} AS builder
+RUN apt-get update && apt-get install -y --no-install-recommends nodejs npm && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY . /app
@@ -8,17 +11,20 @@ RUN ncc project install -y && ncc build --configuration=web_release
 
 
 # --- STAGE 2: PRODUCTION ---
-FROM ghcr.io/nosial/dynamicalweb:latest
-#FROM docker.io/library/dynaweb:latest
+FROM ${WEB_RUNTIME_IMAGE}
 
 LABEL org.opencontainers.image.title="FederationWeb" \
       org.opencontainers.image.version="1.0.0" \
       ncc.package="net.nosial.federationweb"
 
-COPY --from=builder /app/target/web_release/net.nosial.federationweb.ncc /tmp/package.ncc
-RUN ncc package install --package=/tmp/package.ncc -y && rm /tmp/package.ncc
+RUN --mount=type=bind,from=builder,source=/app/target/web_release/net.nosial.federationweb.ncc,target=/tmp/package.ncc \
+    ncc package install --package=/tmp/package.ncc -y
 
-ENV MEMCACHED_SESSION_SLIDING=1
+# Memcached (run by the DynamicalWeb image) holds sessions and the shared cache of federation server reads
+ENV MEMCACHED_ENABLED=1 \
+    MEMCACHED_SESSION_SLIDING=1 \
+    MEMCACHED_KEY_PREFIX=fw_ \
+    FEDERATION_CACHE_TTL=60
 
 RUN mkdir -p /var/www/html
 COPY --from=builder /app/web_entry /var/www/html/index.php
