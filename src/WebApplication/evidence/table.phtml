@@ -26,6 +26,7 @@
                                                     </a>
                                                 </th>
                                                 <th><?php Functions::printl('confidential'); ?></th>
+                                                <th><?php Functions::printl('automated'); ?></th>
                                                 <th>
                                                     <a href="<?php Functions::printRoute('evidence', queryParams: array_merge($view->getBaseQuery(), ['sort_by' => 'tag', 'sort_order' => ($view->getSortBy() === 'tag' && $view->getApiOrder() === 'ASC') ? 'DESC' : 'ASC', 'page' => 1])); ?>" class="fw-sortable">
                                                         <?php Functions::printl('tag'); ?>
@@ -68,7 +69,7 @@
                                                 {
                                                     ?>
                                                     <tr>
-                                                        <td colspan="10">
+                                                        <td colspan="11">
                                                             <div class="fw-empty">
                                                                 <i class="bi bi-exclamation-circle"></i>
                                                                 <p><?php Functions::printl('error_loading'); ?></p>
@@ -81,7 +82,7 @@
                                                 {
                                                     ?>
                                                     <tr>
-                                                        <td colspan="10">
+                                                        <td colspan="11">
                                                             <div class="fw-empty">
                                                                 <i class="bi bi-file-earmark-text"></i>
                                                                 <p><?php Functions::printl('no_evidence'); ?></p>
@@ -146,6 +147,18 @@
                                                                     else
                                                                     {
                                                                         ?><span class="fw-dot green"></span> <?php Functions::printl('no'); ?><?php
+                                                                    }
+                                                                ?>
+                                                            </td>
+                                                            <td>
+                                                                <?php
+                                                                    if ($evidenceRecord->isAutomated())
+                                                                    {
+                                                                        ?><span class="fw-dot amber"></span> <?php Functions::printl('yes'); ?><?php
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        ?><span class="fw-dot gray"></span> <?php Functions::printl('no'); ?><?php
                                                                     }
                                                                 ?>
                                                             </td>

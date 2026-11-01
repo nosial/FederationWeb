@@ -85,7 +85,15 @@
                                                         ?>
                                                         <tr class="fw-row-link" data-href="<?php Functions::printRoute('operator_detail', ['operator_id' => $operator->getUuid()]); ?>">
                                                             <td><span class="fw-uuid"><?php Functions::print($operator->getUuid()); ?></span><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($operator->getUuid()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></td>
-                                                            <td><a href="<?php Functions::printRoute('operator_detail', ['operator_id' => $operator->getUuid()]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($operator->getName()); ?></a><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($operator->getName()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></td>
+                                                            <td>
+                                                                <a href="<?php Functions::printRoute('operator_detail', ['operator_id' => $operator->getUuid()]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($operator->getName()); ?></a><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($operator->getName()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button>
+                                                                <?php
+                                                                    if ($operator->isBot())
+                                                                    {
+                                                                        ?><span class="fw-badge fw-badge-cyan"><i class="bi bi-robot"></i> <?php Functions::printl('bot'); ?></span><?php
+                                                                    }
+                                                                ?>
+                                                            </td>
                                                             <td>
                                                                 <?php
                                                                     if ($operator->isDisabled())
@@ -100,14 +108,8 @@
                                                             </td>
                                                             <td>
                                                                 <?php
-                                                                    if ($operator->isAutoAssigned())
-                                                                    {
-                                                                        ?><span class="fw-dot green"></span> <?php Functions::printl('yes'); ?><?php
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        ?><span class="fw-dot gray"></span> <?php Functions::printl('no'); ?><?php
-                                                                    }
+                                                                    WebSession::set('fw_operator_auto_assign', $operator);
+                                                                    Functions::insertSection('../sections/operator_auto_assign.phtml');
                                                                 ?>
                                                             </td>
                                                             <td>
@@ -148,7 +150,9 @@
                                                             <td>
                                                                 <div class="fw-table-actions">
                                                                     <?php
-                                                                        if (ViewAuthorization::canManageOperators())
+                                                                        // The server never lets anyone modify the root and system operators
+                                                                        $canManageOperator = ViewAuthorization::canManageOperators() && !ViewAuthorization::isReservedOperator($operator);
+                                                                        if ($canManageOperator)
                                                                         {
                                                                         if ($operator->isDisabled())
                                                                         {
@@ -162,6 +166,9 @@
                                                                             <button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('disable_operator'); ?>" data-bs-toggle="modal" data-bs-target="#disableOperatorModal" data-uuid="<?php Functions::print($operator->getUuid()); ?>" data-name="<?php Functions::print($operator->getName()); ?>"><i class="bi bi-pause-circle"></i></button>
                                                                             <?php
                                                                         }
+
+                                                                        if ($operator->getConfiguration() !== null)
+                                                                        {
                                                                     ?>
                                                                     <form method="POST" action="<?php Functions::printRoute('operators'); ?>" class="d-inline mb-0"><?php Functions::insertSection('../sections/csrf_field.phtml'); ?>
                                                                         <input type="hidden" name="action" value="toggle_auto_assign">
@@ -170,11 +177,12 @@
                                                                     </form>
                                                                     <?php
                                                                         }
+                                                                        }
                                                                     ?>
                                                                     <a href="<?php Functions::printRoute('operator_detail', ['operator_id' => $operator->getUuid()]); ?>" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('view'); ?>"><i class="bi bi-box-arrow-up-right"></i></a>
                                                                     <a href="<?php Functions::printRoute('operator_detail', ['operator_id' => $operator->getUuid()]); ?>" target="_blank" rel="noopener" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('open_in_new_tab'); ?>"><i class="bi bi-box-arrow-in-up-right"></i></a>
                                                                     <?php
-                                                                        if (ViewAuthorization::canManageOperators())
+                                                                        if ($canManageOperator)
                                                                         {
                                                                             ?>
                                                                             <button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('delete_operator'); ?>" data-bs-toggle="modal" data-bs-target="#deleteOperatorModal" data-uuid="<?php Functions::print($operator->getUuid()); ?>" data-name="<?php Functions::print($operator->getName()); ?>"><i class="bi bi-trash"></i></button>

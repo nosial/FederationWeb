@@ -5,6 +5,7 @@
     use FederationLib\Exceptions\RequestException;
     use FederationLib\FederationClient;
     use WebKernel\CachingFederationClient;
+    use WebKernel\Utilities;
     use DynamicalWeb\Enums\RequestMethod;
 
     if (!class_exists('Functions', false)) {
@@ -44,10 +45,17 @@
     }
 
     // Initialize the federation client and get the server information. Pages (GET requests) reuse the
-    // records they read for the rest of the request; requests that change records read them fresh.
-    $federationClient = WebSession::getRequest()->getMethod() === RequestMethod::GET
-        ? new CachingFederationClient($serverEndpoint)
-        : new FederationClient($serverEndpoint);
+    // records they read for the rest of the request and from the shared cache; requests that change records
+    // read them fresh, and discard the shared cache of the server once they end so the next page sees the change.
+    if(WebSession::getRequest()->getMethod() === RequestMethod::GET)
+    {
+        $federationClient = new CachingFederationClient($serverEndpoint);
+    }
+    else
+    {
+        $federationClient = new FederationClient($serverEndpoint);
+        register_shutdown_function(static fn() => CachingFederationClient::invalidateSharedCache($serverEndpoint));
+    }
 
     try
     {
@@ -55,12 +63,20 @@
     }
     catch (RequestException $e)
     {
-        // A configured host can become unavailable after an operator has logged in.
-        // Preserve the attempted route so the error page can retry it as a new request.
+        // A configured host can become unavailable after an operator has logged in, or limit the rate of its
+        // requests. Preserve the attempted route so the error page can retry it as a new request.
         WebSession::redirectToRoute('configuration_error', queryParams: [
-            'error' => 'server_unavailable',
+            'error' => Utilities::isRateLimited($e) ? 'rate_limited' : 'server_unavailable',
             'retry' => WebSession::getRequest()->getPath(),
         ]);
+    }
+
+    // Implementations of different major versions of the OFD interface do not interoperate, so a server of another
+    // major version (eg; one that was upgraded or downgraded since signing in) is not used
+    if(!Utilities::isSupportedApiVersion($serverInformation))
+    {
+        Logger::getLogger()->error(sprintf('Unsupported OFD interface version %s of %s', $serverInformation->getApiVersion(), $serverEndpoint));
+        WebSession::redirectToRoute('configuration_error', queryParams: ['error' => 'unsupported_version']);
     }
 
     // Store the federation client and server information in the request session for later use
