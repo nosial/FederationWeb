@@ -1,0 +1,74 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use FederationLib\Enums\ContentType;
+
+    // Prints the content type and context fields of a ContentInput object (OFD "ContentInput object"), configured by
+    // fw_content_input: type_name and context_name name the fields (a context field is named context_name[key]),
+    // and evidence_field adds the data-evidence-field attributes of the report form, whose evidence entries are
+    // cloned and renamed. Only the context fields of the selected content type are shown and submitted, see
+    // sections/javascript.phtml.
+
+    $contentInput = WebSession::get('fw_content_input');
+    $typeName = $contentInput['type_name'];
+    $contextName = $contentInput['context_name'];
+    $evidenceField = $contentInput['evidence_field'] ?? false;
+?>
+                                <div data-content-input>
+                                    <div class="fw-form-group">
+                                        <label class="fw-form-label"><?php Functions::printl('content_type'); ?></label>
+                                        <select class="fw-form-control" name="<?php Functions::print($typeName); ?>" data-content-type-select<?php
+                                            if ($evidenceField)
+                                            {
+                                                ?> data-evidence-field="content_type"<?php
+                                            }
+                                        ?>>
+                                            <?php
+                                                foreach (ContentType::cases() as $contentType)
+                                                {
+                                                    ?><option value="<?php Functions::print($contentType->value); ?>"><?php Functions::printl('content_type_' . strtolower($contentType->value)); ?></option><?php
+                                                }
+                                            ?>
+                                        </select>
+                                    </div>
+                                    <?php
+                                        foreach (ContentType::cases() as $contentType)
+                                        {
+                                            if (empty($contentType->getContextKeys()))
+                                            {
+                                                continue;
+                                            }
+                                            ?>
+                                    <div class="fw-hidden" data-context-for="<?php Functions::print($contentType->value); ?>">
+                                        <?php
+                                            foreach ($contentType->getContextKeys() as $contextKey)
+                                            {
+                                                $required = in_array($contextKey, $contentType->getRequiredContextKeys(), true);
+                                                ?>
+                                        <div class="fw-form-group">
+                                            <label class="fw-form-label"><?php Functions::printl('context_' . $contextKey); ?><?php
+                                                if (!$required)
+                                                {
+                                                    ?> <span class="fw-form-help"><?php Functions::printl('optional_label'); ?></span><?php
+                                                }
+                                            ?></label>
+                                            <input type="<?php Functions::print(in_array($contextKey, ['url', 'final_url'], true) ? 'url' : 'text'); ?>" class="fw-form-control" name="<?php Functions::print($contextName . '[' . $contextKey . ']'); ?>" maxlength="<?php Functions::print($contextKey === 'region' ? 2 : 1000); ?>" placeholder="<?php Functions::printl('context_' . $contextKey . '_placeholder'); ?>" autocomplete="off" disabled<?php
+                                                if ($required)
+                                                {
+                                                    ?> data-context-required<?php
+                                                }
+
+                                                if ($evidenceField)
+                                                {
+                                                    ?> data-evidence-field="<?php Functions::print('context.' . $contextKey); ?>"<?php
+                                                }
+                                            ?>>
+                                        </div>
+                                                <?php
+                                            }
+                                        ?>
+                                    </div>
+                                            <?php
+                                        }
+                                    ?>
+                                </div>
