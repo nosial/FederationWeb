@@ -1,0 +1,33 @@
+<?php
+    use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\WebSession;
+    use FederationLib\Objects\OperatorRecord;
+
+    // Prints the auto-assign opt-ins of the operator set as fw_operator_auto_assign. The server discloses an
+    // operator's configuration only to the operator itself and to operators with operator permissions, anyone
+    // else receives none, which is shown as a dash rather than as an opt-out.
+
+    /** @var OperatorRecord|null $operator */
+    $operator = WebSession::get('fw_operator_auto_assign');
+    $configuration = $operator?->getConfiguration();
+
+    if ($configuration === null)
+    {
+        ?><span class="fw-uuid">—</span><?php
+    }
+    elseif ($configuration->isAutoAssignReports() && $configuration->isAutoAssignAutomatedReports())
+    {
+        ?><span class="fw-dot green"></span> <?php Functions::printl('yes'); ?><?php
+    }
+    elseif ($configuration->isAutoAssignReports())
+    {
+        ?><span class="fw-dot green"></span> <?php Functions::printl('auto_assign_reports_only'); ?><?php
+    }
+    elseif ($configuration->isAutoAssignAutomatedReports())
+    {
+        ?><span class="fw-dot green"></span> <?php Functions::printl('auto_assign_automated_only'); ?><?php
+    }
+    else
+    {
+        ?><span class="fw-dot gray"></span> <?php Functions::printl('no'); ?><?php
+    }
