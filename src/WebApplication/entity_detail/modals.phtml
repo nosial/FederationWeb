@@ -57,6 +57,10 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
+                                        <?php
+                                            WebSession::set('fw_content_input', ['type_name' => 'evidence_content_type', 'context_name' => 'evidence_context']);
+                                            Functions::insertSection('../sections/content_input_fields.phtml');
+                                        ?>
                                         <div class="fw-form-group">
                                             <label class="fw-form-label"><?php Functions::printl('modal_evidence_text_label'); ?></label>
                                             <textarea class="fw-form-control" name="evidence_text" rows="3" autocomplete="off"></textarea>
@@ -69,10 +73,29 @@
                                             <label class="fw-form-label"><?php Functions::printl('modal_evidence_tag_label'); ?></label>
                                             <input type="text" class="fw-form-control" name="evidence_tag" autocomplete="off">
                                         </div>
+                                        <?php
+                                            // Evidence about a telephone number is likely to hold private messages, so it is always
+                                            // submitted as confidential (OFD "Telephone Entities")
+                                            if ($view->getEntity()->isTelephone())
+                                            {
+                                                ?>
+                                        <div class="fw-form-check">
+                                            <input type="checkbox" id="evidenceConfidential" checked disabled>
+                                            <label for="evidenceConfidential"><?php Functions::printl('modal_evidence_confidential_label'); ?></label>
+                                        </div>
+                                        <div class="fw-form-help"><?php Functions::printl('modal_evidence_telephone_confidential'); ?></div>
+                                                <?php
+                                            }
+                                            else
+                                            {
+                                                ?>
                                         <div class="fw-form-check">
                                             <input type="checkbox" name="evidence_confidential" value="1" id="evidenceConfidential">
                                             <label for="evidenceConfidential"><?php Functions::printl('modal_evidence_confidential_label'); ?></label>
                                         </div>
+                                                <?php
+                                            }
+                                        ?>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
@@ -95,8 +118,9 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="fw-form-group">
-                                            <label class="fw-form-label"><?php Functions::printl('modal_blacklist_report_label'); ?></label>
-                                            <input type="text" class="fw-form-control" name="blacklist_report_uuid" id="blacklistReportUuid" required autocomplete="off">
+                                            <label class="fw-form-label"><?php Functions::printl('modal_blacklist_report_label'); ?> <span class="fw-form-help"><?php Functions::printl('optional_label'); ?></span></label>
+                                            <input type="text" class="fw-form-control" name="blacklist_report_uuid" id="blacklistReportUuid" autocomplete="off">
+                                            <div class="fw-form-help"><?php Functions::printl('modal_blacklist_report_help'); ?></div>
                                         </div>
                                         <div class="fw-form-group">
                                             <label class="fw-form-label"><?php Functions::printl('modal_blacklist_type_label'); ?></label>
@@ -105,7 +129,7 @@
                                                     foreach (IncidentType::cases() as $type)
                                                     {
                                                         ?>
-                                                <option value="<?php Functions::print($type->value); ?>"><?php Functions::print($type->name); ?></option>
+                                                <option value="<?php Functions::print($type->value); ?>"><?php Functions::printl('incident_' . strtolower($type->value)); ?></option>
                                                         <?php
                                                     }
                                                 ?>
