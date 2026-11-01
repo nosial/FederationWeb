@@ -155,6 +155,26 @@ function removeFile(index) {
     updateFileList();
 }
 
+// Shows the context fields of the content type selected in a content input (sections/content_input_fields.phtml).
+// The context fields of other content types are disabled, so they are not submitted.
+function updateContentInput(contentInput) {
+    var select = contentInput.querySelector('[data-content-type-select]');
+    if (!select) return;
+    contentInput.querySelectorAll('[data-context-for]').forEach(function(group) {
+        var selected = group.dataset.contextFor === select.value;
+        group.classList.toggle('fw-hidden', !selected);
+        group.querySelectorAll('input').forEach(function(field) {
+            field.disabled = !selected;
+            field.required = selected && field.hasAttribute('data-context-required');
+        });
+    });
+}
+
+document.querySelectorAll('[data-content-input]').forEach(updateContentInput);
+document.addEventListener('change', function(e) {
+    if (e.target.matches('[data-content-type-select]')) updateContentInput(e.target.closest('[data-content-input]'));
+});
+
 function escapeHtml(str) {
     var div = document.createElement('div');
     div.textContent = str;
@@ -170,9 +190,12 @@ function escapeHtml(str) {
         var index = list.querySelectorAll('[data-report-evidence]').length;
         var item = list.querySelector('[data-report-evidence]').cloneNode(true);
         item.querySelectorAll('[data-evidence-field]').forEach(function(field) {
-            field.value = '';
-            field.name = 'evidence[' + index + '][' + field.dataset.evidenceField + ']';
+            // A nested field such as context.subject is named evidence[index][context][subject]
+            field.name = 'evidence[' + index + '][' + field.dataset.evidenceField.split('.').join('][') + ']';
+            if (field.tagName === 'SELECT') field.selectedIndex = 0;
+            else field.value = '';
         });
+        item.querySelectorAll('[data-content-input]').forEach(updateContentInput);
 
         var actions = document.createElement('div');
         actions.className = 'd-flex justify-content-end mb-2';
