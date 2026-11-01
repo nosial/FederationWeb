@@ -154,14 +154,8 @@
                                                                         </td>
                                                                         <td>
                                                                             <?php
-                                                                                if ($operator->isAutoAssigned())
-                                                                                {
-                                                                                    ?><span class="fw-dot green"></span> <?php Functions::printl('yes'); ?><?php
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    ?><span class="fw-dot gray"></span> <?php Functions::printl('no'); ?><?php
-                                                                                }
+                                                                                WebSession::set('fw_operator_auto_assign', $operator);
+                                                                                Functions::insertSection('../sections/operator_auto_assign.phtml');
                                                                             ?>
                                                                         </td>
                                                                         <td>
@@ -681,7 +675,13 @@
                                                                         <td><span class="fw-uuid"><?php Functions::print($searchView->formatDateTime($attachment->getCreated())); ?></span></td>
                                                                         <td>
                                                                             <div class="fw-table-actions">
-                                                                                <a href="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $attachment->getEvidenceUuid()], ['download_attachment' => $attachment->getUuid()]); ?>" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('download_attachment'); ?>"><i class="bi bi-download"></i></a>
+                                                                                <?php
+                                                                                    // Attachments are downloaded through the page of their evidence
+                                                                                    if ($attachment->getEvidenceUuid() !== null)
+                                                                                    {
+                                                                                        ?><a href="<?php Functions::printRoute('evidence_detail', ['evidence_uuid' => $attachment->getEvidenceUuid()], ['download_attachment' => $attachment->getUuid()]); ?>" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('download_attachment'); ?>"><i class="bi bi-download"></i></a><?php
+                                                                                    }
+                                                                                ?>
                                                                                 <a href="<?php Functions::print($attachmentUrl); ?>" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('view'); ?>"><i class="bi bi-box-arrow-up-right"></i></a>
                                                                                 <a href="<?php Functions::print($attachmentUrl); ?>" target="_blank" rel="noopener" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('open_in_new_tab'); ?>"><i class="bi bi-box-arrow-in-up-right"></i></a>
                                                                             </div>
