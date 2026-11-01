@@ -360,7 +360,6 @@
   justify-content: space-between;
   gap: 14px;
   flex-wrap: wrap;
-  border-left: 4px solid var(--fw-page-accent, $fw-gray-300);
 
   .fw-record-hero-title {
     display: flex;
@@ -417,7 +416,6 @@
     padding: 12px;
     text-align: center;
     margin-bottom: 14px;
-    border-left: 4px solid var(--fw-page-accent);
 
     .fw-reputation-score {
       font-size: 2rem;
@@ -567,7 +565,6 @@
     background: $white;
     border: 1px solid $fw-gray-200;
     margin-bottom: 14px;
-    border-left: 4px solid var(--fw-page-accent);
 
     .fw-profile-avatar {
       width: 48px;
