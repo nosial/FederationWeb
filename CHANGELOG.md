@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2026-11-01
+
+This update introduces a minor bug fix
+
+### Fixed
+ - The API specification page printed an `Undefined variable $type` warning for every schema that is not a reference,
+   and showed those schemas with a generic label (eg; `object` or `mixed`) instead of their declared type.
+
+
+
 ## [1.0.4] - 2026-11-01
 
 This update follows version `2.2` of the OFD Specification and requires FederationLib `2.1.0` or newer, servers of
