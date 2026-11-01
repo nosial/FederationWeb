@@ -17,7 +17,7 @@
     // the sort value is [field, order label key].
     $filters = array_filter([
         ['print_filter_search', $view->getSearchQuery(), null],
-        ['print_filter_category', $view->getCategoryFilter(), ['confidential' => 'filter_confidential', 'not_confidential' => 'filter_not_confidential', 'classified' => 'filter_classified', 'unclassified' => 'filter_unclassified']],
+        ['print_filter_category', $view->getCategoryFilter(), ['confidential' => 'filter_confidential', 'not_confidential' => 'filter_not_confidential', 'classified' => 'filter_classified', 'unclassified' => 'filter_unclassified', 'automated' => 'filter_automated', 'not_automated' => 'filter_not_automated']],
         ['print_filter_operator', $view->getOperatorId(), null],
         ['print_filter_entity', $view->getEntityId(), null],
         ['print_filter_sort', $view->getSortBy() !== null && $view->getSortBy() !== '' ? [$view->getSortBy(), $view->getApiOrder() === 'DESC' ? 'print_sort_desc' : 'print_sort_asc'] : null, null],
