@@ -484,7 +484,7 @@
                                                             <details class="fw-spec-schema">
                                                                 <summary class="fw-spec-schema-summary">
                                                                     <span class="fw-spec-schema-name fw-mono"><?php Functions::print($schemaName); ?></span>
-                                                                    <span class="fw-uuid"><?php Functions::print($schemaDef['type'] ?? 'object'); ?></span>
+                                                                    <span class="fw-uuid"><?php Functions::print(ApiSpecificationView::formatType($schemaDef)); ?></span>
                                                                     <?php
                                                                         if (!empty($schemaDef['description']))
                                                                         {
