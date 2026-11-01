@@ -3,6 +3,7 @@
     use DynamicalWeb\WebSession;
     use FederationLib\Objects\ServerInformation;
     use WebKernel\DashboardView;
+    use WebKernel\Utilities;
 
     /** @var DashboardView $dashboardView */
     $dashboardView = WebSession::get('dashboard_view');
@@ -357,6 +358,21 @@
                             </span>
                         </div>
                         <div class="fw-status-item">
+                            <span class="fw-status-label"><?php Functions::printl('public_telephone_entities'); ?></span>
+                            <span class="fw-status-value">
+                                <?php
+                                    if ($serverInformation->isPublicTelephoneEntities())
+                                    {
+                                        ?><span class="fw-dot green"></span> <?php Functions::printl('enabled'); ?><?php
+                                    }
+                                    else
+                                    {
+                                        ?><span class="fw-dot red"></span> <?php Functions::printl('disabled'); ?><?php
+                                    }
+                                ?>
+                            </span>
+                        </div>
+                        <div class="fw-status-item">
                             <span class="fw-status-label"><?php Functions::printl('public_scan_content'); ?></span>
                             <span class="fw-status-value">
                                 <?php
@@ -397,6 +413,111 @@
                                     else
                                     {
                                         ?><span class="fw-dot red"></span> <?php Functions::printl('disabled'); ?><?php
+                                    }
+                                ?>
+                            </span>
+                        </div>
+                        <div class="fw-status-item">
+                            <span class="fw-status-label"><?php Functions::printl('allow_url_uploads'); ?></span>
+                            <span class="fw-status-value">
+                                <?php
+                                    if ($serverInformation->isAllowUrlUploads())
+                                    {
+                                        ?><span class="fw-dot green"></span> <?php Functions::printl('enabled'); ?><?php
+                                    }
+                                    else
+                                    {
+                                        ?><span class="fw-dot red"></span> <?php Functions::printl('disabled'); ?><?php
+                                    }
+                                ?>
+                            </span>
+                        </div>
+                        <div class="fw-status-item">
+                            <span class="fw-status-label"><?php Functions::printl('collects_public_scan_content'); ?></span>
+                            <span class="fw-status-value">
+                                <?php
+                                    // Whether content submitted for scanning without authentication may be stored
+                                    if ($serverInformation->isCollectsPublicScanContent())
+                                    {
+                                        ?><span class="fw-dot amber"></span> <?php Functions::printl('yes'); ?><?php
+                                    }
+                                    else
+                                    {
+                                        ?><span class="fw-dot green"></span> <?php Functions::printl('no'); ?><?php
+                                    }
+                                ?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fw-card">
+                <div class="fw-card-header">
+                    <h5><i class="bi bi-shield-check fw-icon-blue"></i> <?php Functions::printl('scanning_capabilities'); ?></h5>
+                </div>
+                <div class="fw-card-body">
+                    <div class="fw-status-list">
+                        <div class="fw-status-item">
+                            <span class="fw-status-label"><?php Functions::printl('scan_content_types'); ?></span>
+                            <span class="fw-status-value">
+                                <?php
+                                    foreach ($serverInformation->getScanContentTypes() as $contentType)
+                                    {
+                                        ?><span class="fw-badge fw-badge-blue"><?php Functions::printl('content_type_' . strtolower($contentType->value)); ?></span> <?php
+                                    }
+                                ?>
+                            </span>
+                        </div>
+                        <div class="fw-status-item">
+                            <span class="fw-status-label"><?php Functions::printl('scan_concerns'); ?></span>
+                            <span class="fw-status-value">
+                                <?php
+                                    // A server that does not publish its concerns only assesses its default concerns
+                                    if ($serverInformation->getConcerns() === null)
+                                    {
+                                        ?><span class="fw-dot gray"></span> <?php Functions::printl('not_published'); ?><?php
+                                    }
+                                    else
+                                    {
+                                        foreach ($serverInformation->getConcerns() as $concern)
+                                        {
+                                            ?><span class="fw-badge <?php Functions::print(Utilities::getIncidentBadge($concern)); ?>"><?php Functions::printl('incident_' . strtolower($concern->value)); ?></span> <?php
+                                        }
+                                    }
+                                ?>
+                            </span>
+                        </div>
+                        <div class="fw-status-item">
+                            <span class="fw-status-label"><?php Functions::printl('scan_default_concerns'); ?></span>
+                            <span class="fw-status-value">
+                                <?php
+                                    if (empty($serverInformation->getDefaultConcerns()))
+                                    {
+                                        ?><span class="fw-dot gray"></span> <?php Functions::printl('not_published'); ?><?php
+                                    }
+                                    else
+                                    {
+                                        foreach ($serverInformation->getDefaultConcerns() as $concern)
+                                        {
+                                            ?><span class="fw-badge <?php Functions::print(Utilities::getIncidentBadge($concern)); ?>"><?php Functions::printl('incident_' . strtolower($concern->value)); ?></span> <?php
+                                        }
+                                    }
+                                ?>
+                            </span>
+                        </div>
+                        <div class="fw-status-item">
+                            <span class="fw-status-label"><?php Functions::printl('scan_files'); ?></span>
+                            <span class="fw-status-value">
+                                <?php
+                                    // Every server accepts files with scanned content, one without file limits ignores them
+                                    if ($serverInformation->getMaxScanFiles() > 0 && $serverInformation->getMaxScanFileSize() > 0)
+                                    {
+                                        ?><span class="fw-dot green"></span> <?php Functions::printl('scan_files_limits', ['files' => $serverInformation->getMaxScanFiles(), 'size' => Utilities::formatSize($serverInformation->getMaxScanFileSize())]); ?><?php
+                                    }
+                                    else
+                                    {
+                                        ?><span class="fw-dot gray"></span> <?php Functions::printl('scan_files_ignored'); ?><?php
                                     }
                                 ?>
                             </span>
