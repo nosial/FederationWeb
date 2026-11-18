@@ -6,6 +6,7 @@
     use DynamicalWeb\Classes\RequestCache;
     use DynamicalWeb\Html\Functions;
     use DynamicalWeb\WebSession;
+    use FederationLib\Enums\ClassificationFlag;
     use FederationLib\Enums\ContentType;
     use FederationLib\Enums\IncidentType;
     use FederationLib\Exceptions\RequestException;
@@ -267,6 +268,48 @@
             if($bytes >= 1048576) return round($bytes / 1048576, 1) . ' MB';
             if($bytes >= 1024) return round($bytes / 1024, 1) . ' KB';
             return $bytes . ' B';
+        }
+
+        /**
+         * Returns the badge CSS class for an evidence classification.
+         *
+         * @param ClassificationFlag|null $classification The evidence classification.
+         * @return string The badge CSS class.
+         */
+        public static function getClassificationBadge(?ClassificationFlag $classification): string
+        {
+            return match($classification)
+            {
+                ClassificationFlag::MALICIOUS => 'fw-badge-red',
+                ClassificationFlag::SUSPICIOUS => 'fw-badge-amber',
+                ClassificationFlag::NORMAL => 'fw-badge-green',
+                default => 'fw-badge-gray',
+            };
+        }
+
+        /**
+         * Returns a Bootstrap icon class for a MIME type.
+         *
+         * @param string|null $mime The MIME type to classify.
+         * @return string The icon CSS class.
+         */
+        public static function getMimeIcon(?string $mime): string
+        {
+            $mime = $mime ?? '';
+            return match(true)
+            {
+                str_contains($mime, 'pdf') => 'bi-filetype-pdf',
+                str_contains($mime, 'image/') => 'bi-file-earmark-image',
+                str_contains($mime, 'video/') => 'bi-file-earmark-play',
+                str_contains($mime, 'audio/') => 'bi-file-earmark-music',
+                str_contains($mime, 'text/') => 'bi-filetype-txt',
+                str_contains($mime, 'zip') || str_contains($mime, 'rar') || str_contains($mime, 'tar') || str_contains($mime, 'gzip') => 'bi-file-earmark-zip',
+                str_contains($mime, 'json') => 'bi-filetype-json',
+                str_contains($mime, 'xml') => 'bi-filetype-xml',
+                str_contains($mime, 'html') => 'bi-filetype-html',
+                str_contains($mime, 'javascript') => 'bi-filetype-js',
+                default => 'bi-file-earmark',
+            };
         }
 
         /**

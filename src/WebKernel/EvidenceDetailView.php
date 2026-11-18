@@ -230,22 +230,7 @@
          * @param string|null $mime The MIME type to classify.
          * @return string The icon CSS class.
          */
-        public function getMimeIcon(?string $mime): string
-        {
-            return match(true) {
-                str_contains($mime ?? '', 'pdf') => 'bi-filetype-pdf',
-                str_contains($mime ?? '', 'image/') => 'bi-file-earmark-image',
-                str_contains($mime ?? '', 'video/') => 'bi-file-earmark-play',
-                str_contains($mime ?? '', 'audio/') => 'bi-file-earmark-music',
-                str_contains($mime ?? '', 'text/') => 'bi-filetype-txt',
-                str_contains($mime ?? '', 'zip') || str_contains($mime ?? '', 'rar') || str_contains($mime ?? '', 'tar') || str_contains($mime ?? '', 'gzip') => 'bi-file-earmark-zip',
-                str_contains($mime ?? '', 'json') => 'bi-filetype-json',
-                str_contains($mime ?? '', 'xml') => 'bi-filetype-xml',
-                str_contains($mime ?? '', 'html') => 'bi-filetype-html',
-                str_contains($mime ?? '', 'javascript') => 'bi-filetype-js',
-                default => 'bi-file-earmark',
-            };
-        }
+        public function getMimeIcon(?string $mime): string { return Utilities::getMimeIcon($mime); }
         /** Determines whether the page uses dark mode.
          * @return bool Whether dark mode is enabled.
          */

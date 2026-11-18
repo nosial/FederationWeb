@@ -180,16 +180,7 @@
          * @param ClassificationFlag|null $classification The evidence classification.
          * @return string The badge CSS class.
          */
-        public function getClassificationBadge(?ClassificationFlag $classification): string
-        {
-            return match($classification)
-            {
-                ClassificationFlag::MALICIOUS => 'fw-badge-red',
-                ClassificationFlag::SUSPICIOUS => 'fw-badge-amber',
-                ClassificationFlag::NORMAL => 'fw-badge-green',
-                default => 'fw-badge-gray',
-            };
-        }
+        public function getClassificationBadge(?ClassificationFlag $classification): string { return Utilities::getClassificationBadge($classification); }
         /**
          * Returns the badge CSS class for an incident type.
          *
@@ -245,19 +236,7 @@
          * @param string $mime The MIME type to classify.
          * @return string The icon CSS class.
          */
-        public function getMimeIcon(string $mime): string
-        {
-            return match(true)
-            {
-                str_contains($mime, 'pdf') => 'bi-filetype-pdf',
-                str_contains($mime, 'image/') => 'bi-file-earmark-image',
-                str_contains($mime, 'video/') => 'bi-file-earmark-play',
-                str_contains($mime, 'audio/') => 'bi-file-earmark-music',
-                str_contains($mime, 'text/') => 'bi-filetype-txt',
-                str_contains($mime, 'zip') || str_contains($mime, 'rar') || str_contains($mime, 'tar') || str_contains($mime, 'gzip') => 'bi-file-earmark-zip',
-                default => 'bi-file-earmark',
-            };
-        }
+        public function getMimeIcon(string $mime): string { return Utilities::getMimeIcon($mime); }
         /**
          * Formats a byte count for display.
          *

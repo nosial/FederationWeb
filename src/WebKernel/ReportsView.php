@@ -313,6 +313,11 @@
                 Utilities::respondWithJson($this->searchSuggestions(trim((string)$request->getParameter('q'))));
             }
 
+            if($action === 'close_report' && $request->getHeader('X-Requested-With') === 'XMLHttpRequest')
+            {
+                Utilities::respondWithJson($this->closeReportInline((string)$request->getParameter('report_uuid'), $request->getParameter('classification')));
+            }
+
             $query = $request->getQueryParameters();
             $redirect = array_filter([
                 'page' => $query['page'] ?? 1,
@@ -356,6 +361,66 @@
             }
 
             Utilities::redirect('reports', queryParameters: $redirect);
+        }
+
+        /**
+         * Closes a report for the quick review modal and describes the closed report so the list row can be
+         * updated in place.
+         *
+         * @param string $reportUuid The report UUID.
+         * @param string|null $classification The classification flag value, or empty for none.
+         * @return array The response payload.
+         */
+        private function closeReportInline(string $reportUuid, ?string $classification): array
+        {
+            try
+            {
+                $classificationFlag = empty($classification) ? null : ClassificationFlag::tryFrom($classification);
+                $this->assignCurrentOperatorBeforeClosing($reportUuid);
+                $this->federationClient->closeReport($reportUuid, $classificationFlag);
+            }
+            catch(\Exception $e)
+            {
+                Logger::getLogger()->warning('Unable to close report from the quick review', $e);
+                return [
+                    'success' => false,
+                    'message' => Utilities::localize('report_close_failed'),
+                    'detail' => $e->getMessage(),
+                ];
+            }
+
+            $response = [
+                'success' => true,
+                'message' => Utilities::localize('report_closed'),
+                'closed_label' => Utilities::localize('closed'),
+                'assigned_operator' => null,
+                'updated' => Utilities::formatDate(time()),
+            ];
+
+            try
+            {
+                $report = Utilities::getReport($this->federationClient, $reportUuid);
+                $assignedOperator = $report->getAssignedOperator();
+                if($report->getUpdated() !== null)
+                {
+                    $response['updated'] = Utilities::formatDate($report->getUpdated());
+                }
+                if($assignedOperator !== null)
+                {
+                    $response['assigned_operator'] = [
+                        'uuid' => $assignedOperator,
+                        'name' => Utilities::getOperatorNames($this->federationClient, [$assignedOperator])[$assignedOperator] ?? $assignedOperator,
+                        'url' => Functions::getRouteUrl('operator_detail', ['operator_id' => $assignedOperator]),
+                    ];
+                }
+            }
+            catch(\Exception $e)
+            {
+                // The report is closed; the row is still updated, only without the refreshed details
+                Logger::getLogger()->warning('Unable to reload report after closing it from the quick review', $e);
+            }
+
+            return $response;
         }
 
         /**

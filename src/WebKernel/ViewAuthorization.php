@@ -227,7 +227,7 @@
                 'evidence', 'evidence_list_print', 'evidence_detail', 'evidence_detail_print' => $serverInformation->isPublicEvidence(),
                 'blacklist', 'blacklist_list_print', 'blacklist_detail', 'blacklist_detail_print' => $serverInformation->isPublicBlacklist(),
                 'entities', 'entities_list_print', 'entity_query', 'entity_detail', 'entity_detail_print' => $serverInformation->isPublicEntities(),
-                'reports', 'reports_list_print', 'report_detail', 'report_detail_print' => $serverInformation->isPublicReports(),
+                'reports', 'reports_list_print', 'report_detail', 'report_review', 'report_detail_print' => $serverInformation->isPublicReports(),
                 'search' => $serverInformation->isPublicAuditLogs()
                     || $serverInformation->isPublicEvidence()
                     || $serverInformation->isPublicBlacklist()
