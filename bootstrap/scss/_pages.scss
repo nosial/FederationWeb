@@ -489,8 +489,9 @@
   }
 }
 
-// === Evidence page specific ===
-.fw-page--evidence {
+// === Evidence page specific (also the report quick review modal) ===
+.fw-page--evidence,
+.fw-review {
 
   // Attachment list
   .fw-attachment-list {
