@@ -107,7 +107,7 @@ jobs:
       - name: Install build dependencies
         run: |
           apt-get update && apt-get install -y --no-install-recommends nodejs npm build-essential autoconf automake \
-            libtool cmake pkg-config bison re2c flex git curl xz-utils unzip patch && rm -rf /var/lib/apt/lists/*
+            autopoint libtool cmake pkg-config bison re2c flex git curl xz-utils unzip patch
 
       # The sources and the PHP build are kept between runs, so builds only relink FrankenPHP with the new package
       - name: Restore the static-php-cli working directory
