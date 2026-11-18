@@ -23,6 +23,8 @@ built on [FederationLib](https://github.com/nosial/FederationLib) and served by 
   * [Connecting to an Existing Server](#connecting-to-an-existing-server)
   * [Running the Complete Stack](#running-the-complete-stack)
   * [Preparing a Production Deployment](#preparing-a-production-deployment)
+* [Running the Standalone Binary](#running-the-standalone-binary)
+  * [Building the Binary](#building-the-binary)
 * [Usage](#usage)
   * [Signing In](#signing-in)
   * [Browsing Records](#browsing-records)
@@ -50,16 +52,19 @@ built on [FederationLib](https://github.com/nosial/FederationLib) and served by 
 
 FederationWeb is distributed as a [Nosial Code Compiler (ncc)](https://github.com/nosial/ncc) package that DynamicalWeb
 serves. Most deployments do not need to build it by hand. The [Dockerfile](Dockerfile) builds the package and installs
-it into the DynamicalWeb image (see [Deploying with Docker](#deploying-with-docker)).
+it into the DynamicalWeb image (see [Deploying with Docker](#deploying-with-docker)). Each release also includes a
+standalone executable that needs neither PHP nor a web server (see
+[Running the Standalone Binary](#running-the-standalone-binary)).
 
 ### Requirements
 
 To build and run FederationWeb outside of Docker, you need:
 
  - [ncc](https://github.com/nosial/ncc), to build and install the package;
- - PHP 8.4.1 or newer (the version current ncc requires) with the `curl` and `memcached` extensions;
+ - PHP 8.4.1 or newer (the version current ncc requires) with the `curl` extension, and the `memcached` or `apcu`
+   extension;
  - Node.js and npm, to compile the stylesheets, scripts and vendor assets;
- - a memcached server, for sessions and the cache;
+ - a memcached server for sessions and the cache, or APCu when FederationWeb runs in a single server process;
  - [FederationLib](https://github.com/nosial/FederationLib) `2.1.0` or newer, whose client the package is built with;
  - a Federated Database server that implements version `2.0`, `2.1` or `2.2` of the OFD specification, such as
    FederationLib `2.0.0` or newer.
@@ -103,7 +108,7 @@ The [Makefile](Makefile) wraps the common commands:
 
 | Target                | Description                                                                  |
 |-----------------------|------------------------------------------------------------------------------|
-| `make all`            | Builds the `debug`, `release` and `web_release` packages                     |
+| `make all`            | Builds the `debug`, `release` and `web_release` packages and the binary      |
 | `make configure`      | Generates the IDE stubs for the project's dependencies (`ncc project stubs`) |
 | `make clean`          | Removes the build output, compiled assets and installed dependencies         |
 | `make docker-build`   | Builds the docker image                                                      |
@@ -185,6 +190,53 @@ FederationWeb handles operators' access tokens. Before you deploy it publicly, m
  - memcached is not reachable from outside the deployment. Sessions contain operators' access tokens, and the cache
    contains the records those operators can read;
  - sign-in attempts are rate-limited, at the reverse proxy or on the Federated Database server.
+
+
+## Running the Standalone Binary
+
+Every release includes `federationweb-linux-x86_64`, a single executable built by ncc's `frankenphp` build type. It
+contains PHP, the [FrankenPHP](https://frankenphp.dev) web server and FederationWeb, so it runs without PHP, ncc,
+memcached or a web server installed:
+
+```shell
+chmod +x federationweb-linux-x86_64
+./federationweb-linux-x86_64 php-server --listen 127.0.0.1:8080
+```
+
+Open `http://localhost:8080`, enter the URL of any Federated Database server on the sign-in page, and sign in with an
+access token or anonymously. Without `FEDERATION_SERVER_ENDPOINT`, every visitor chooses the server they connect to.
+The [environment variables](#environment-variable-reference) work the same way as in Docker; set
+`FEDERATION_SERVER_ENDPOINT` to fill in a default server, and `FEDERATION_DISABLE_CUSTOM_HOST` as well to lock the
+sign-in page to it:
+
+```shell
+FEDERATION_SERVER_ENDPOINT=https://federation.example.com ./federationweb-linux-x86_64 php-server --listen :8080
+```
+
+The binary has no memcached server, so sessions and the cache are kept in the memory of the process (APCu). Everyone is
+signed out when the binary restarts. The upload limit is 64MB, the same as in the Docker image.
+
+> [!CAUTION]
+> Listening on `127.0.0.1` keeps the binary to your own computer. When you listen on every address (`--listen :8080`),
+> anyone who reaches the port can make your computer send requests to the server URLs they enter, unless
+> `FEDERATION_DISABLE_CUSTOM_HOST` is set (see [Configuring the Server Connection](#configuring-the-server-connection)).
+> Use `--domain example.com` to serve over HTTPS with an automatic certificate.
+
+### Building the Binary
+
+Build the `native` configuration:
+
+```shell
+ncc project install
+ncc build --configuration native
+```
+
+The binary is written to `target/native/federationweb` and is built for the platform it is built on (Linux or macOS).
+The first build compiles PHP, its libraries and FrankenPHP from source with
+[static-php-cli](https://github.com/crazywhalecc/static-php-cli), which needs a C toolchain and takes a while. The
+sources and the PHP build are kept in `target/.frankenphp`, so the following builds only relink the binary with the new
+package, which takes seconds (`make clean` removes them). The configuration enables spc's `auto_fix` option, so a full
+build installs the missing build dependencies with the system's package manager, which may ask for `sudo`.
 
 
 ## Usage
@@ -359,8 +411,9 @@ of the service in `docker-compose.yml`.
 
 ### Configuring the Server Connection
 
-`FEDERATION_SERVER_ENDPOINT` is the only required variable. It is the URL of the Federated Database server to connect
-to, including its scheme:
+`FEDERATION_SERVER_ENDPOINT` is the URL of the Federated Database server to connect to, including its scheme. It fills
+in the server host field of the sign-in page. Without it, visitors enter the URL of the server they connect to, and it
+is required only when `FEDERATION_DISABLE_CUSTOM_HOST` is set:
 
 ```yaml
 environment:
@@ -396,8 +449,10 @@ configuration option.
 
 ### Configuring Sessions
 
-DynamicalWeb handles sessions and stores them in memcached. Signing in requires sessions, so `MEMCACHED_ENABLED` must be
-`1`, `true`, `yes` or `on`. The Docker image sets it already.
+DynamicalWeb handles sessions and stores them in memcached when `MEMCACHED_ENABLED` is `1`, `true`, `yes` or `on`. The
+Docker image sets it already. Without memcached, sessions are kept in APCu, in the memory of the PHP process. This is
+how the [standalone binary](#running-the-standalone-binary) works; sessions are then lost when the process restarts and
+are not shared between servers. Signing in requires one of the two.
 
 Sessions are bound to the client's user agent and IP address with an HMAC, using `MEMCACHED_SESSION_SECRET` as the key.
 The default secret is publicly known, so always set your own in production:
@@ -432,8 +487,8 @@ environment:
   - FEDERATION_CACHE_TTL=30
 ```
 
-If memcached is unavailable (`MEMCACHED_ENABLED` is not set, or the `memcached` extension is missing), every page reads
-from the server.
+If memcached is unavailable (`MEMCACHED_ENABLED` is not set, or the `memcached` extension is missing), reads are cached
+in APCu instead, and when APCu is unavailable as well, every page reads from the server.
 
 > [!NOTE]
 > An access token revoked by another client of the server can keep seeing the pages it already loaded until they
@@ -445,20 +500,20 @@ from the server.
 
 ### Environment Variable Reference
 
-| Environment Variable             | Type   | Default                               | Description                                                                   |
-|----------------------------------|--------|---------------------------------------|-------------------------------------------------------------------------------|
-| `FEDERATION_SERVER_ENDPOINT`     | string | None (required)                       | The URL of the Federated Database server to connect to                        |
-| `FEDERATION_DISABLE_CUSTOM_HOST` | flag   | Not set                               | Locks the sign-in page to `FEDERATION_SERVER_ENDPOINT`                        |
-| `FEDERATION_DISABLE_ANONYMOUS`   | flag   | Not set                               | Requires an access token to sign in                                           |
-| `FEDERATION_CACHE_TTL`           | int    | `60`                                  | Seconds server reads are shared between requests, `0` disables the cache      |
-| `MEMCACHED_ENABLED`              | bool   | `1` (Docker image)                    | Enables sessions and the cache; signing in requires it                        |
-| `MEMCACHED_HOST`                 | string | `127.0.0.1`                           | The memcached server host                                                     |
-| `MEMCACHED_PORT`                 | int    | `11211`                               | The memcached server port                                                     |
-| `MEMCACHED_KEY_PREFIX`           | string | `fw_` (Docker image)                  | The prefix of every cache key                                                 |
-| `MEMCACHED_SESSION_TTL`          | int    | `3600`                                | Seconds a session stays valid                                                 |
-| `MEMCACHED_SESSION_SECRET`       | string | `dynamicalweb_default_session_secret` | The key that binds sessions to the client; set a long random value            |
-| `MEMCACHED_SESSION_SLIDING`      | bool   | `1` (Docker image)                    | Renews the session cookie on every request, making the TTL an idle timeout    |
-| `MEMCACHED_SESSION_BIND_IP`      | bool   | `1`                                   | Set to `0` to keep sessions when the client's IP address changes              |
+| Environment Variable             | Type   | Default                               | Description                                                                           |
+|----------------------------------|--------|---------------------------------------|---------------------------------------------------------------------------------------|
+| `FEDERATION_SERVER_ENDPOINT`     | string | Not set                               | The default Federated Database server; required with `FEDERATION_DISABLE_CUSTOM_HOST` |
+| `FEDERATION_DISABLE_CUSTOM_HOST` | flag   | Not set                               | Locks the sign-in page to `FEDERATION_SERVER_ENDPOINT`                                |
+| `FEDERATION_DISABLE_ANONYMOUS`   | flag   | Not set                               | Requires an access token to sign in                                                   |
+| `FEDERATION_CACHE_TTL`           | int    | `60`                                  | Seconds server reads are shared between requests, `0` disables the cache              |
+| `MEMCACHED_ENABLED`              | bool   | `1` (Docker image)                    | Stores sessions and the cache in memcached instead of APCu                            |
+| `MEMCACHED_HOST`                 | string | `127.0.0.1`                           | The memcached server host                                                             |
+| `MEMCACHED_PORT`                 | int    | `11211`                               | The memcached server port                                                             |
+| `MEMCACHED_KEY_PREFIX`           | string | `fw_` (Docker image)                  | The prefix of every cache key                                                         |
+| `MEMCACHED_SESSION_TTL`          | int    | `3600`                                | Seconds a session stays valid                                                         |
+| `MEMCACHED_SESSION_SECRET`       | string | `dynamicalweb_default_session_secret` | The key that binds sessions to the client; set a long random value                    |
+| `MEMCACHED_SESSION_SLIDING`      | bool   | `1` (Docker image)                    | Renews the session cookie on every request, making the TTL an idle timeout            |
+| `MEMCACHED_SESSION_BIND_IP`      | bool   | `1`                                   | Set to `0` to keep sessions when the client's IP address changes                      |
 
 
 ## Access and Permissions
