@@ -212,3 +212,100 @@
   &:last-child { margin-bottom: 0; }
 }
 
+
+// Report quick review modal (reports list)
+.fw-review-modal {
+  .modal-body { padding: 0; }
+
+  .fw-review-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 180px;
+    color: var(--fw-text-muted);
+
+    .bi { animation: fwReviewSpin 1s linear infinite; }
+  }
+
+  .fw-review-alert { margin: 10px 10px 0; }
+}
+
+@keyframes fwReviewSpin { to { transform: rotate(360deg); } }
+
+.fw-review {
+  .fw-review-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 18px;
+    padding: 6px 12px;
+
+    @include media-breakpoint-down(md) { grid-template-columns: minmax(0, 1fr); }
+
+    > .fw-detail-row:last-child { border-bottom: 1px solid var(--fw-border-light); }
+    > .fw-review-span { grid-column: 1 / -1; }
+  }
+
+  .fw-review-pre {
+    max-height: 220px;
+    overflow: auto;
+  }
+
+  .fw-review-evidence {
+    border-top: 1px solid var(--fw-border-default);
+
+    .fw-tabs {
+      background: var(--fw-surface-alt);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+
+      .fw-tab .fw-badge { font-size: .5rem; padding: 1px 4px; }
+    }
+  }
+
+  .fw-review-pane {
+    padding: 8px 12px 12px;
+
+    > .fw-review-summary { padding: 0; }
+  }
+
+  .fw-review-pane-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--fw-border-light);
+    font-size: $fw-font-size-sm;
+  }
+
+  .fw-attachment-item { align-items: flex-start; }
+
+  .fw-review-thumb {
+    display: block;
+    max-width: 100%;
+    max-height: 240px;
+    margin-top: 6px;
+    border: 1px solid var(--fw-border-default);
+    background: var(--fw-surface-alt);
+    object-fit: contain;
+  }
+
+  .fw-review-close {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-top: 1px solid var(--fw-border-default);
+    background: var(--fw-surface-alt);
+
+    .fw-form-label { margin: 0; white-space: nowrap; }
+    .fw-form-control { max-width: 260px; }
+  }
+
+  .fw-review-close-note {
+    color: var(--fw-text-muted);
+    font-size: $fw-font-size-sm;
+  }
+}
