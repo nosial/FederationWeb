@@ -29,6 +29,11 @@
         }
     }
 
+    if(empty($serverEndpoint) && in_array(getenv('FEDERATION_DISABLE_CUSTOM_HOST'), [false, ''], true))
+    {
+        WebSession::redirectToRoute('authenticate');
+    }
+
     $parsedUrl = parse_url($serverEndpoint);
     if(empty($serverEndpoint) || !isset($parsedUrl['scheme']) || !isset($parsedUrl['host']))
     {
