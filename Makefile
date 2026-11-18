@@ -1,10 +1,12 @@
-all: target/debug/net.nosial.federationweb.ncc target/release/net.nosial.federationweb.ncc target/web_release/net.nosial.federationweb.ncc
+all: target/debug/net.nosial.federationweb.ncc target/release/net.nosial.federationweb.ncc target/web_release/net.nosial.federationweb.ncc target/native/federationweb
 target/debug/net.nosial.federationweb.ncc:
 	ncc build --configuration debug --log-level debug
 target/release/net.nosial.federationweb.ncc:
 	ncc build --configuration release --log-level debug
 target/web_release/net.nosial.federationweb.ncc:
 	ncc build --configuration web_release --log-level debug
+target/native/federationweb:
+	ncc build --configuration native --log-level debug
 
 docker-build:
 	docker build -t net.nosial.federationweb:1.0.0 .
