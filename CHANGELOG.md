@@ -35,6 +35,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Requires DynamicalWeb `1.0.23` or newer, which keeps sessions and the cache in APCu when memcached is not enabled.
  - The badge class of evidence classifications and the icon of attachment MIME types are shared through `Utilities`.
 
+### Fixed
+ - Changes made through FederationWeb were not always visible on the next page: the cached records of the server
+   were discarded when the request ended, which can be after the browser has followed the redirect, and under the
+   endpoint as configured rather than as the pages cache it (eg; with a trailing slash), so the change could stay
+   hidden until the cache expired. They are now discarded before the response is sent, under the same endpoint.
+
 
 
 ## [1.0.5] - 2026-11-01
