@@ -84,7 +84,7 @@
                                                     foreach ($reportsView->getReports() as $report)
                                                     {
                                                         ?>
-                                                        <tr class="fw-row-link" data-href="<?php Functions::printRoute('report_detail', ['report_uuid' => $report->getUuid()]); ?>">
+                                                        <tr class="fw-row-link" data-href="<?php Functions::printRoute('report_detail', ['report_uuid' => $report->getUuid()]); ?>" data-report-row="<?php Functions::print($report->getUuid()); ?>">
                                                             <td><span class="fw-uuid"><?php Functions::print($report->getUuid()); ?></span><button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($report->getUuid()); ?>" title="Copy"><i class="bi bi-clipboard"></i></button></td>
                                                             <td>
                                                                 <?php
@@ -103,7 +103,7 @@
                                                                 ?>
                                                             </td>
                                                             <td><span class="fw-badge <?php Functions::print($reportsView->getIncidentBadge($report->getIncidentType())); ?>"><?php Functions::printl('incident_' . strtolower($report->getIncidentType()->value)); ?></span></td>
-                                                            <td>
+                                                            <td data-cell="status">
                                                                 <?php
                                                                     if ($report->isOpened())
                                                                     {
@@ -120,7 +120,7 @@
                                                                 <a href="<?php Functions::printRoute('operator_detail', ['operator_id' => $submittingOperator]); ?>" class="fw-detail-link fw-fw-semibold"><?php Functions::print($reportsView->getOperatorName($submittingOperator) ?? $submittingOperator); ?></a>
                                                                 <button type="button" class="fw-copy-btn" data-copy="<?php Functions::print($submittingOperator); ?>" title="Copy"><i class="bi bi-clipboard"></i></button>
                                                             </td>
-                                                            <td>
+                                                            <td data-cell="assigned">
                                                                 <?php
                                                                     $assignedOperator = $report->getAssignedOperator();
                                                                     if ($assignedOperator !== null)
@@ -137,7 +137,7 @@
                                                                 ?>
                                                             </td>
                                                             <td><span class="fw-uuid"><?php Functions::print($reportsView->formatDate($report->getCreated())); ?></span></td>
-                                                            <td>
+                                                            <td data-cell="updated">
                                                                 <?php
                                                                     if ($report->getUpdated() !== null)
                                                                     {
@@ -151,6 +151,7 @@
                                                             </td>
                                                             <td>
                                                                 <div class="fw-table-actions">
+                                                                    <button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('quick_review'); ?>" data-bs-toggle="modal" data-bs-target="#reviewReportModal" data-uuid="<?php Functions::print($report->getUuid()); ?>" data-review-url="<?php Functions::printRoute('report_review', ['report_uuid' => $report->getUuid()]); ?>" data-detail-url="<?php Functions::printRoute('report_detail', ['report_uuid' => $report->getUuid()]); ?>"><i class="bi bi-clipboard-check"></i></button>
                                                                     <a href="<?php Functions::printRoute('report_detail', ['report_uuid' => $report->getUuid()]); ?>" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('view'); ?>"><i class="bi bi-box-arrow-up-right"></i></a>
                                                                     <a href="<?php Functions::printRoute('report_detail', ['report_uuid' => $report->getUuid()]); ?>" target="_blank" rel="noopener" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('open_in_new_tab'); ?>"><i class="bi bi-box-arrow-in-up-right"></i></a>
                                                                     <?php
@@ -158,7 +159,7 @@
                                                                         {
                                                                             if (ViewAuthorization::canCloseReport($report))
                                                                             {
-                                                                                ?><button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('close_report'); ?>" data-bs-toggle="modal" data-bs-target="#closeReportModal" data-uuid="<?php Functions::print($report->getUuid()); ?>"><i class="bi bi-check-circle"></i></button><?php
+                                                                                ?><button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon fw-close-report-btn" title="<?php Functions::printl('close_report'); ?>" data-bs-toggle="modal" data-bs-target="#closeReportModal" data-uuid="<?php Functions::print($report->getUuid()); ?>"><i class="bi bi-check-circle"></i></button><?php
                                                                             }
                                                                             ?><button type="button" class="fw-btn fw-btn-ghost fw-btn-sm fw-btn-icon" title="<?php Functions::printl('delete_report'); ?>" data-bs-toggle="modal" data-bs-target="#deleteReportModal" data-uuid="<?php Functions::print($report->getUuid()); ?>"><i class="bi bi-trash"></i></button><?php
                                                                         }
