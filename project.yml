@@ -65,7 +65,7 @@ build_configurations:
       NCC_DISABLE_LOGGING: '1'
     options:
       static: true
-      web_configuration:
+      web_configuration: &web_configuration
         application:
           name: FederationWeb
           root: FederationWeb/WebApplication
@@ -343,3 +343,19 @@ build_configurations:
               module: sections/toggle_dark_mode.phtml
               allowed_methods:
                 - POST
+  -
+    name: native
+    output: 'target/native/federationweb'
+    type: frankenphp
+    definitions:
+      NCC_DISABLE_LOGGING: '1'
+    options:
+      static: true
+      work_dir: 'target/.frankenphp'
+      auto_fix: true
+      php_ini:
+        upload_max_filesize: 64M
+        post_max_size: 64M
+        apc.enabled: 1
+        apc.shm_size: 64M
+      web_configuration: *web_configuration
