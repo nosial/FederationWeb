@@ -1,5 +1,8 @@
 // FederationWeb — Demo Page (Interactive Table Views)
 
+@use 'variables' as *;
+@use 'breakpoints' as *;
+
 .fw-filter-bar {
   margin-bottom: 10px;
   background: $white;

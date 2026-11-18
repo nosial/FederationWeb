@@ -1,5 +1,8 @@
 // Top Navigation (stays ink-black in both light/dark modes)
 
+@use '../variables' as *;
+@use '../breakpoints' as *;
+
 .fw-topnav {
   background: $topnav-bg;
   display: flex;

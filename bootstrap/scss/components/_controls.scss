@@ -1,6 +1,8 @@
-@use 'sass:color';
-
 // Buttons + Forms + Search + Pagination + Detail rows + Alerts
+
+@use 'sass:color';
+@use '../variables' as *;
+@use '../breakpoints' as *;
 
 // ============ Buttons ============
 .fw-btn {

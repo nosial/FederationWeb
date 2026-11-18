@@ -1,5 +1,8 @@
 // Cards + Stat cards
 
+@use '../variables' as *;
+@use '../breakpoints' as *;
+
 .fw-card {
   background: var(--fw-surface-bg);
   border: 1px solid var(--fw-border-default);

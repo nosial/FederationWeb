@@ -1,5 +1,7 @@
 // Main content area, page header, utilities
 
+@use '../variables' as *;
+
 .fw-main {
   flex: 1;
   display: flex;

@@ -1,5 +1,8 @@
 // Topbar
 
+@use '../variables' as *;
+@use '../breakpoints' as *;
+
 .fw-wrapper {
   display: flex;
   flex-direction: column;

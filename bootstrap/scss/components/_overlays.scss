@@ -1,5 +1,8 @@
 // Modals + Dropdowns
 
+@use '../variables' as *;
+@use '../breakpoints' as *;
+
 // ============ Dropdown ============
 .fw-dropdown-menu {
   border: 1px solid var(--fw-border-default);
@@ -352,7 +355,7 @@
   .fw-toast-detail {
     display: block;
     color: var(--fw-text-secondary);
-    font-family: $font-family-monospace;
+    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', ui-monospace, monospace; // as .fw-mono
     font-size: $fw-font-size-xs;
   }
 

@@ -1,5 +1,7 @@
 // Tabs
 
+@use '../variables' as *;
+
 .fw-tabs {
   display: flex;
   gap: 0;

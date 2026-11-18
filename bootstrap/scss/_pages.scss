@@ -1,5 +1,8 @@
 // FederationWeb — Page-specific styles
 
+@use 'variables' as *;
+@use 'breakpoints' as *;
+
 .fw-text-block {
   display: block;
   white-space: pre-wrap;

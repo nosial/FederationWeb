@@ -1,5 +1,8 @@
 // Misc components: metadata, copy, progress, timeline, empty, panel, KPI, etc.
 
+@use '../variables' as *;
+@use '../breakpoints' as *;
+
 // ============ Code/monospace ============
 .fw-mono {
   font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', ui-monospace, monospace;

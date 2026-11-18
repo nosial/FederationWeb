@@ -1,37 +1,20 @@
 // FederationWeb — Enterprise Management Panel
-// Bootstrap (official recommended @import approach for SCSS module compatibility)
-@import 'bootstrap/scss/functions';
-@import 'bootstrap/scss/variables';
-@import 'bootstrap/scss/variables-dark';
-@import 'bootstrap/scss/maps';
-@import 'bootstrap/scss/mixins';
-@import 'bootstrap/scss/root';
-
-// Bootstrap components
-@import 'bootstrap/scss/reboot';
-@import 'bootstrap/scss/type';
-@import 'bootstrap/scss/grid';
-@import 'bootstrap/scss/utilities';
-@import 'bootstrap/scss/utilities/api';
-@import 'bootstrap/scss/forms/form-check';
-@import 'bootstrap/scss/dropdown';
-@import 'bootstrap/scss/modal';
-@import 'bootstrap/scss/close';
-@import 'bootstrap/scss/transitions';
+// Bootstrap, which only supports @import, is loaded through its own entry point
+@use 'vendor/bootstrap';
 
 // Our custom design system
-@import 'variables';
-@import 'layout/topbar';
-@import 'layout/topnav';
-@import 'layout/content';
-@import 'components/cards';
-@import 'components/tables';
-@import 'components/controls';
-@import 'components/tabs';
-@import 'components/overlays';
-@import 'components/misc';
-@import 'pages';
-@import 'demo';
+@use 'variables' as *;
+@use 'layout/topbar';
+@use 'layout/topnav';
+@use 'layout/content';
+@use 'components/cards';
+@use 'components/tables';
+@use 'components/controls';
+@use 'components/tabs';
+@use 'components/overlays';
+@use 'components/misc';
+@use 'pages';
+@use 'demo';
 
 // Base overrides
 body {

@@ -1,0 +1,26 @@
+// The parts of Bootstrap FederationWeb uses.
+//
+// Bootstrap 5.3 does not support Sass modules: its partials share their variables, functions and mixins through
+// @import, so they can only be loaded with @import, and Dart Sass reports these rules as deprecated. They are kept to
+// this file, which the stylesheets load with @use; the stylesheets themselves don't use Bootstrap's Sass API (see
+// _breakpoints.scss). Replace these rules with @use once Bootstrap supports Sass modules (Bootstrap 6).
+
+// Configuration
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/variables-dark';
+@import 'bootstrap/scss/maps';
+@import 'bootstrap/scss/mixins';
+@import 'bootstrap/scss/root';
+
+// Components
+@import 'bootstrap/scss/reboot';
+@import 'bootstrap/scss/type';
+@import 'bootstrap/scss/grid';
+@import 'bootstrap/scss/utilities';
+@import 'bootstrap/scss/utilities/api';
+@import 'bootstrap/scss/forms/form-check';
+@import 'bootstrap/scss/dropdown';
+@import 'bootstrap/scss/modal';
+@import 'bootstrap/scss/close';
+@import 'bootstrap/scss/transitions';

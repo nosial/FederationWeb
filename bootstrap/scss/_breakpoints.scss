@@ -1,0 +1,32 @@
+// Responsive breakpoints, the same as Bootstrap's default grid ($grid-breakpoints).
+//
+// Bootstrap's own breakpoint mixins are only available to stylesheets loaded with @import, see vendor/_bootstrap.scss.
+
+@use 'sass:map';
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+);
+
+/// Applies the content to viewports narrower than a breakpoint, like Bootstrap's media-breakpoint-down(): the maximum
+/// width is .02px below the breakpoint so that it does not overlap a min-width query of the same breakpoint.
+/// @param {String} $name The breakpoint, eg; sm
+@mixin media-breakpoint-down($name) {
+  $width: map.get($grid-breakpoints, $name);
+  @if $width == null {
+    @error "Unknown breakpoint `#{$name}`, expected one of #{map.keys($grid-breakpoints)}";
+  }
+
+  @if $width > 0 {
+    @media (max-width: $width - .02px) {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+}
