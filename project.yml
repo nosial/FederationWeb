@@ -214,6 +214,13 @@ build_configurations:
                 - GET
                 - POST
             -
+              id: report_review
+              path: /reports/{report_uuid}/review
+              module: report_review/index.phtml
+              locale_id: reports
+              allowed_methods:
+                - GET
+            -
               id: report_detail_print
               path: /reports/{report_uuid}/print
               module: report_detail/print.phtml
