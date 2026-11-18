@@ -19,7 +19,7 @@
     "flag-icons": "^7.5.0"
   },
   "devDependencies": {
-    "nunjucks": "^3.2.4",
-    "sass": "1.77.8"
+    "nunjucks": "^3.2.0",
+    "sass": "^1.108.2"
   }
 }
