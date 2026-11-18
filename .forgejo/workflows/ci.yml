@@ -78,6 +78,46 @@ jobs:
           name: web_release
           path: target/web_release/net.nosial.federationweb.ncc
 
+  native:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/nosial/ncc:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      # static-php-cli compiles PHP and FrankenPHP with a C toolchain; its doctor installs anything else it needs
+      # (auto_fix)
+      - name: Install build dependencies
+        run: |
+          apt-get update && apt-get install -y --no-install-recommends build-essential autoconf automake \
+            libtool cmake pkg-config bison re2c flex git curl xz-utils unzip patch && rm -rf /var/lib/apt/lists/*
+
+      # The sources and the PHP build are kept between runs, so builds only relink FrankenPHP with the new package
+      - name: Restore the static-php-cli working directory
+        uses: actions/cache@v6
+        with:
+          path: target/.frankenphp
+          key: frankenphp-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('project.yml') }}
+          restore-keys: |
+            frankenphp-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Build project
+        env:
+          NCC_SIGNING_KEY: ${{ secrets.NCC_SIGNING_KEY }}
+          NCC_SIGNING_KEY_PASSPHRASE: ${{ secrets.NCC_SIGNING_KEY_PASSPHRASE }}
+        run: |
+          ncc project install --log-level debug -y
+          ncc build --config native --log-level debug
+          mkdir -p dist && cp target/native/federationweb dist/federationweb-linux-x86_64
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: native
+          path: dist/federationweb-linux-x86_64
+
   # Check for phpunit.xml
   check-phpunit:
     runs-on: ubuntu-latest
@@ -116,7 +156,7 @@ jobs:
 
 
   release-artifacts:
-    needs: [debug, release, web_release]
+    needs: [debug, release, web_release, native]
     permissions: write-all
     runs-on: ubuntu-latest
     container:
@@ -166,6 +206,20 @@ jobs:
         with:
             files: |
                 web_release/*
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download native artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: native
+          path: native
+
+      - name: Upload native artifact to release
+        uses: softprops/action-gh-release@v3
+        with:
+            files: |
+                native/*
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
