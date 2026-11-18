@@ -103,8 +103,8 @@ a {
   .fw-page--entity .fw-threat-summary .fw-threat-item .fw-threat-value { color: var(--fw-text-heading); }
   .fw-page--entity .fw-threat-summary .fw-threat-item .fw-threat-label { color: var(--fw-text-muted); }
   // Attachment items (evidence page)
-  .fw-page--evidence .fw-attachment-item { border-color: var(--fw-border-default); }
-  .fw-page--evidence .fw-attachment-item .fw-attachment-icon { background: rgba($fw-cyan-600, 0.12); color: $fw-cyan-400; }
+  .fw-page--evidence .fw-attachment-item, .fw-review .fw-attachment-item { border-color: var(--fw-border-default); }
+  .fw-page--evidence .fw-attachment-item .fw-attachment-icon, .fw-review .fw-attachment-item .fw-attachment-icon { background: rgba($fw-cyan-600, 0.12); color: $fw-cyan-400; }
   // Profile card (operator page) — full path to match base specificity
   .fw-page--operator .fw-profile-card { background: var(--fw-surface-bg); border-color: var(--fw-border-default); }
   .fw-page--operator .fw-profile-card .fw-profile-info .fw-profile-name { color: var(--fw-text-heading); }

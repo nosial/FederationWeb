@@ -1,5 +1,6 @@
 <?php
     use DynamicalWeb\Html\Functions;
+    use WebKernel\Utilities;
 ?>
         <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -9,6 +10,151 @@
                     var button = event.relatedTarget;
                     if (!button) return;
                     document.getElementById('closeReportUuid').value = button.getAttribute('data-uuid');
+                });
+            }
+
+            var reviewModal = document.getElementById('reviewReportModal');
+            if (reviewModal) {
+                var reviewBody = document.getElementById('reviewReportBody');
+                var reviewAlert = document.getElementById('reviewReportAlert');
+                var reviewCloseBtn = document.getElementById('reviewReportCloseBtn');
+                var reviewFullLink = document.getElementById('reviewReportFullLink');
+                var reviewLoading = document.getElementById('reviewReportLoading');
+                var reviewFailed = document.getElementById('reviewReportFailed');
+                var reviewController = null, reviewUuid = null, reviewDismissTimer = null;
+                var closeFailedMessage = <?php print(json_encode(Utilities::localize('report_close_failed'))); ?>;
+
+                var escapeHtml = function(value) { var div = document.createElement('div'); div.textContent = value == null ? '' : String(value); return div.innerHTML; };
+
+                var showTemplate = function(template) {
+                    reviewBody.innerHTML = '';
+                    reviewBody.appendChild(template.content.cloneNode(true));
+                };
+
+                var showAlert = function(type, message, detail) {
+                    var icon = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill';
+                    reviewAlert.innerHTML = '<div class="alert alert-' + type + ' mb-0" role="alert"><div class="d-flex align-items-center gap-2"><i class="bi ' + icon + '"></i><div><strong>' + escapeHtml(message) + '</strong>'
+                        + (detail ? '<br><span class="fw-error-detail">' + escapeHtml(detail) + '</span>' : '') + '</div></div></div>';
+                    reviewAlert.hidden = false;
+                };
+
+                var hideAlert = function() { reviewAlert.hidden = true; reviewAlert.innerHTML = ''; };
+
+                var setCloseBusy = function(busy) {
+                    reviewCloseBtn.disabled = busy;
+                    var icon = reviewCloseBtn.querySelector('.bi');
+                    if (icon) icon.className = busy ? 'bi bi-arrow-repeat' : 'bi bi-check-circle';
+                };
+
+                // Reflects a report closed from the modal in its list row, so the page does not need a reload
+                var updateRow = function(uuid, data) {
+                    var row = document.querySelector('tr[data-report-row="' + CSS.escape(uuid) + '"]');
+                    if (!row) return;
+                    var status = row.querySelector('[data-cell="status"]');
+                    if (status) status.innerHTML = '<span class="fw-dot green"></span> ' + escapeHtml(data.closed_label);
+                    var assigned = row.querySelector('[data-cell="assigned"]');
+                    if (assigned && data.assigned_operator) {
+                        assigned.innerHTML = '<a href="' + escapeHtml(data.assigned_operator.url) + '" class="fw-detail-link fw-fw-semibold">' + escapeHtml(data.assigned_operator.name) + '</a> '
+                            + '<button type="button" class="fw-copy-btn" data-copy="' + escapeHtml(data.assigned_operator.uuid) + '" title="Copy"><i class="bi bi-clipboard"></i></button>';
+                    }
+                    var updated = row.querySelector('[data-cell="updated"]');
+                    if (updated && data.updated) updated.innerHTML = '<span class="fw-uuid">' + escapeHtml(data.updated) + '</span>';
+                    row.querySelectorAll('.fw-close-report-btn').forEach(function(button) { button.remove(); });
+                };
+
+                reviewModal.addEventListener('show.bs.modal', function(event) {
+                    var button = event.relatedTarget;
+                    if (!button) return;
+                    if (reviewController) reviewController.abort();
+                    clearTimeout(reviewDismissTimer);
+                    reviewController = new AbortController();
+                    reviewUuid = button.getAttribute('data-uuid');
+                    reviewFullLink.href = button.getAttribute('data-detail-url');
+                    reviewCloseBtn.hidden = true;
+                    setCloseBusy(false);
+                    hideAlert();
+                    showTemplate(reviewLoading);
+
+                    var requestedUuid = reviewUuid;
+                    fetch(button.getAttribute('data-review-url'), { credentials: 'same-origin', signal: reviewController.signal, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(function(response) {
+                            // An expired session is redirected to the sign-in page, which is not a review
+                            if (!response.ok || response.redirected) throw new Error('HTTP ' + response.status);
+                            return response.text();
+                        })
+                        .then(function(html) {
+                            if (requestedUuid !== reviewUuid) return;
+                            reviewBody.innerHTML = html;
+                            var review = reviewBody.querySelector('.fw-review');
+                            if (!review) { showTemplate(reviewFailed); return; }
+                            reviewCloseBtn.hidden = !(review.getAttribute('data-report-open') === '1' && review.getAttribute('data-can-close') === '1');
+                        })
+                        .catch(function(error) {
+                            if (error && error.name === 'AbortError') return;
+                            if (requestedUuid === reviewUuid) showTemplate(reviewFailed);
+                        });
+                });
+
+                reviewModal.addEventListener('hidden.bs.modal', function() {
+                    if (reviewController) reviewController.abort();
+                    clearTimeout(reviewDismissTimer);
+                    reviewController = null;
+                    reviewUuid = null;
+                    reviewBody.innerHTML = '';
+                    hideAlert();
+                });
+
+                reviewCloseBtn.addEventListener('click', function() {
+                    if (!reviewUuid || reviewCloseBtn.disabled) return;
+                    var uuid = reviewUuid;
+                    var classification = document.getElementById('reviewReportClassification');
+                    var body = new URLSearchParams();
+                    body.set('action', 'close_report');
+                    body.set('report_uuid', uuid);
+                    body.set('classification', classification ? classification.value : '');
+
+                    hideAlert();
+                    setCloseBusy(true);
+                    fetch('<?php Functions::printRoute('reports'); ?>', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: body.toString()
+                    })
+                        .then(function(response) { return response.json().catch(function() { return { success: false, detail: 'HTTP ' + response.status }; }); })
+                        .then(function(data) {
+                            if (uuid !== reviewUuid) return;
+                            if (!data || !data.success) {
+                                setCloseBusy(false);
+                                showAlert('danger', (data && data.message) || closeFailedMessage, data && (data.detail || data.error));
+                                return;
+                            }
+
+                            updateRow(uuid, data);
+                            reviewCloseBtn.hidden = true;
+                            var closeSection = reviewBody.querySelector('.fw-review-close');
+                            if (closeSection) closeSection.remove();
+                            showAlert('success', data.message);
+                            reviewDismissTimer = setTimeout(function() { bootstrap.Modal.getOrCreateInstance(reviewModal).hide(); }, 1200);
+                        })
+                        .catch(function(error) {
+                            if (uuid !== reviewUuid) return;
+                            setCloseBusy(false);
+                            showAlert('danger', closeFailedMessage, error ? error.message : null);
+                        });
+                });
+
+                // Left and right arrows move between the evidence tabs while no form field has focus
+                reviewModal.addEventListener('keydown', function(event) {
+                    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+                    if (event.target.closest('input, textarea, select')) return;
+                    var tabs = Array.prototype.slice.call(reviewBody.querySelectorAll('#reviewEvidenceTabs .fw-tab'));
+                    if (tabs.length < 2) return;
+                    var current = tabs.findIndex(function(tab) { return tab.classList.contains('active'); });
+                    var next = (current + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+                    event.preventDefault();
+                    bootstrap.Tab.getOrCreateInstance(tabs[next]).show();
+                    tabs[next].scrollIntoView({ block: 'nearest', inline: 'nearest' });
                 });
             }
 
