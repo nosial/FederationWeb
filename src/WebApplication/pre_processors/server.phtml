@@ -52,7 +52,11 @@
     // Initialize the federation client and get the server information. Pages (GET requests) reuse the
     // records they read for the rest of the request and from the shared cache; requests that change records
     // read them fresh, and discard the shared cache of the server once they end so the next page sees the change.
-    if(WebSession::getRequest()->getMethod() === RequestMethod::GET)
+    $readOnlyRequest = WebSession::getRequest()->getMethod() === RequestMethod::GET
+        || WebSession::getCurrentRoute()->getId() === 'fw_toggle_dark_mode'
+        || in_array(WebSession::getRequest()->getParameter('action'), ['search_suggestions', 'search_entities', 'search_dropdown'], true);
+
+    if($readOnlyRequest)
     {
         $federationClient = new CachingFederationClient($serverEndpoint);
     }

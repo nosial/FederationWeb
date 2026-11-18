@@ -4,6 +4,7 @@
 
     use DynamicalWeb\Classes\Logger;
     use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\Enums\RequestMethod;
     use DynamicalWeb\WebSession;
     use FederationLib\Enums\ClassificationFlag;
     use FederationLib\Enums\IncidentType;
@@ -65,6 +66,32 @@
 
             if($this->record === null) return;
 
+            // The action of a POST request only needs the record itself and redirects back to the page, so the
+            // related records are only read when the page is rendered
+            if(WebSession::getRequest()->getMethod() === RequestMethod::POST)
+            {
+                return;
+            }
+
+            if($this->federationClient instanceof CachingFederationClient)
+            {
+                // Records that only depend on the blacklist record are read together rather than one after another,
+                // then taken from the cache below
+                $client = $this->federationClient;
+                $entityUuid = $this->record->getEntityUuid();
+                $reportUuid = $this->record->getReportUuid();
+                $client->prefetch(array_filter([
+                    ViewAuthorization::canReadEntities() ? fn() => $client->getEntityRecord($entityUuid) : null,
+                    ViewAuthorization::canReadOperatorRecords() ? fn() => $client->getOperator($this->record->getOperatorUuid()) : null,
+                    ViewAuthorization::canReadReports() && $reportUuid !== null && $reportUuid !== '' ? fn() => $client->getReport($reportUuid) : null,
+                    ViewAuthorization::canReadReports() && $reportUuid !== null && $reportUuid !== '' && ViewAuthorization::canReadEvidence() ? fn() => $client->listReportEvidenceRecords($reportUuid, includeConfidential: ViewAuthorization::canManageRecords()) : null,
+                    ViewAuthorization::canReadAuditLogs() ? fn() => $client->listEntityAuditLogs($entityUuid, 1, 100) : null,
+                    ViewAuthorization::canReadBlacklist() ? fn() => $client->listEntityBlacklistRecords($entityUuid, 1, 100, includeLifted: true) : null,
+                    ViewAuthorization::canReadEvidence() ? fn() => $client->listEntityEvidenceRecords($entityUuid, 1, 100, ViewAuthorization::canManageRecords()) : null,
+                    ViewAuthorization::canReadReports() ? fn() => $client->listEntityReports($entityUuid) : null,
+                ]));
+            }
+
             if (ViewAuthorization::canReadEntities()) try { $this->entityRecord = $this->federationClient->getEntityRecord($this->record->getEntityUuid()); } catch(\Exception $exception) { Logger::getLogger()->warning('Unable to load blacklist entity', $exception); }
             if (ViewAuthorization::canReadOperatorRecords()) try { $this->operatorRecord = $this->federationClient->getOperator($this->record->getOperatorUuid()); } catch(\Exception $exception) { Logger::getLogger()->warning('Unable to load blacklist operator', $exception); }
             if (ViewAuthorization::canReadReports() && ($reportUuid = $this->record->getReportUuid()) !== null && $reportUuid !== '') { try { $this->reportRecord = Utilities::getReport($this->federationClient, $reportUuid); } catch(\Exception $exception) { Logger::getLogger()->warning('Unable to load blacklist report record', $exception); } }
@@ -72,6 +99,11 @@
             {
                 if (ViewAuthorization::canReadEvidence()) try { $this->reportEvidence = $this->federationClient->listReportEvidenceRecords($this->reportRecord->getUuid(), includeConfidential: ViewAuthorization::canManageRecords()); } catch(\Exception $exception) { Logger::getLogger()->warning('Unable to load blacklist report evidence', $exception); $this->reportEvidence = null; }
                 else $this->reportEvidence = [];
+                if (ViewAuthorization::canManageRecords() && $this->federationClient instanceof CachingFederationClient)
+                {
+                    // The attachments of the evidence are read together rather than one after another
+                    $this->federationClient->prefetchRecords(evidenceAttachments: array_map(static fn($evidenceRecord): string => $evidenceRecord->getUuid(), $this->reportEvidence ?? []));
+                }
                 if (ViewAuthorization::canManageRecords())
                 {
                     foreach($this->reportEvidence ?? [] as $evidenceRecord)

@@ -3,6 +3,7 @@
     namespace WebKernel;
 
     use DynamicalWeb\Classes\Logger;
+    use DynamicalWeb\Enums\RequestMethod;
     use DynamicalWeb\WebSession;
     use FederationLib\Enums\AuditLogType;
     use FederationLib\Enums\EntityRelationshipType;
@@ -77,6 +78,28 @@
             }
 
             if($this->entity === null) return;
+
+            // The action of a POST request only needs the record itself and redirects back to the page, so the
+            // related records are only read when the page is rendered
+            if(WebSession::getRequest()->getMethod() === RequestMethod::POST)
+            {
+                return;
+            }
+
+            if($this->federationClient instanceof CachingFederationClient)
+            {
+                // The related records are read together rather than one after another, then taken from the cache below
+                $client = $this->federationClient;
+                $entityUuid = $this->entity->getUuid();
+                $relationshipUuid = $this->entity->getRelationshipEntity();
+                $client->prefetch(array_filter([
+                    ViewAuthorization::canReadReports() ? fn() => $client->listEntityReports($entityUuid) : null,
+                    ViewAuthorization::canReadEvidence() ? fn() => $client->listEntityEvidenceRecords($entityUuid, includeConfidential: ViewAuthorization::canManageRecords()) : null,
+                    ViewAuthorization::canReadBlacklist() ? fn() => $client->listEntityBlacklistRecords($entityUuid, includeLifted: true) : null,
+                    ViewAuthorization::canReadAuditLogs() ? fn() => $client->listEntityAuditLogs($entityUuid) : null,
+                    ViewAuthorization::canReadEntities() && $relationshipUuid !== null ? fn() => $client->getEntityRecord($relationshipUuid) : null,
+                ]));
+            }
 
             if (ViewAuthorization::canReadReports()) try { $this->recentReports = $this->federationClient->listEntityReports($this->entity->getUuid()); } catch(\Exception $exception) { Logger::getLogger()->warning('Unable to load entity reports', $exception); }
             else $this->recentReports = [];
@@ -270,6 +293,12 @@
         public function getReportAttachmentCounts(): ?array
         {
             if($this->reportAttachmentCounts !== null) return $this->reportAttachmentCounts;
+            if($this->federationClient instanceof CachingFederationClient)
+            {
+                // The attachments of the evidence are read together rather than one after another
+                $this->federationClient->prefetchRecords(evidenceAttachments: array_map(
+                    static fn($evidence): ?string => $evidence->getReport() === null ? null : $evidence->getUuid(), $this->recentEvidence));
+            }
             $counts = [];
             foreach($this->recentReports as $report) $counts[$report->getUuid()] = 0;
             foreach($this->recentEvidence as $evidence)

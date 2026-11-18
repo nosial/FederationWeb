@@ -3,6 +3,7 @@
     namespace WebKernel;
 
     use DynamicalWeb\Html\Functions;
+    use DynamicalWeb\Enums\RequestMethod;
     use DynamicalWeb\WebSession;
     use FederationLib\Enums\IncidentType;
     use FederationLib\FederationClient;
@@ -40,6 +41,7 @@
 
 
         private bool $allRecords;
+        private bool $loaded = false;
         private FederationClient $federationClient;
         private ServerInformation $serverInformation;
 
@@ -54,6 +56,27 @@
             $this->allRecords = $allRecords;
             $this->federationClient = WebSession::get('federation_client');
             $this->serverInformation = WebSession::get('server_information');
+
+            // A POST request is answered by its action, so the records are only read when the page is rendered
+            if(WebSession::getRequest()->getMethod() !== RequestMethod::POST)
+            {
+                $this->load();
+            }
+        }
+
+        /**
+         * Reads the records of the page. Called by the constructor for pages, and by the page after the action of
+         * a POST request when it does not end the request.
+         */
+        public function load(): void
+        {
+            if($this->loaded)
+            {
+                return;
+            }
+
+            $this->loaded = true;
+            $allRecords = $this->allRecords;
             $this->limit = 1;
 
             $query = WebSession::getRequest()->getQueryParameters();
@@ -420,6 +443,15 @@
          */
         private function loadRecordLabels(?array $records): array
         {
+            // The reports and entities of the rows are read together rather than one after another
+            if($this->federationClient instanceof CachingFederationClient)
+            {
+                $this->federationClient->prefetchRecords(
+                    entities: array_map(static fn($record) => $record->getEntityUuid(), $records ?? []),
+                    reports: array_map(static fn($record) => $record->getReportUuid(), $records ?? []),
+                );
+            }
+
             $reportInfo = [];
             foreach($records ?? [] as $record)
             {

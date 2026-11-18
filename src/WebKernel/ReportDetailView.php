@@ -61,6 +61,31 @@
                 return;
             }
 
+            // The action of a POST request only needs the record itself and redirects back to the page, so the
+            // related records are only read when the page is rendered
+            if(WebSession::getRequest()->getMethod() === RequestMethod::POST)
+            {
+                return;
+            }
+
+            // Records that only depend on the report are read together rather than one after another; they are
+            // still read below, exactly as before, from the client's cache of this request
+            if($this->federationClient instanceof CachingFederationClient)
+            {
+                $client = $this->federationClient;
+                $report = $this->report;
+                $reads = [];
+                if(ViewAuthorization::canReadOperatorRecords())
+                {
+                    $reads[] = fn() => $client->getOperator($report->getSubmittingOperator());
+                    if(($assignedOperatorUuid = $report->getAssignedOperator()) !== null && $assignedOperatorUuid !== '') $reads[] = fn() => $client->getOperator($assignedOperatorUuid);
+                    $reads[] = fn() => $client->listOperators();
+                }
+                if(ViewAuthorization::canReadEntities() && ($reportingEntityUuid = $report->getReportingEntity()) !== null && $reportingEntityUuid !== '') $reads[] = fn() => $client->getEntityRecord($reportingEntityUuid);
+                if(ViewAuthorization::canReadEvidence()) $reads[] = fn() => $client->listReportEvidenceRecords($report->getUuid(), includeConfidential: ViewAuthorization::canManageRecords());
+                $client->prefetch($reads);
+            }
+
             if (ViewAuthorization::canReadOperatorRecords())
             {
                 try { $this->submittingOperator = $this->federationClient->getOperator($this->report->getSubmittingOperator()); }
@@ -74,6 +99,27 @@
             }
             if (ViewAuthorization::canReadEvidence()) try { $this->relatedEvidence = $this->federationClient->listReportEvidenceRecords($this->report->getUuid(), includeConfidential: ViewAuthorization::canManageRecords()); } catch(\Exception $exception) { Logger::getLogger()->warning('Unable to load report evidence', $exception); }
             else $this->relatedEvidence = [];
+            if($this->federationClient instanceof CachingFederationClient)
+            {
+                // The records of the reporting entity and the attachments of the evidence are read together
+                $client = $this->federationClient;
+                $reads = [];
+                if($this->reportingEntity !== null)
+                {
+                    $entityUuid = $this->reportingEntity->getUuid();
+                    if(ViewAuthorization::canReadBlacklist()) $reads[] = fn() => $client->listEntityBlacklistRecords($entityUuid, includeLifted: true);
+                    if(ViewAuthorization::canReadReports()) $reads[] = fn() => $client->listEntityReports($entityUuid);
+                }
+                if(ViewAuthorization::canManageRecords())
+                {
+                    foreach($this->relatedEvidence ?? [] as $evidence)
+                    {
+                        $evidenceUuid = $evidence->getUuid();
+                        $reads[] = fn() => $client->getEvidenceAttachments($evidenceUuid);
+                    }
+                }
+                $client->prefetch($reads);
+            }
             if($this->reportingEntity !== null)
             {
                 if (ViewAuthorization::canReadBlacklist()) try { $this->entityBlacklist = $this->federationClient->listEntityBlacklistRecords($this->reportingEntity->getUuid(), includeLifted: true); } catch(\Exception $exception) { Logger::getLogger()->warning('Unable to load report entity blacklist', $exception); }

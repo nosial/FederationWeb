@@ -395,6 +395,12 @@
                 }
             }
 
+            // Operators the list did not cover are read together rather than one after another
+            if($client instanceof CachingFederationClient)
+            {
+                $client->prefetchOperators($uuids);
+            }
+
             $names = [];
             foreach($uuids as $uuid)
             {
@@ -421,6 +427,11 @@
          */
         public static function getEntityAddresses(FederationClient $client, array $uuids): array
         {
+            if($client instanceof CachingFederationClient)
+            {
+                $client->prefetchEntities($uuids);
+            }
+
             $addresses = [];
             foreach(array_unique(array_filter($uuids, static fn($uuid): bool => $uuid !== null && $uuid !== '')) as $uuid)
             {

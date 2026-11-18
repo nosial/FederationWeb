@@ -48,6 +48,22 @@
             }
 
             $reportingEntityUuid = $this->report->getReportingEntity();
+            if($this->federationClient instanceof CachingFederationClient)
+            {
+                // Records that only depend on the report are read together rather than one after another, then
+                // taken from the cache below
+                $client = $this->federationClient;
+                $reportUuid = $this->report->getUuid();
+                $hasReportingEntity = ViewAuthorization::canReadEntities() && $reportingEntityUuid !== null && $reportingEntityUuid !== '';
+                $client->prefetch(array_filter([
+                    $hasReportingEntity ? fn() => $client->getEntityRecord($reportingEntityUuid) : null,
+                    ViewAuthorization::canReadEvidence() ? fn() => $client->listReportEvidenceRecords($reportUuid, includeConfidential: ViewAuthorization::canManageRecords()) : null,
+                    $hasReportingEntity && ViewAuthorization::canReadReports() ? fn() => $client->listEntityReports($reportingEntityUuid) : null,
+                    $hasReportingEntity && ViewAuthorization::canReadBlacklist() ? fn() => $client->listEntityBlacklistRecords($reportingEntityUuid) : null,
+                    ViewAuthorization::canReadOperatorRecords() ? fn() => $client->getOperator($this->report->getSubmittingOperator()) : null,
+                ]));
+            }
+
             if(ViewAuthorization::canReadEntities() && $reportingEntityUuid !== null && $reportingEntityUuid !== '')
             {
                 try
@@ -77,6 +93,16 @@
             else
             {
                 $this->evidence = [];
+            }
+
+            if($this->federationClient instanceof CachingFederationClient)
+            {
+                // The attachments of the evidence and the records its rows are labelled with are read together
+                $this->federationClient->prefetchRecords(
+                    entities: array_map(static fn($evidence): string => $evidence->getEntityUuid(), $this->evidence ?? []),
+                    operators: ViewAuthorization::canReadOperatorRecords() ? array_merge([$this->report->getAssignedOperator()], array_map(static fn($evidence): string => $evidence->getOperatorUuid(), $this->evidence ?? [])) : [],
+                    evidenceAttachments: ViewAuthorization::canManageRecords() ? array_map(static fn($evidence): string => $evidence->getUuid(), $this->evidence ?? []) : [],
+                );
             }
 
             if(ViewAuthorization::canManageRecords())

@@ -33,6 +33,7 @@
         private ?string $errorMessageKey;
         private ?string $errorMessage;
         private bool $allRecords;
+        private bool $loaded = false;
         private FederationClient $federationClient;
         private ServerInformation $serverInformation;
 
@@ -47,6 +48,27 @@
             $this->allRecords = $allRecords;
             $this->federationClient = WebSession::get('federation_client');
             $this->serverInformation = WebSession::get('server_information');
+
+            // A POST request is answered by its action, so the records are only read when the page is rendered
+            if(WebSession::getRequest()->getMethod() !== RequestMethod::POST)
+            {
+                $this->load();
+            }
+        }
+
+        /**
+         * Reads the records of the page. Called by the constructor for pages, and by the page after the action of
+         * a POST request when it does not end the request.
+         */
+        public function load(): void
+        {
+            if($this->loaded)
+            {
+                return;
+            }
+
+            $this->loaded = true;
+            $allRecords = $this->allRecords;
             $this->limit = 1;
             $query = WebSession::getRequest()->getQueryParameters();
             $this->page = WebSession::getRequest()->getIntParameter('page', 1, min: 1);

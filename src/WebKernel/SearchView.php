@@ -30,6 +30,7 @@
         private array $operatorNames;
         private array $entityAddresses;
         private ?array $groupedResults;
+        private bool $loaded = false;
         private ?FederationClient $federationClient;
 
         /**
@@ -38,6 +39,26 @@
         public function __construct()
         {
             $this->federationClient = WebSession::get('federation_client');
+
+            // A POST request is answered by its action, so the records are only read when the page is rendered
+            if(WebSession::getRequest()->getMethod() !== RequestMethod::POST)
+            {
+                $this->load();
+            }
+        }
+
+        /**
+         * Reads the records of the page. Called by the constructor for pages, and by the page after the action of
+         * a POST request when it does not end the request.
+         */
+        public function load(): void
+        {
+            if($this->loaded)
+            {
+                return;
+            }
+
+            $this->loaded = true;
 
             $queryParameters = WebSession::getRequest()->getQueryParameters();
             $query = trim($queryParameters['q'] ?? '');
@@ -81,6 +102,50 @@
             $this->operatorNames = [];
             $this->entityAddresses = [];
             $this->groupedResults = null;
+            $this->prefetchLabels();
+        }
+
+        /**
+         * Reads the operators and entities the result rows are labelled with together rather than one after another
+         * as the rows render; the rows still read them through getOperatorName() and getEntityAddress().
+         */
+        private function prefetchLabels(): void
+        {
+            if(!$this->federationClient instanceof CachingFederationClient)
+            {
+                return;
+            }
+
+            $entities = [];
+            $operators = [];
+            foreach($this->results as $result)
+            {
+                $record = $result->getRecord();
+                switch($result->getType())
+                {
+                    case RecordType::ENTITY:
+                        if($record->getRelationshipType() !== null) $entities[] = $record->getRelationshipEntity();
+                        break;
+                    case RecordType::EVIDENCE:
+                    case RecordType::BLACKLIST:
+                    case RecordType::AUDIT_LOG:
+                        $entities[] = $record->getEntityUuid();
+                        $operators[] = $record->getOperatorUuid();
+                        break;
+                    case RecordType::REPORT:
+                        $entities[] = $record->getReportingEntity();
+                        $operators[] = $record->getSubmittingOperator();
+                        $operators[] = $record->getAssignedOperator();
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            $this->federationClient->prefetchRecords(
+                entities: $entities,
+                operators: ViewAuthorization::canReadOperatorRecords() ? $operators : [],
+            );
         }
 
         /**

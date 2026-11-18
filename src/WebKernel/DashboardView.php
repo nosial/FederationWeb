@@ -36,6 +36,44 @@
         }
 
         /**
+         * Reads the records of the operational overview together rather than one after another as its sections
+         * render: the recent audit logs, top threats and evidence, then the labels of their rows. The sections
+         * still read them through the getters below, from the client's cache of this request.
+         *
+         * @param bool $operationalOverview Whether the page shows the operational overview, see dashboard/records.phtml.
+         */
+        public function prefetch(bool $operationalOverview): void
+        {
+            $client = $this->federationClient;
+            if(!$operationalOverview || !$client instanceof CachingFederationClient)
+            {
+                return;
+            }
+
+            $client->prefetch([
+                fn() => $client->listAuditLogs(1, 10),
+                fn() => $client->listAuditLogs(1, 4),
+                fn() => $client->getTopThreats(4),
+                fn() => $client->listEvidence(1, 4),
+            ]);
+
+            $auditLogs = $this->getAuditLogs(10) ?? [];
+            $evidence = $this->getRecentEvidence() ?? [];
+            $operatorUuids = array_merge(
+                array_map(static fn($log) => $log->getOperatorUuid(), $auditLogs),
+                array_map(static fn($record) => $record->getOperatorUuid(), $evidence),
+            );
+
+            $client->prefetchRecords(
+                entities: array_merge(
+                    array_map(static fn($log) => $log->getEntityUuid(), $auditLogs),
+                    array_map(static fn($record) => $record->getEntityUuid(), $evidence),
+                ),
+                operators: ViewAuthorization::canReadOperatorRecords() ? $operatorUuids : [],
+            );
+        }
+
+        /**
          * Retrieve a page of recent audit logs.
          *
          * @param int $limit Maximum number of audit logs to retrieve.

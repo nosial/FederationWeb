@@ -6,6 +6,7 @@
     use FederationLib\Exceptions\RequestException;
     use FederationLib\FederationClient;
     use FederationLib\Objects\AuditLog;
+    use FederationLib\Objects\EntityQueryResult;
     use FederationLib\Objects\EntityRecord;
     use FederationLib\Objects\EvidenceRecord;
     use FederationLib\Objects\FileAttachmentRecord;
@@ -40,6 +41,9 @@
     {
         /** Seconds shared entries are kept when FEDERATION_CACHE_TTL is not set. */
         private const int DEFAULT_SHARED_CACHE_TTL = 60;
+
+        /** Requests sent to the server at the same time when reads are prefetched, kept low so as not to be rate limited. */
+        private const int PREFETCH_CONCURRENCY = 8;
 
         /** Memcached key prefix of the generation counter of each server endpoint. */
         private const string GENERATION_KEY = 'fw_generation:';
@@ -89,7 +93,12 @@
         public function setAccessToken(?string $accessToken): void
         {
             parent::setAccessToken($accessToken);
-            $this->cache = [];
+
+            // Server information does not depend on the access token, so the copy read before the token was set
+            // (by the server pre-processor) is kept rather than requested again
+            $this->cache = array_key_exists('info', $this->cache) && $this->cache['info'] instanceof ServerInformation
+                ? ['info' => $this->cache['info']]
+                : [];
             $this->sharedScope = null;
         }
 
@@ -115,6 +124,22 @@
         public function search(string $query, ?array $types=null, int $page=1, int $limit=10): array
         {
             return $this->remember($this->key('search', [$query, $types, $page, $limit]), fn() => parent::search($query, $types, $page, $limit));
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function getTopThreats(int $limit = 10): array
+        {
+            return $this->remember($this->key('top_threats', [$limit]), fn() => parent::getTopThreats($limit));
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function queryEntity(string $entityIdentifier, ?array $concerns=null): EntityQueryResult
+        {
+            return $this->remember($this->key('entity_query', [$entityIdentifier, $concerns]), fn() => parent::queryEntity($entityIdentifier, $concerns));
         }
 
         /**
@@ -408,6 +433,88 @@
         public function hasOperator(string $operatorUuid): bool
         {
             return array_key_exists('operator:' . $operatorUuid, $this->cache);
+        }
+
+        /**
+         * Runs reads concurrently so that they are remembered for this request, after which reading them again
+         * costs nothing. Callers then read the records exactly as before: failures are remembered and thrown by
+         * those reads, so prefetching never changes what a page shows, only how long it takes.
+         *
+         * <p>Without a FederationLib that can run requests concurrently, nothing is read in advance and the reads
+         * happen one after another as before.
+         *
+         * @param array<callable(): mixed> $reads The reads, such as fn() => $client->getEntityRecord($uuid).
+         */
+        public function prefetch(array $reads): void
+        {
+            if(count($reads) < 2 || !method_exists(FederationClient::class, 'parallel'))
+            {
+                return;
+            }
+
+            try
+            {
+                parent::parallel(array_values($reads), self::PREFETCH_CONCURRENCY);
+            }
+            catch(\Throwable $exception)
+            {
+                // The reads that did not complete are made one after another by their callers instead
+                Logger::getLogger()->warning('Unable to prefetch records', $exception);
+            }
+        }
+
+        /**
+         * Reads operator records concurrently, see {@see CachingFederationClient::prefetch()}.
+         *
+         * @param array<string|null> $uuids The operator UUIDs; empty values, repeats and known operators are skipped.
+         */
+        public function prefetchOperators(array $uuids): void
+        {
+            $this->prefetchRecords(operators: $uuids);
+        }
+
+        /**
+         * Reads entity records concurrently, see {@see CachingFederationClient::prefetch()}.
+         *
+         * @param array<string|null> $identifiers The entity UUIDs; empty values, repeats and known entities are skipped.
+         */
+        public function prefetchEntities(array $identifiers): void
+        {
+            $this->prefetchRecords(entities: $identifiers);
+        }
+
+        /**
+         * Reads records of several types concurrently, all at the same time, see {@see CachingFederationClient::prefetch()}.
+         * Empty values, repeats and records already read in this request are skipped.
+         *
+         * @param array<string|null> $entities Entity UUIDs.
+         * @param array<string|null> $operators Operator UUIDs.
+         * @param array<string|null> $reports Report UUIDs.
+         * @param array<string|null> $evidenceAttachments Evidence UUIDs whose attachments are read.
+         */
+        public function prefetchRecords(array $entities=[], array $operators=[], array $reports=[], array $evidenceAttachments=[]): void
+        {
+            $reads = [];
+            foreach(['entity:' => $entities, 'operator:' => $operators, 'report:' => $reports, 'evidence_attachments:' => $evidenceAttachments] as $prefix => $identifiers)
+            {
+                foreach(array_unique(array_filter($identifiers, static fn($identifier): bool => is_string($identifier) && $identifier !== '')) as $identifier)
+                {
+                    if(array_key_exists($prefix . $identifier, $this->cache))
+                    {
+                        continue;
+                    }
+
+                    $reads[] = match($prefix)
+                    {
+                        'entity:' => fn() => $this->getEntityRecord($identifier),
+                        'operator:' => fn() => $this->getOperator($identifier),
+                        'report:' => fn() => $this->getReport($identifier),
+                        'evidence_attachments:' => fn() => $this->getEvidenceAttachments($identifier),
+                    };
+                }
+            }
+
+            $this->prefetch($reads);
         }
 
         /**

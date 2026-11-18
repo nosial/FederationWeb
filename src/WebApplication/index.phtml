@@ -16,6 +16,7 @@
     $operatorName = $cookieSession?->get('operator_name');
     $dashboardView = new DashboardView();
     WebSession::set('dashboard_view', $dashboardView);
+    $dashboardView->prefetch($operatorUuid !== null);
 
     PageMetadata::set(Utilities::localize('nav_dashboard'), Utilities::localize('meta_description', ['server_name' => PageMetadata::getSiteName()]));
 ?>

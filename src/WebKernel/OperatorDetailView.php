@@ -62,9 +62,28 @@
                 return;
             }
 
+            // The action of a POST request only needs the record itself and redirects back to the page, so the
+            // related records are only read when the page is rendered
+            if(WebSession::getRequest()->getMethod() === RequestMethod::POST)
+            {
+                return;
+            }
+
             // The operator record is public, but each related collection follows the visibility of its
             // own domain, so each is loaded separately and a private domain does not hide the others.
             $uuid = $this->operator->getUuid();
+            if($this->federationClient instanceof CachingFederationClient)
+            {
+                // The collections are read together rather than one after another, then taken from the cache below
+                $client = $this->federationClient;
+                $this->federationClient->prefetch(array_filter([
+                    ViewAuthorization::canReadAuditLogs() ? fn() => $client->listOperatorAuditLogs($uuid) : null,
+                    ViewAuthorization::canReadReports() ? fn() => $client->listOperatorReports($uuid) : null,
+                    ViewAuthorization::canReadReports() ? fn() => $client->listAssignedOperatorReports($uuid) : null,
+                    ViewAuthorization::canReadEvidence() ? fn() => $client->listOperatorEvidence($uuid) : null,
+                    ViewAuthorization::canReadBlacklist() ? fn() => $client->listOperatorBlacklist($uuid) : null,
+                ]));
+            }
             $this->recentAuditLogs = $this->loadRelated(ViewAuthorization::canReadAuditLogs(), fn() => $this->federationClient->listOperatorAuditLogs($uuid));
             $this->recentReports = $this->loadRelated(ViewAuthorization::canReadReports(), fn() => $this->federationClient->listOperatorReports($uuid));
             $this->assignedReports = $this->loadRelated(ViewAuthorization::canReadReports(), fn() => $this->federationClient->listAssignedOperatorReports($uuid));

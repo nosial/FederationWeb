@@ -64,6 +64,33 @@
 
             if($this->evidence === null) return;
 
+            // The action of a POST request only needs the record itself and redirects back to the page, so the
+            // related records are only read when the page is rendered
+            if(WebSession::getRequest()->getMethod() === RequestMethod::POST)
+            {
+                return;
+            }
+
+            if($this->federationClient instanceof CachingFederationClient)
+            {
+                // Records that only depend on the evidence are read together rather than one after another, then
+                // taken from the cache below
+                $client = $this->federationClient;
+                $entityUuid = $this->evidence->getEntityUuid();
+                $reportUuid = $this->evidence->getReport();
+                $evidenceUuid = $this->evidence->getUuid();
+                $client->prefetch(array_filter([
+                    ViewAuthorization::canReadEntities() ? fn() => $client->getEntityRecord($entityUuid) : null,
+                    ViewAuthorization::canReadOperatorRecords() ? fn() => $client->getOperator($this->evidence->getOperatorUuid()) : null,
+                    ViewAuthorization::canReadReports() && $reportUuid !== null && $reportUuid !== '' ? fn() => $client->getReport($reportUuid) : null,
+                    ViewAuthorization::canManageRecords() ? fn() => $client->getEvidenceAttachments($evidenceUuid) : null,
+                    ViewAuthorization::canReadAuditLogs() ? fn() => $client->listEntityAuditLogs($entityUuid, 1, 100) : null,
+                    ViewAuthorization::canReadEntities() && ViewAuthorization::canReadReports() ? fn() => $client->listEntityReports($entityUuid, 1, 100) : null,
+                    ViewAuthorization::canReadEntities() && ViewAuthorization::canReadEvidence() ? fn() => $client->listEntityEvidenceRecords($entityUuid, 1, 100, ViewAuthorization::canManageRecords()) : null,
+                    ViewAuthorization::canReadEntities() && ViewAuthorization::canReadBlacklist() ? fn() => $client->listEntityBlacklistRecords($entityUuid, 1, 100, includeLifted: true) : null,
+                ]));
+            }
+
             if (ViewAuthorization::canReadEntities()) try { $this->entityRecord = $this->federationClient->getEntityRecord($this->evidence->getEntityUuid()); } catch(\Exception $exception) { Logger::getLogger()->warning('Unable to load evidence entity', $exception); }
             if (ViewAuthorization::canReadOperatorRecords()) try { $this->operatorRecord = $this->federationClient->getOperator($this->evidence->getOperatorUuid()); } catch(\Exception $exception) { Logger::getLogger()->warning('Unable to load evidence operator', $exception); }
             if (ViewAuthorization::canReadReports() && ($reportUuid = $this->evidence->getReport()) !== null && $reportUuid !== '') { try { $this->reportRecord = Utilities::getReport($this->federationClient, $reportUuid); } catch(\Exception $exception) { Logger::getLogger()->warning('Unable to load evidence report', $exception); } }

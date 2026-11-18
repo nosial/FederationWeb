@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+ - Quick review on the reports list: a new row action opens a modal that shows the report (status, incident type,
+   entity with its other reports and active blacklist records, operators, dates and message) and its evidence as
+   tabs with the text content, context, note, metadata and attachments, with previews of image attachments. An open
+   report can be closed from the modal with an optional classification: the modal closes at once while the report is
+   closed in the background, its row shows it as closing and is updated in place without reloading the page, and a
+   notification reports the outcome. Notifications stack, so several reports can be closed one after another.
+ - Added the `native` build configuration, a standalone executable built by ncc's `frankenphp` build type that
+   contains PHP, the FrankenPHP web server and FederationWeb. It is run with
+   `./federationweb php-server --listen 127.0.0.1:8080`, keeps sessions in APCu, and is attached to every release as
+   `federationweb-linux-x86_64`.
+
+### Changed
+ - Without `FEDERATION_SERVER_ENDPOINT`, pages lead to the sign-in page, where visitors enter the server they connect
+   to, instead of the configuration error page. The error page is still shown when `FEDERATION_DISABLE_CUSTOM_HOST` is
+   set without a server, or when the endpoint is not a valid URL.
+ - Pages read records that don't depend on each other at the same time instead of one after another when FederationLib
+   supports it (the labels of table rows, the related records of detail pages, the dashboard's overview and the quick
+   review), which matters most when the server is far away. With an older FederationLib they are read as before.
+ - Actions (POST requests) no longer read the records of their page before they are carried out, only the record they
+   act on, since they redirect back to the page.
+ - Search suggestions and the theme toggle read through the cache and no longer discard the cached records of the
+   server, since they change no records.
+ - Server information read before the access token is applied is kept for the rest of the request rather than read
+   again, and the dashboard's top threats and the entity query of entity pages are cached like other reads.
+ - Requires DynamicalWeb `1.0.23` or newer, which keeps sessions and the cache in APCu when memcached is not enabled.
+ - The badge class of evidence classifications and the icon of attachment MIME types are shared through `Utilities`.
+
+
+
 ## [1.0.5] - 2026-11-01
 
 This update introduces a minor bug fix
