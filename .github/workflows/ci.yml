@@ -24,6 +24,9 @@ jobs:
           apt-get update && apt-get install -y nodejs npm && rm -rf /var/lib/apt/lists/*
 
       - name: Build project
+        env:
+          NCC_SIGNING_KEY: ${{ secrets.NCC_SIGNING_KEY }}
+          NCC_SIGNING_KEY_PASSPHRASE: ${{ secrets.NCC_SIGNING_KEY_PASSPHRASE }}
         run: |
           ncc project install --log-level debug -y
           ncc build --config debug --log-level debug
@@ -49,6 +52,9 @@ jobs:
           apt-get update && apt-get install -y nodejs npm && rm -rf /var/lib/apt/lists/*
 
       - name: Build project
+        env:
+          NCC_SIGNING_KEY: ${{ secrets.NCC_SIGNING_KEY }}
+          NCC_SIGNING_KEY_PASSPHRASE: ${{ secrets.NCC_SIGNING_KEY_PASSPHRASE }}
         run: |
           ncc project install --log-level debug -y
           ncc build --config release --log-level debug
@@ -74,6 +80,9 @@ jobs:
           apt-get update && apt-get install -y nodejs npm && rm -rf /var/lib/apt/lists/*
 
       - name: Build project
+        env:
+          NCC_SIGNING_KEY: ${{ secrets.NCC_SIGNING_KEY }}
+          NCC_SIGNING_KEY_PASSPHRASE: ${{ secrets.NCC_SIGNING_KEY_PASSPHRASE }}
         run: |
           ncc project install --log-level debug -y
           ncc build --config web_release --log-level debug
