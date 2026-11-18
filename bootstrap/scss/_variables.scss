@@ -1,6 +1,8 @@
 // FederationWeb — Enterprise Theme Variables
 // Law Enforcement / Professional — Square, Compact, Data-Dense
 
+@use 'sass:color';
+
 // === Core Palette ===
 $white: #ffffff;
 $ink-black: #00171f;
@@ -185,8 +187,8 @@ $accent-red: $fw-red-600;
   --fw-surface-alt: #{rgba(0, 52, 89, 0.65)};
   --fw-surface-overlay: #{$deep-space-blue};
   --fw-text-primary: #{$white};
-  --fw-text-secondary: #{mix($white, $deep-space-blue, 75%)};
-  --fw-text-muted: #{mix($white, $deep-space-blue, 55%)};
+  --fw-text-secondary: #{color.mix($white, $deep-space-blue, 75%)};
+  --fw-text-muted: #{color.mix($white, $deep-space-blue, 55%)};
   --fw-text-heading: #{$white};
   --fw-border-default: #{rgba($cerulean, 0.35)};
   --fw-border-light: #{rgba($cerulean, 0.18)};
@@ -196,7 +198,7 @@ $accent-red: $fw-red-600;
   --fw-primary-text: #{$ink-black};
   --fw-link: #{$fresh-sky};
   --fw-link-hover: #{$white};
-  --fw-topbar-bg: #{mix($deep-space-blue, $ink-black, 70%)};
+  --fw-topbar-bg: #{color.mix($deep-space-blue, $ink-black, 70%)};
   --fw-topbar-border: #{rgba($cerulean, 0.25)};
   --fw-table-header-bg: #{rgba($cerulean, 0.18)};
   --fw-table-row-alt: #{rgba($white, 0.02)};
@@ -221,7 +223,7 @@ $accent-red: $fw-red-600;
   --fw-icon-amber: #{$fw-amber-400};
   --fw-icon-green: #{$fw-emerald-400};
   --fw-icon-cyan: #{$fw-cyan-400};
-  --fw-icon-navy: #{mix($white, $deep-space-blue, 80%)};
+  --fw-icon-navy: #{color.mix($white, $deep-space-blue, 80%)};
   --fw-badge-blue-bg: #{rgba($cerulean, 0.2)};
   --fw-badge-blue-text: #{$fresh-sky};
   --fw-badge-green-bg: #{rgba($fw-emerald-500, 0.2)};

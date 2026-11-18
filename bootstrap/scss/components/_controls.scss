@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 // Buttons + Forms + Search + Pagination + Detail rows + Alerts
 
 // ============ Buttons ============
@@ -47,7 +49,7 @@
     color: $white;
     border-color: $fw-red-600;
     &:hover { background: $fw-red-700; border-color: $fw-red-700; }
-    &:active { background: darken($fw-red-700, 5%); }
+    &:active { background: color.adjust($fw-red-700, $lightness: -5%); }
   }
 
   &-sm {
