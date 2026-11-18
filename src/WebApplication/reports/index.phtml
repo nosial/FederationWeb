@@ -15,6 +15,7 @@
     if (WebSession::getRequest()->getMethod() === RequestMethod::POST)
     {
         $reportsView->handlePostRequest();
+        $reportsView->load();
     }
 
     PageMetadata::set(Utilities::localize('page_title'), Utilities::localize('meta_description', ['server_name' => PageMetadata::getSiteName()]));

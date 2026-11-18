@@ -12,6 +12,7 @@
     if (WebSession::getRequest()->getMethod() === RequestMethod::POST)
     {
         $auditLogView->handlePostRequest();
+        $auditLogView->load();
     }
     WebSession::set('audit_log_view', $auditLogView);
 

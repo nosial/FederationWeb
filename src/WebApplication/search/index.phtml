@@ -14,6 +14,7 @@
     if (WebSession::getRequest()->getMethod() === RequestMethod::POST)
     {
         $searchView->handlePostRequest();
+        $searchView->load();
     }
 
     WebSession::set('search_view', $searchView);

@@ -14,6 +14,7 @@
     if (WebSession::getRequest()->getMethod() === RequestMethod::POST)
     {
         $entitiesView->handlePostRequest();
+        $entitiesView->load();
     }
 
     PageMetadata::set(Utilities::localize('page_title'), Utilities::localize('meta_description', ['server_name' => PageMetadata::getSiteName()]));
