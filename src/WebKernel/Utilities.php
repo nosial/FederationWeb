@@ -319,6 +319,8 @@
          */
         public static function respondWithJson(array $data): never
         {
+            // A change is visible to the next page as soon as the browser has the response
+            CachingFederationClient::flushSharedCacheInvalidation();
             WebSession::respondJson($data);
         }
 
@@ -342,6 +344,8 @@
                 }
             }
 
+            // A change is visible to the page the browser is redirected to
+            CachingFederationClient::flushSharedCacheInvalidation();
             WebSession::redirectToRoute($route, $pathVariables, $queryParameters);
         }
 

@@ -54,6 +54,9 @@
         /** @var string|false|null The shared cache scope, false when the shared cache is unavailable, null until resolved. */
         private string|false|null $sharedScope = null;
 
+        /** @var string|null The endpoint whose shared cache the request discards, '' once discarded, null when none. */
+        private static ?string $pendingInvalidation = null;
+
         /**
          * Returns how long shared entries are kept, configured by the FEDERATION_CACHE_TTL environment
          * variable in seconds.
@@ -84,6 +87,36 @@
                 // A counter memcached evicted starts again from the current time, ahead of the generations
                 // still referenced by entries that have not expired yet
                 Memcache::increment(self::getGenerationKey($endpoint), 1, time());
+            }
+        }
+
+        /**
+         * Discards the shared cache of a server endpoint once the current request has changed records: as soon
+         * as the request responds (see {@see CachingFederationClient::flushSharedCacheInvalidation()}), so the page
+         * the browser loads next never reads a copy from before the change, or when the request ends otherwise.
+         *
+         * @param string $endpoint The server endpoint, as the client returns it.
+         */
+        public static function invalidateSharedCacheAfterChange(string $endpoint): void
+        {
+            if(self::$pendingInvalidation === null)
+            {
+                register_shutdown_function(static fn() => self::flushSharedCacheInvalidation());
+            }
+
+            self::$pendingInvalidation = $endpoint;
+        }
+
+        /**
+         * Discards the shared cache scheduled by {@see CachingFederationClient::invalidateSharedCacheAfterChange()},
+         * once. Called before a request that changed records responds.
+         */
+        public static function flushSharedCacheInvalidation(): void
+        {
+            if(self::$pendingInvalidation !== null && self::$pendingInvalidation !== '')
+            {
+                self::invalidateSharedCache(self::$pendingInvalidation);
+                self::$pendingInvalidation = '';
             }
         }
 

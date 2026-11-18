@@ -63,7 +63,8 @@
     else
     {
         $federationClient = new FederationClient($serverEndpoint);
-        register_shutdown_function(static fn() => CachingFederationClient::invalidateSharedCache($serverEndpoint));
+        // Keyed by the client's endpoint, which is normalized the same way as the endpoint pages cache under
+        CachingFederationClient::invalidateSharedCacheAfterChange($federationClient->getEndpoint());
     }
 
     try

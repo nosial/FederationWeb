@@ -313,8 +313,8 @@
 // ============ Notifications ============
 .fw-toast-stack {
   position: fixed;
+  top: $topbar-height + 12px;
   right: 16px;
-  bottom: 16px;
   z-index: 1090;
   display: flex;
   flex-direction: column;
@@ -331,8 +331,12 @@
   padding: 8px 10px;
   font-size: $fw-font-size-sm;
   line-height: 1.4;
-  border-left: 3px solid transparent;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+  color: var(--fw-text-primary);
+  // The status tints are translucent in the dark theme, so they are laid over the solid surface to stay readable
+  background: var(--fw-surface-overlay);
+  border: 1px solid var(--fw-border-default);
+  border-left-width: 3px;
+  box-shadow: 4px 4px 0 rgba($ink-black, .12);
   pointer-events: auto;
   animation: fwToastIn 150ms ease-out;
   transition: opacity 200ms ease, transform 200ms ease;
@@ -347,7 +351,9 @@
 
   .fw-toast-detail {
     display: block;
-    opacity: .8;
+    color: var(--fw-text-secondary);
+    font-family: $font-family-monospace;
+    font-size: $fw-font-size-xs;
   }
 
   .btn-close {
@@ -358,8 +364,16 @@
     background-size: 8px;
   }
 
-  &.fw-toast-success { background: var(--fw-success-bg); color: var(--fw-success-text); border-left-color: var(--fw-success-text); }
-  &.fw-toast-danger { background: var(--fw-danger-bg); color: var(--fw-danger-text); border-left-color: var(--fw-danger-text); }
+  &.fw-toast-success {
+    background: linear-gradient(var(--fw-success-bg), var(--fw-success-bg)), var(--fw-surface-overlay);
+    border-left-color: var(--fw-success-text);
+    > .bi, strong { color: var(--fw-success-text); }
+  }
+  &.fw-toast-danger {
+    background: linear-gradient(var(--fw-danger-bg), var(--fw-danger-bg)), var(--fw-surface-overlay);
+    border-left-color: var(--fw-danger-text);
+    > .bi, strong { color: var(--fw-danger-text); }
+  }
   &.fw-toast-out { opacity: 0; transform: translateX(8px); }
 }
 

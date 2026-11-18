@@ -20,7 +20,7 @@
                 </div>
                 <div class="fw-card-body fw-card-body-nopad">
                     <?php
-                        if ($dashboardView->getAuditLogs(10) === null)
+                        if ($dashboardView->getAuditLogs(40) === null)
                         {
                             ?>
                             <div class="fw-empty">
@@ -29,7 +29,7 @@
                             </div>
                             <?php
                         }
-                        elseif (empty($dashboardView->getAuditLogs(10)))
+                        elseif (empty($dashboardView->getAuditLogs(40)))
                         {
                             ?>
                             <div class="fw-empty">
@@ -55,7 +55,7 @@
                                     </thead>
                                     <tbody>
                                         <?php
-                                            foreach ($dashboardView->getAuditLogs(10) ?? [] as $log)
+                                            foreach ($dashboardView->getAuditLogs(40) ?? [] as $log)
                                             {
                                                 ?>
                                                 <tr class="fw-row-link" data-href="<?php Functions::printRoute('audit_log_detail', ['audit_log_uuid' => $log->getUuid()]); ?>">
