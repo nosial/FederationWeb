@@ -309,3 +309,61 @@
     font-size: $fw-font-size-sm;
   }
 }
+
+// ============ Notifications ============
+.fw-toast-stack {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1090;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 300px;
+  max-width: calc(100vw - 32px);
+  pointer-events: none;
+}
+
+.fw-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  font-size: $fw-font-size-sm;
+  line-height: 1.4;
+  border-left: 3px solid transparent;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+  pointer-events: auto;
+  animation: fwToastIn 150ms ease-out;
+  transition: opacity 200ms ease, transform 200ms ease;
+
+  > .bi { font-size: 14px; flex-shrink: 0; }
+
+  .fw-toast-body {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .fw-toast-detail {
+    display: block;
+    opacity: .8;
+  }
+
+  .btn-close {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    padding: 4px;
+    background-size: 8px;
+  }
+
+  &.fw-toast-success { background: var(--fw-success-bg); color: var(--fw-success-text); border-left-color: var(--fw-success-text); }
+  &.fw-toast-danger { background: var(--fw-danger-bg); color: var(--fw-danger-text); border-left-color: var(--fw-danger-text); }
+  &.fw-toast-out { opacity: 0; transform: translateX(8px); }
+}
+
+@keyframes fwToastIn { from { opacity: 0; transform: translateX(8px); } }
+
+// A report closing in the background from the quick review
+.fw-spin { display: inline-block; animation: fwReviewSpin 1s linear infinite; }

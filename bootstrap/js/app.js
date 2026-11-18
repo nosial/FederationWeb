@@ -734,6 +734,46 @@
     });
   }
 
+  // ============ Notifications ============
+  // Stackable notifications for the outcome of actions that complete in the background, such as closing a
+  // report from the quick review. Successes dismiss themselves; failures stay until they are dismissed.
+  var fwNotifyStack = null;
+
+  function fwNotifyEscape(value) {
+    var div = document.createElement('div');
+    div.textContent = value == null ? '' : String(value);
+    return div.innerHTML;
+  }
+
+  function fwNotifyDismiss(toast) {
+    if (!toast.parentNode || toast.classList.contains('fw-toast-out')) return;
+    toast.classList.add('fw-toast-out');
+    setTimeout(function () { toast.remove(); }, 200);
+  }
+
+  window.fwNotify = function (type, message, detail) {
+    if (!fwNotifyStack || !fwNotifyStack.isConnected) {
+      fwNotifyStack = document.createElement('div');
+      fwNotifyStack.className = 'fw-toast-stack';
+      fwNotifyStack.setAttribute('role', 'status');
+      fwNotifyStack.setAttribute('aria-live', 'polite');
+      document.body.appendChild(fwNotifyStack);
+    }
+
+    var success = type === 'success';
+    var toast = document.createElement('div');
+    toast.className = 'fw-toast fw-toast-' + (success ? 'success' : 'danger');
+    toast.innerHTML = '<i class="bi ' + (success ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill') + '"></i>'
+      + '<div class="fw-toast-body"><strong>' + fwNotifyEscape(message) + '</strong>'
+      + (detail ? '<span class="fw-toast-detail">' + fwNotifyEscape(detail) + '</span>' : '') + '</div>'
+      + '<button type="button" class="btn-close" aria-label="Close"></button>';
+    toast.querySelector('.btn-close').addEventListener('click', function () { fwNotifyDismiss(toast); });
+    fwNotifyStack.appendChild(toast);
+
+    if (success) setTimeout(function () { fwNotifyDismiss(toast); }, 5000);
+    return toast;
+  };
+
   document.addEventListener('DOMContentLoaded', function() {
     fwInitDarkMode();
     fwInitDatePickers();
