@@ -7,6 +7,34 @@
     /** @var ReportsView $reportsView */
     $reportsView = WebSession::get('reports_view');
 ?>
+<div class="modal fade fw-review-modal" id="reviewReportModal" tabindex="-1" aria-labelledby="reviewReportTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reviewReportTitle"><i class="bi bi-clipboard-check"></i> <?php Functions::printl('review_modal_title'); ?></h5>
+                <a href="#" id="reviewReportFullLink" class="fw-btn fw-btn-ghost fw-btn-sm ms-auto me-2"><i class="bi bi-box-arrow-up-right"></i> <?php Functions::printl('review_open_full'); ?></a>
+                <button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="reviewReportAlert" class="fw-review-alert" hidden></div>
+                <div id="reviewReportBody"></div>
+                <template id="reviewReportLoading">
+                    <div class="fw-review-loading"><i class="bi bi-arrow-repeat"></i> <?php Functions::printl('review_loading'); ?></div>
+                </template>
+                <template id="reviewReportFailed">
+                    <div class="fw-tab-empty">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <p><?php Functions::printl('review_load_failed'); ?></p>
+                    </div>
+                </template>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="fw-btn fw-btn-secondary" data-bs-dismiss="modal"><?php Functions::printl('cancel'); ?></button>
+                <button type="button" class="fw-btn fw-btn-primary" id="reviewReportCloseBtn" hidden><i class="bi bi-check-circle"></i> <span><?php Functions::printl('modal_close_confirm'); ?></span></button>
+            </div>
+        </div>
+    </div>
+</div>
 <?php
     if (ViewAuthorization::canManageRecords())
     {
