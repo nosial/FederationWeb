@@ -648,6 +648,15 @@ reports:
   failed_entity_reports: Failed to load related reports
   mime: MIME Type
   size: Size
+  quick_review: 'Quick Review'
+  review_modal_title: 'Review Report'
+  review_open_full: 'Open Full Report'
+  review_open_evidence: 'Open Evidence'
+  review_loading: 'Loading report…'
+  review_load_failed: 'Failed to load the report. It may not exist or you may not have permission to view it.'
+  review_other_reports: 'Other reports on this entity'
+  review_active_blacklists: 'Active blacklist records of this entity'
+  review_report_closed_note: 'This report is closed.'
 evidence:
   meta_description: 'Evidence records submitted to {server_name} by its operators.'
   meta_description_record: 'Evidence on {entity} submitted to {server_name} on {created}.'

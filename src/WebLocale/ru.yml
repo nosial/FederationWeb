@@ -648,6 +648,15 @@ reports:
   failed_entity_reports: Не удалось загрузить связанные отчёты
   mime: MIME-тип
   size: Размер
+  quick_review: 'Быстрый просмотр'
+  review_modal_title: 'Просмотр отчёта'
+  review_open_full: 'Открыть полный отчёт'
+  review_open_evidence: 'Открыть доказательство'
+  review_loading: 'Загрузка отчёта…'
+  review_load_failed: 'Не удалось загрузить отчёт. Возможно, он не существует или у вас нет прав на его просмотр.'
+  review_other_reports: 'Другие отчёты по этой сущности'
+  review_active_blacklists: 'Активные записи чёрного списка этой сущности'
+  review_report_closed_note: 'Этот отчёт закрыт.'
 evidence:
   meta_description: 'Записи доказательств, отправленные операторами на {server_name}.'
   meta_description_record: 'Доказательство по {entity}, отправленное на {server_name} {created}.'

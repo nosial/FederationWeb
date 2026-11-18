@@ -648,6 +648,15 @@ reports:
   failed_entity_reports: 加载相关报告失败
   mime: MIME 类型
   size: 大小
+  quick_review: '快速审核'
+  review_modal_title: '审核报告'
+  review_open_full: '打开完整报告'
+  review_open_evidence: '打开证据'
+  review_loading: '正在加载报告…'
+  review_load_failed: '加载报告失败。该报告可能不存在，或您无权查看。'
+  review_other_reports: '该实体的其他报告'
+  review_active_blacklists: '该实体的有效黑名单记录'
+  review_report_closed_note: '此报告已关闭。'
 evidence:
   meta_description: '操作员提交到 {server_name} 的证据记录。'
   meta_description_record: '于 {created} 提交到 {server_name} 的关于 {entity} 的证据。'

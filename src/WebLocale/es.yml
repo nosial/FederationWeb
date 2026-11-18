@@ -648,6 +648,15 @@ reports:
   failed_entity_reports: Error al cargar informes relacionados
   mime: Tipo MIME
   size: Tamaño
+  quick_review: 'Revisión rápida'
+  review_modal_title: 'Revisar informe'
+  review_open_full: 'Abrir informe completo'
+  review_open_evidence: 'Abrir evidencia'
+  review_loading: 'Cargando informe…'
+  review_load_failed: 'Error al cargar el informe. Puede que no exista o que no tenga permiso para verlo.'
+  review_other_reports: 'Otros informes sobre esta entidad'
+  review_active_blacklists: 'Registros de lista negra activos de esta entidad'
+  review_report_closed_note: 'Este informe está cerrado.'
 evidence:
   meta_description: 'Registros de evidencia enviados a {server_name} por sus operadores.'
   meta_description_record: 'Evidencia sobre {entity} enviada a {server_name} el {created}.'
